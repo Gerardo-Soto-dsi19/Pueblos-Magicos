@@ -7,11 +7,10 @@ function Layout() {
     <>
       <div className='container max-w-full '>
         <Cabecera />
-
       </div>
-      <div className='md:flex mt-12 justify-center items-center'>
+      
         <Outlet />
-      </div>
+      
       <div>
         <Footer />
       </div>

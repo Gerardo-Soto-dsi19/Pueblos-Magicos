@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 function Footer() {
     return (
         <>
-            <footer className="bg-[#5A1236] text-white py-4 px-8 text-sm font-['Roboto']" >
+            <footer className="bg-[#6C1D45] text-white py-4 px-8 text-sm font-['Roboto']" >
                 <div className="flex md:flex-col md:items-center sm:flex-row sm:justify-between gap-10">
                     <div>
                         <h3 className="font-bold">INSTITUTO POLITÉCNICO NACIONAL</h3>
