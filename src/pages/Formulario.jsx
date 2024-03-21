@@ -3,7 +3,8 @@ import axios from "axios"
 
 
 function Formulario() {
-  const [puebloMagico, setPuebloMagico] = useState('')
+  const [puebloMagico, setPuebloMagico] = useState([])
+  const [puebloMagicoSelected, setPuebloMagicoSelected] = useState('')
   const [categoria, setCategoria] = useState([])
   const [categoriaSelected, setCategoriaSelected] = useState('')
   const [titulo, setTitulo] = useState('')
@@ -14,7 +15,8 @@ function Formulario() {
   const [telefono, setTelefono] = useState('')
   const [latitud, setLatitud] = useState('')
   const [longitud, setLongitud] = useState('')
-  const [imagenes, setImagenes] = useState('')
+  const [imgPrincipal, setImgPrincipal] = useState('')
+  const [imgGaleria, setImgsGaleria] = useState([])
 
   useEffect(() => {
     axios.get('http://localhost/api/tiposervicios')
@@ -29,14 +31,24 @@ function Formulario() {
   const handleStateChange = event => {
     setCategoriaSelected(event.target.value);
   };
+  useEffect(() => {
+    axios.get('http://localhost/api/pueblosmagicos')
+      .then(response => { setPuebloMagico(response.data.data) })
+      .catch(error => {
+        console.error('Error fetching pueblos:', error);
+      });
+  }, []);
+  const handlePuebloMChange = event => {
+    setPuebloMagicoSelected(event.target.value);
+  };
 
   return (
     <>
       <div className="md:flex justify-center items-center ">
         <form className="shadow-lg rounded-lg mt-5 mb-10 px-14">
           <div className="space-y-12 mb-10">
-          <h1>Formulario</h1>
-            <div className="border-b border-gray-900/10 pb-12">              
+            <h1>Formulario</h1>
+            <div className="border-b border-gray-900/10 pb-12">
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-3">
                   <label htmlFor="#" className="block text-sm font-medium leading-6 text-gray-900">
@@ -44,14 +56,13 @@ function Formulario() {
                   </label>
                   <div className="mt-2">
                     <select
-                      id="#"
-                      name="#"
-                      autoComplete="#"
+                      value={puebloMagicoSelected} onChange={handlePuebloMChange}
                       className="block w-full rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
                     >
-                      <option>1</option>
-                      <option>2</option>
-                      <option>3</option>
+                      <option value="">Seleccionar...</option>
+                      {puebloMagico.map(puebloMagico => (
+                        <option key={puebloMagico.id} value={puebloMagico.nombre}>{puebloMagico.nombre}</option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -104,7 +115,7 @@ function Formulario() {
                   </label>
                   <div className="mt-2">
                     <input
-                      type="date"
+                      type="text"
                       name="#"
                       id="#"
                       autoComplete="dias-servicio"
@@ -119,7 +130,7 @@ function Formulario() {
                   </label>
                   <div className="mt-2">
                     <input
-                      type="text"
+                      type="time"
                       name="#"
                       id="#"
                       autoComplete="address-level1"
@@ -134,7 +145,7 @@ function Formulario() {
                   </label>
                   <div className="mt-2">
                     <input
-                      type="text"
+                      type="number"
                       name="postal-code"
                       id="postal-code"
                       autoComplete="postal-code"
@@ -149,7 +160,7 @@ function Formulario() {
                   </label>
                   <div className="mt-2">
                     <input
-                      type="text"
+                      type="tel"
                       name="postal-code"
                       id="postal-code"
                       autoComplete="postal-code"
@@ -188,7 +199,7 @@ function Formulario() {
                 </div>
                 <div className="col-span-full">
                   <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900">
-                    Imagenes
+                    Imagen Principal
                   </label>
                   <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                     <div className="text-center">
@@ -206,6 +217,28 @@ function Formulario() {
                     </div>
                   </div>
                 </div>
+
+                <div className="col-span-full">
+                  <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900">
+                    Imagenes de galeria
+                  </label>
+                  <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                    <div className="text-center">
+                      <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                        <label
+                          htmlFor="file-upload"
+                          className="relative cursor-pointer rounded-md bg-white font-semibold text-[#6c1d45] focus-within:outline-none focus-within:ring-2 focus-within:ring-[#6c1d45] focus-within:ring-offset-2 hover:text-[#6A294A]"
+                        >
+                          <span>Sube uno o varios archivos</span>
+                          <input id="file-upload" name="file-upload" type="file" multiple className="sr-only" />
+                        </label>
+                        <p className="pl-1">o arrastra y suelta</p>
+                      </div>
+                      <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
