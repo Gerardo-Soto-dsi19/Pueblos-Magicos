@@ -6,6 +6,7 @@ This repository contains a step-by-step guide on how to install React using Vite
 - React Vite
 - Taildwind CSS
 - HTML5
+- Node.js
 
 ## Getting Started
 
@@ -15,7 +16,7 @@ To get a local copy up and running follow  these simple example steps.
 
 Before you begin, make sure you have Node.js installed on your system. You can download and install it from <a href ="https://nodejs.org/en"> the official Node.js page.</a>
 
-Make sure you choose the LTS version
+Make sure you choose the LTS version 20.11.1
 
 
 ### Installation Steps
