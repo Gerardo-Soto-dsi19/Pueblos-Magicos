@@ -1,23 +1,38 @@
 import { useState, useEffect } from 'react';
 import axios from "axios"
-
+import FormData from 'form-data';
 
 function Formulario() {
-  const [puebloMagico, setPuebloMagico] = useState([])
-  const [puebloMagicoSelected, setPuebloMagicoSelected] = useState('')
-  const [categoria, setCategoria] = useState([])
-  const [categoriaSelected, setCategoriaSelected] = useState('')
-  const [titulo, setTitulo] = useState('')
-  const [descripcion, setDescripcion] = useState('')
-  const [diasServicios, setDiasServicio] = useState('')
-  const [horario, setHorario] = useState('')
-  const [precio, setPrecio] = useState('')
-  const [telefono, setTelefono] = useState('')
-  const [latitud, setLatitud] = useState('')
-  const [longitud, setLongitud] = useState('')
-  const [imgPrincipal, setImgPrincipal] = useState('')
-  const [imgGaleria, setImgsGaleria] = useState([])
 
+  const [formData, setFormData] = useState({
+    id_pueblo: '',
+    categoria: '',
+    titulo: '',
+    descripcion: '',
+    dias_servicio: '',
+    horario_inicio: '',
+    horario_fin: '',
+    precio: '',
+    latitud: '',
+    longitud: '',
+    calle: '',
+    colonia: '',
+    estado: '',
+    alcaldia: '',
+    CP: '',
+    numInt: '',
+    numExt: '',
+    imgPrincipal: null,
+    arrayGaleria: [],
+  });
+
+  const [puebloMagico, setPuebloMagico] = useState([])
+  const [categoria, setCategoria] = useState([])
+  const [estado, setEstado] = useState([])
+  const [imagenPrincipal, setImagenPrincipal] = useState(null);
+  const [imagenesAdicionales, setImagenesAdicionales] = useState([]);
+
+  /* Seteo de combos  */
   useEffect(() => {
     axios.get('http://localhost/api/tiposervicios')
       .then(response => {
@@ -28,9 +43,7 @@ function Formulario() {
       });
   }, []);
 
-  const handleStateChange = event => {
-    setCategoriaSelected(event.target.value);
-  };
+
   useEffect(() => {
     axios.get('http://localhost/api/pueblosmagicos')
       .then(response => { setPuebloMagico(response.data.data) })
@@ -38,14 +51,103 @@ function Formulario() {
         console.error('Error fetching pueblos:', error);
       });
   }, []);
-  const handlePuebloMChange = event => {
-    setPuebloMagicoSelected(event.target.value);
+
+  useEffect(() => {
+    axios.get('http://localhost/api/catestados')
+      .then(response => { setEstado(response.data.data) })
+      .catch(error => {
+        console.error('Error fetching estados:', error);
+      });
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, files } = e.target;
+
+    if (name === 'imgPrincipal') {
+      setFormData((prevState) => ({
+        ...prevState,
+        imgPrincipal: files[0],
+      }));
+    } else if (name === 'arrayGaleria') {
+      setFormData((prevState) => ({
+        ...prevState,
+        arrayGaleria: Array.from(files),
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: e.target.value,
+      }));
+    }
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const formDataToSend = new FormData();
+
+      if (formData.imgPrincipal) {
+        formDataToSend.append('imgPrincipal', formData.imgPrincipal);
+      }
+    
+      // Agrega las imágenes adicionales
+      if (formData.arrayGaleria.length > 0) {
+        formData.arrayGaleria.forEach((imagen) => {
+          formDataToSend.append('arrayGaleria', imagen);
+        });
+      }
+
+      const datosToSend = {
+        data: {
+          id_tipo_servicio: formData.categoria,
+          municipio: formData.alcaldia,
+          CP: formData.CP,
+          int: formData.numInt,
+          ext: formData.numExt,
+          colonia: formData.colonia,
+          calle: formData.calle,
+          dias_servicio: formData.dias_servicio,
+          horario_inicio: formData.horario_inicio,
+          horario_fin: formData.horario_fin,
+          precio: formData.precio,
+          titulo: formData.titulo,
+          descripcion: formData.descripcion,
+          latitud: formData.latitud,
+          longitud: formData.longitud,
+          imgPrincipal: formData.imgPrincipal,
+          arrayGaleria: formData.arrayGaleria,
+          id_estado: formData.estado,
+          id_usuario: '1',
+          id_pueblo: formData.id_pueblo,
+        }
+      }
+      console.log(datosToSend);
+
+      const response = await axios.post('http://localhost/api/servicios/registrar', datosToSend, {
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'multipart/form-data',
+          
+        },
+
+      });
+      if (response.status === 200 || response.status === 201) {
+        console.log('Datos enviados exitosamente');
+      }
+      else if (response.status === 422) {
+        console.log('Unprocessable Content');
+      } else {
+        console.log('Error al enviar los datos:');
+      }
+    } catch (error) {
+      console.error('Error al enviar los datos:', error);
+    }
+  }
 
   return (
     <>
       <div className="md:flex justify-center items-center ">
-        <form className="shadow-lg rounded-lg mt-5 mb-10 px-14">
+        <form onSubmit={handleSubmit} className="shadow-lg rounded-lg mt-5 mb-10 px-14">
           <div className="space-y-12 mb-10">
             <h1>Formulario</h1>
             <div className="border-b border-gray-900/10 pb-12">
@@ -56,12 +158,14 @@ function Formulario() {
                   </label>
                   <div className="mt-2">
                     <select
-                      value={puebloMagicoSelected} onChange={handlePuebloMChange}
+                      name='id_pueblo'
+                      value={formData.id_pueblo}
+                      onChange={handleChange}
                       className="block w-full rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
                     >
                       <option value="">Seleccionar...</option>
-                      {puebloMagico.map(puebloMagico => (
-                        <option key={puebloMagico.id} value={puebloMagico.nombre}>{puebloMagico.nombre}</option>
+                      {puebloMagico.map((item) => (
+                        <option key={item.id} value={item.id}>{item.nombre}</option>
                       ))}
                     </select>
                   </div>
@@ -72,104 +176,109 @@ function Formulario() {
                   </label>
                   <div className="mt-2">
                     <select
-                      value={categoriaSelected} onChange={handleStateChange}
+                      name='categoria'
+                      value={formData.categoria}
+                      onChange={handleChange}
                       className="block w-full rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
                     >
                       <option value="">Seleccionar...</option>
-                      {categoria.map(categoria => (
-                        <option key={categoria.id} value={categoria.servicio}>{categoria.servicio}</option>
+                      {categoria.map((item) => (
+                        <option key={item.id} value={item.id}>{item.servicio}</option>
                       ))}
                     </select>
                   </div>
                 </div>
 
                 <div className="col-span-full">
-                  <label htmlFor="street-address" className="block text-sm font-medium leading-6 text-gray-900">
+                  <label htmlFor="titulo" className="block text-sm font-medium leading-6 text-gray-900">
                     Titulo
                   </label>
                   <div className="mt-2">
                     <input
                       type="text"
-                      name="street-address"
-                      id="street-address"
+                      name="titulo"
+                      id="titulo"
+                      value={formData.titulo} onChange={handleChange}
                       autoComplete="street-address"
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                   <div className="mt-2">
-                    <label htmlFor="about" className="block text-sm font-medium leading-6 text-gray-900">
+                    <label htmlFor="descripcion" className="block text-sm font-medium leading-6 text-gray-900">
                       Descripcion
                     </label>
                     <textarea
-                      id="about"
-                      name="about"
+                      id="descripcion"
+                      name="descripcion"
                       rows={3}
+                      value={formData.descripcion} onChange={handleChange}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       defaultValue={''}
                     />
                   </div>
                 </div>
+
                 <div className="sm:col-span-2 sm:col-start-1">
-                  <label htmlFor="#" className="block text-sm font-medium leading-6 text-gray-900">
+                  <label htmlFor="dias_servicio" className="block text-sm font-medium leading-6 text-gray-900">
                     Días de servicio
                   </label>
                   <div className="mt-2">
                     <input
                       type="text"
-                      name="#"
-                      id="#"
-                      autoComplete="dias-servicio"
+                      name="dias_servicio"
+                      value={formData.dias_servicio} onChange={handleChange}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label htmlFor="#" className="block text-sm font-medium leading-6 text-gray-900">
-                    Horario
+                  <label htmlFor="horario_inicio" className="block text-sm font-medium leading-6 text-gray-900">
+                    Horario de apertura
                   </label>
                   <div className="mt-2">
                     <input
                       type="time"
-                      name="#"
-                      id="#"
-                      autoComplete="address-level1"
+                      name="horario_inicio"
+                      id="horario_inicio"
+                      value={formData.horario_inicio} onChange={handleChange}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label htmlFor="postal-code" className="block text-sm font-medium leading-6 text-gray-900">
+                  <label htmlFor="horario_fin" className="block text-sm font-medium leading-6 text-gray-900">
+                    Horario de cierre
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="time"
+                      name="horario_fin"
+                      id="horario_fin"
+                      value={formData.horario_fin} onChange={handleChange}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label htmlFor="precio" className="block text-sm font-medium leading-6 text-gray-900">
                     Precio
                   </label>
                   <div className="mt-2">
                     <input
                       type="number"
-                      name="postal-code"
-                      id="postal-code"
-                      autoComplete="postal-code"
+                      name="precio"
+                      id="precio"
+                      value={formData.precio} onChange={handleChange}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
 
-                <div className="sm:col-span-2 sm:col-start-1">
-                  <label htmlFor="postal-code" className="block text-sm font-medium leading-6 text-gray-900">
-                    Teléfono
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="tel"
-                      name="postal-code"
-                      id="postal-code"
-                      autoComplete="postal-code"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
                 <div className="sm:col-span-2">
-                  <label htmlFor="Latitud" className="block text-sm font-medium leading-6 text-gray-900">
+                  <label htmlFor="latitud" className="block text-sm font-medium leading-6 text-gray-900">
                     Latitud
                   </label>
                   <div className="mt-2">
@@ -177,7 +286,7 @@ function Formulario() {
                       type="text"
                       name="latitud"
                       id="latitud"
-                      autoComplete="latitud"
+                      value={formData.latitud} onChange={handleChange}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
@@ -192,11 +301,123 @@ function Formulario() {
                       type="text"
                       name="longitud"
                       id="longitud"
-                      autoComplete="longitud"
+                      value={formData.longitud} onChange={handleChange}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
+
+                {/* Meter inputs para direccion (incluir colonia) */}
+
+                <div className="sm:col-span-3">
+                  <label htmlFor="calle" className="block text-sm font-medium leading-6 text-gray-900">
+                    Calle
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      name="calle"
+                      id="calle"
+                      value={formData.calle} onChange={handleChange}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-3">
+                  <label htmlFor="colonia" className="block text-sm font-medium leading-6 text-gray-900">
+                    Colonia
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      name="colonia"
+                      id="colonia"
+                      value={formData.colonia} onChange={handleChange}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-3">
+                  <label htmlFor="alcaldia" className="block text-sm font-medium leading-6 text-gray-900">
+                    Alcaldia/Municipio
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      name="alcaldia"
+                      id="alcaldia"
+                      value={formData.alcaldia} onChange={handleChange}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-3">
+                  <label htmlFor="#" className="block text-sm font-medium leading-6 text-gray-900">
+                    Estado
+                  </label>
+                  <div className="mt-2">
+                    <select
+                      name='estado'
+                      value={formData.estado} onChange={handleChange}
+                      className="block w-full rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
+                    >
+                      <option value="">Seleccionar...</option>
+                      {estado.map((item) => (
+                        <option key={item.id} value={item.id}>{item.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label htmlFor="CP" className="block text-sm font-medium leading-6 text-gray-900">
+                    Codigo Postal
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      name="CP"
+                      id="CP"
+                      value={formData.CP} onChange={handleChange}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
+
+
+                <div className="sm:col-span-2">
+                  <label htmlFor="numInt" className="block text-sm font-medium leading-6 text-gray-900">
+                    Núm Int.
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      name="numInt"
+                      id="numInt"
+                      value={formData.numInt} onChange={handleChange}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label htmlFor="numExt" className="block text-sm font-medium leading-6 text-gray-900">
+                    Núm Ext.
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="number"
+                      name="numExt"
+                      id="numExt"
+                      value={formData.numExt} onChange={handleChange}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
+
                 <div className="col-span-full">
                   <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900">
                     Imagen Principal
@@ -205,11 +426,11 @@ function Formulario() {
                     <div className="text-center">
                       <div className="mt-4 flex text-sm leading-6 text-gray-600">
                         <label
-                          htmlFor="file-upload"
+                          htmlFor="imgPrincipal"
                           className="relative cursor-pointer rounded-md bg-white font-semibold text-[#6c1d45] focus-within:outline-none focus-within:ring-2 focus-within:ring-[#6c1d45] focus-within:ring-offset-2 hover:text-[#6A294A]"
                         >
                           <span>Sube un archivo</span>
-                          <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                          <input id="imgPrincipal" name="imgPrincipal" type="file" className="sr-only" onChange={handleChange} />
                         </label>
                         <p className="pl-1">o arrastra y suelta</p>
                       </div>
@@ -226,11 +447,11 @@ function Formulario() {
                     <div className="text-center">
                       <div className="mt-4 flex text-sm leading-6 text-gray-600">
                         <label
-                          htmlFor="file-upload"
+                          htmlFor="arrayGaleria"
                           className="relative cursor-pointer rounded-md bg-white font-semibold text-[#6c1d45] focus-within:outline-none focus-within:ring-2 focus-within:ring-[#6c1d45] focus-within:ring-offset-2 hover:text-[#6A294A]"
                         >
                           <span>Sube uno o varios archivos</span>
-                          <input id="file-upload" name="file-upload" type="file" multiple className="sr-only" />
+                          <input id="arrayGaleria" name="arrayGaleria" type="file" multiple className="sr-only" onChange={handleChange} />
                         </label>
                         <p className="pl-1">o arrastra y suelta</p>
                       </div>
