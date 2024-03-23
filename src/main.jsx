@@ -7,6 +7,8 @@ import Login from './pages/Login'
 import Formulario from './pages/Formulario'
 import RegistroLogin from './pages/RegistroLogin'
 import RecuperarContraseña from './pages/RecuperarContraseña'
+import GestorSolicitudes from './pages/GestorSolicitudes'
+import Sidebar from './components/Sidebar'
 
 const router = createBrowserRouter([
   {
@@ -28,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: '/formulario/registro',
         element: <Formulario/>
+      },
+      {
+        path: '/gestion-solicitudes',
+        element: <GestorSolicitudes/>
       }
     ]
   },
