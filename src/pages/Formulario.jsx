@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from "axios"
 import FormData from 'form-data';
+import Swal from 'sweetalert2';
 
 function Formulario() {
 
@@ -29,8 +30,7 @@ function Formulario() {
   const [puebloMagico, setPuebloMagico] = useState([])
   const [categoria, setCategoria] = useState([])
   const [estado, setEstado] = useState([])
-  const [imagenPrincipal, setImagenPrincipal] = useState(null);
-  const [imagenesAdicionales, setImagenesAdicionales] = useState([]);
+
 
   /* Seteo de combos  */
   useEffect(() => {
@@ -59,6 +59,19 @@ function Formulario() {
         console.error('Error fetching estados:', error);
       });
   }, []);
+
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    }
+  });
+
 
   const handleChange = (e) => {
     const { name, files } = e.target;
@@ -89,7 +102,7 @@ function Formulario() {
       if (formData.imgPrincipal) {
         formDataToSend.append('imgPrincipal', formData.imgPrincipal);
       }
-    
+
       // Agrega las imágenes adicionales
       if (formData.arrayGaleria.length > 0) {
         formData.arrayGaleria.forEach((imagen) => {
@@ -121,26 +134,50 @@ function Formulario() {
           id_pueblo: formData.id_pueblo,
         }
       }
-      console.log(datosToSend);
 
       const response = await axios.post('http://localhost/api/servicios/registrar', datosToSend, {
         headers: {
           'accept': 'application/json',
           'Content-Type': 'multipart/form-data',
-          
         },
 
       });
       if (response.status === 200 || response.status === 201) {
         console.log('Datos enviados exitosamente');
+        Toast.fire({
+          icon: "success",
+          title: "Se ha registrado la solicitud con exito!"
+        });
       }
       else if (response.status === 422) {
-        console.log('Unprocessable Content');
+        console.log('Unprocessable Contentaaaa');
       } else {
         console.log('Error al enviar los datos:');
+
       }
     } catch (error) {
-      console.error('Error al enviar los datos:', error);
+      if (error.response && error.response.data) {
+        // Imprimir la respuesta de la API
+        console.log('Error al enviar los datossss:', error.response.data);
+        const camposNoLlenados = Object.entries(error.response.data.data).flatMap(([campo, errores]) =>
+          errores.map((error) => `-${error}`)
+        );
+        
+        const mensajeError = `Los siguientes campos no se llenaron correctamente:\n\n\n${camposNoLlenados.join('\n\n')}`;
+        
+
+        Swal.fire({
+          title: 'Error',
+          text: mensajeError,
+          icon: 'error',
+        })
+      }
+      /*       console.error('Error al enviar los datos:', error);
+            console.log('Campos sin llenar',response.data.data);
+            Toast.fire({
+              icon:'error',
+              title: 'Ha ocurrido un error al enviar la solicitud'
+            }); */
     }
   }
 
