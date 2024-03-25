@@ -37,13 +37,17 @@ Make sure you choose the LTS version 20.11.1
     ```
 3. Start the development server
 
-    To start the development server, run the following command:
+    To start the development server, run the following commands:
+   
+   ``` sh
+      npm install
+   ``` 
   
     ```sh
       npm run dev
     ```
 
-4. Ready to get started!
+5. Ready to get started!
 
     Now you're ready to start developing your React application with Vite. You can begin editing files in the src folder and see the changes reflected automatically in your browser.
 
