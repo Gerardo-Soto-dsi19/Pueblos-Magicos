@@ -1,6 +1,6 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom'
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../components/AuthContext';
 import axios from "axios"
 import Swal from 'sweetalert2';
 
@@ -11,6 +11,7 @@ const Login = () => {
     });
 
     const navigate = useNavigate();
+    const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -36,7 +37,10 @@ const Login = () => {
             });
 
             if (response.status === 200) {
+                sessionStorage.setItem('accessToken',response.data.access_token)                                
                 navigate('/formulario/registro')
+                console.log(response.data);
+                setIsAuthenticated(true);
                 console.log('OK');
             } else {
                 Swal.fire({
