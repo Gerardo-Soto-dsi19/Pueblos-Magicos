@@ -172,12 +172,6 @@ function Formulario() {
           icon: 'error',
         })
       }
-      /*       console.error('Error al enviar los datos:', error);
-            console.log('Campos sin llenar',response.data.data);
-            Toast.fire({
-              icon:'error',
-              title: 'Ha ocurrido un error al enviar la solicitud'
-            }); */
     }
   }
 
