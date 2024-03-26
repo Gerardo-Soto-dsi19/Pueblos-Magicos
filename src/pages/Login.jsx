@@ -1,6 +1,63 @@
-import { Outlet, Link } from 'react-router-dom'
+import { Outlet, Link, useNavigate } from 'react-router-dom'
+
+import { useState, useEffect } from 'react';
+import axios from "axios"
+import Swal from 'sweetalert2';
 
 const Login = () => {
+    const [formData, setFormData] = useState({
+        'user_name': '',
+        'password': ''
+    });
+
+    const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value,
+        }));
+    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const dataToSend = {
+            data: {
+                user_name: formData.user_name,
+                password: formData.password
+            }
+        }
+        try {
+            const response = await axios.post('http://localhost/api/users/login', dataToSend, {
+                headers: {
+                    'accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (response.status === 200) {
+                navigate('/formulario/registro')
+                console.log('OK');
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de inicio de sesión',
+                    text: response.data.error,
+                });
+            }
+        } catch (error) {
+            if (error.response && error.response.data) {
+                // Imprimir la respuesta de la API
+                console.log('Error al enviar los datos:', error.response.data);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Credenciales incorrectas',
+                    text: 'Ha ocurrido un error durante el inicio de sesión.',
+                });
+
+            }
+        }
+    }
     return (
         <>
             <div className='md:flex justify-center items-center'>
@@ -16,18 +73,18 @@ const Login = () => {
                         </div>
 
                         <div className=" sm:mx-auto sm:w-full sm:max-w-sm">
-                            <form className="shadow-md rounded-lg py-10 px-5 mb-10 space-y-6" action="#" method="POST">
+                            <form onSubmit={handleSubmit} className="shadow-md rounded-lg py-10 px-5 mb-10 space-y-6" action="#" method="POST">
                                 <div>
-                                    <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-                                        Usuario
+                                    <label htmlFor="user_name" className="block text-sm font-medium leading-6 text-gray-900">
+                                        Correo
                                     </label>
                                     <div className="mt-2">
                                         <input
-                                            id="email"
-                                            name="email"
+                                            id="user_name"
+                                            name="user_name"
                                             type="email"
-                                            autoComplete="email"
-                                            required
+                                            value={formData.user_name} onChange={handleChange}
+
                                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-zinc-900 sm:text-sm sm:leading-6"
                                         />
                                     </div>
@@ -49,8 +106,8 @@ const Login = () => {
                                             id="password"
                                             name="password"
                                             type="password"
-                                            autoComplete="current-password"
-                                            required
+                                            value={formData.password} onChange={handleChange}
+
                                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-zinc-800 sm:text-sm sm:leading-6"
                                         />
                                     </div>
