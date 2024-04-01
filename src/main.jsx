@@ -11,8 +11,8 @@ import RecuperarContraseña from './pages/RecuperarContraseña'
 import GestorSolicitudes from './pages/GestorSolicitudes'
 
 
-const router = createBrowserRouter([
-  {
+
+const router = createBrowserRouter([{
     path: '/',
     element: <Layout />,
     children: [

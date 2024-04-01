@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom"
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { AuthContext } from './AuthContext';
 import axios from "axios";
 
 function Cabecera() {
     const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);        
     const authToken = sessionStorage.getItem('accessToken');
+
+
     const handleLogout = () => {
         try{
             
@@ -18,6 +20,7 @@ function Cabecera() {
             console.log(response);
             console.log("Sesion finalizada");
             setIsAuthenticated(false);
+            sessionStorage.removeItem('accessToken')
         }catch(error){
             console.log(error.response.data);
         }
