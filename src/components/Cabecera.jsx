@@ -10,14 +10,12 @@ function Cabecera() {
 
     const handleLogout = () => {
         try{
-            
-            console.log('contenido de auth: ',authToken);
+                        
             const response = axios.post('http://localhost/api/users/logout',null, {
                 headers: {                                     
                     'Authorization': `Bearer ${authToken}`
                 }
-            });
-            console.log(response);
+            });            
             console.log("Sesion finalizada");
             setIsAuthenticated(false);
             sessionStorage.removeItem('accessToken')

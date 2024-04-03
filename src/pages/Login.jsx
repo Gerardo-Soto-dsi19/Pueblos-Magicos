@@ -11,7 +11,7 @@ const Login = () => {
     });
 
     const navigate = useNavigate();
-    const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);    
+    const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -37,11 +37,23 @@ const Login = () => {
             });
 
             if (response.status === 200) {
-                sessionStorage.setItem('accessToken',response.data.access_token)                                
-                navigate('/formulario/registro')
-                console.log(response.data);
-                setIsAuthenticated(true);
-                console.log('OK');
+                sessionStorage.setItem('accessToken', response.data.access_token)
+                const responseCSRF = axios.get('http://localhost/sanctum/csrf-cookie', {
+                    headers: {
+                        'accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    }
+                });                
+                if ((await responseCSRF).status === 204) {
+                    navigate('/formulario/registro')
+                    setIsAuthenticated(true)
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de inicio de sesión',
+                        text: (await responseCSRF).data.error,
+                    });
+                }
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -52,11 +64,10 @@ const Login = () => {
         } catch (error) {
             if (error.response && error.response.data) {
                 // Imprimir la respuesta de la API
-                console.log('Error al enviar los datos:', error.response.data);
                 Swal.fire({
                     icon: 'error',
                     title: 'Credenciales incorrectas',
-                    text: 'Ha ocurrido un error durante el inicio de sesión.',
+                    text: 'Nombre de usuario o contraseña no válidos',
                 });
 
             }
@@ -64,7 +75,7 @@ const Login = () => {
     }
     return (
         <>
-            <div className='md:flex justify-center items-center'>
+            <div className='md:flex justify-center items-center mt-10 '>
                 <div className=" bg-white shadow-lg md:w-96 rounded-lg mb-10">
                     <div className="flex min-h-full flex-1 flex-col justify-center py-4 lg:px-8 b">
                         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -111,7 +122,6 @@ const Login = () => {
                                             name="password"
                                             type="password"
                                             value={formData.password} onChange={handleChange}
-
                                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-zinc-800 sm:text-sm sm:leading-6"
                                         />
                                     </div>

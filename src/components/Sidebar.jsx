@@ -40,6 +40,7 @@ function Sidebar() {
                 </ul>
             </aside>
             <main className='md:w-5/6'>
+                <h1 className="px-4 mt-4">Gestion de solicitudes</h1>
                 <div>                    
                     <ListadoSolicitudes/>
                 </div>
