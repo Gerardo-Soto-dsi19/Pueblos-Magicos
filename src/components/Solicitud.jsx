@@ -28,20 +28,23 @@ function Solicitud() {
                     Descripcion: {''}
                     <span className='font-normal normal-case'>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ratione sed error deserunt libero! Accusamus fugiat tempore labore? Molestias natus, voluptatibus necessitatibus nesciunt odio quae quos nostrum. Deserunt inventore error laudantium.</span>
                 </p>
-                <div className="flex justify-between mt-10">
+                <div className="flex justify-between mt-10 flex-wrap">
                     <button
-                    type="button"
-                    className="py-2 px-10 bg-[#6C1D45] hover:bg-[#8C3A68] text-white font-bold uppercase rounded-lg">
+                        type="button"
+                        className="w-full md:w-auto py-2 px-6 md:px-10 bg-[#6C1D45] hover:bg-[#8C3A68] text-white font-bold uppercase rounded-lg mb-4"
+                    >
                         Aceptar
                     </button>
                     <button
-                    type="button"
-                    className="py-2 px-10 bg-slate-950 hover:bg-slate-800 text-white font-bold uppercase rounded-lg">
+                        type="button"
+                        className="w-full md:w-auto py-2 px-6 md:px-10 bg-slate-950 hover:bg-slate-800 text-white font-bold uppercase rounded-lg mb-4"
+                    >
                         Editar
                     </button>
                     <button
-                    type="button"
-                    className="py-2 px-10 bg-[#707372] hover:bg-[#8D9293] text-white font-bold uppercase rounded-lg">
+                        type="button"
+                        className="w-full md:w-auto py-2 px-6 md:px-10 bg-[#707372] hover:bg-[#8D9293] text-white font-bold uppercase rounded-lg mb-4"
+                    >
                         Rechazar
                     </button>
                 </div>

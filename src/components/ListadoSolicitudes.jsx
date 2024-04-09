@@ -4,7 +4,7 @@ import Solicitud from "./Solicitud"
 function ListadoSolicitudes() {
     return (
         <>
-            <div className="md:h-screen overflow-y-scroll">
+            <div>
                 <Solicitud/>
                 <Solicitud/>
                 <Solicitud/>

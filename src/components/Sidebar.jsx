@@ -7,7 +7,7 @@ function Sidebar() {
             <aside className="md:w-1/6 bg-[#6C1D45] text-white  border-white flex flex-col" >
                 <div className='mb-32'>
                     <div className=' mx-auto'>
-                        <img src="../public/logo-ipn-lema-vertical-blanco.png" />
+                        <img src="../logo-ipn-lema-vertical-blanco.png" />
                     </div>
                 </div>
                 <ul className="flex flex-col items-center">
@@ -41,7 +41,7 @@ function Sidebar() {
             </aside>
             <main className='md:w-5/6'>
                 <h1 className="px-4 mt-4">Gestion de solicitudes</h1>
-                <div>                    
+                <div>
                     <ListadoSolicitudes/>
                 </div>
             </main>

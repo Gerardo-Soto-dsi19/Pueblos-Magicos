@@ -190,7 +190,7 @@ function Formulario() {
         <form onSubmit={handleSubmit} className="shadow-lg rounded-lg mt-5 mb-10 px-14">
           <div className="space-y-12 mb-10">
             <h1>Formulario</h1>
-            <div className="border-b border-gray-900/10 pb-12">
+            <div className="border-b border-gray-900/10 pb-11">
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-3">
                   <label htmlFor="#" className="block text-sm font-medium leading-6 text-gray-900">
