@@ -3,83 +3,84 @@
 @tailwind utilities;
 
 /******** Custom Properties ********/
- :root{                
-    --white-color: #E6E6E6; 
+:root {
+    --white-color: #E6E6E6;
     --gray-light-color: #E6E6E6;
     --gray-dark-color: #666666;
-    --white-alpha-color: rgba(255,255,255,0.5);
-    --black-alpha-color: rgba(0,0,0,0.5);
+    --white-alpha-color: rgba(255, 255, 255, 0.5);
+    --black-alpha-color: rgba(0, 0, 0, 0.5);
     --text-color: #222;
     --link-color: #81DAF5;
-    --font: "Raleway", sans-serif;   
+    --font: "Raleway", sans-serif;
     --max-width: 1200px;
     --header-heigth: 4rem;
-} 
+}
 
 /******** Reset ********/
- html{
+html {
     box-sizing: border-box;
     font-family: var(--font);
     font-size: 16px;
     scroll-behavior: smooth;
 }
+
 *,
 *::after,
-*::before{
+*::before {
     box-sizing: inherit;
 }
 
-body{
+body {
     margin: 0;
     overflow-x: hidden;
     color: var(--text-color);
-   
+    background-color:#F7F7F7;
 }
 
-a{
+a {
     color: var(--link-color);
     transition: all 0.5s ease-out;
 }
 
-a:hover{
+a:hover {
     opacity: 0.75;
 }
 
-h1{
+h1 {
     margin: 0;
     font-size: 2rem;
 }
 
-h2{
+h2 {
     margin: 0;
     font-size: 1.5rem;
 }
 
-h3{
+h3 {
     margin: 0;
     font-size: 1.25rem;
 }
 
-h4{
+h4 {
     margin: 0;
     font-size: 1rem;
 }
 
-h5{
+h5 {
     margin: 0;
     font-size: 0.85rem;
 }
 
-h6{
+h6 {
     margin: 0;
     font-size: 0.7rem;
 }
 
-img{
+img {
     max-width: 100%;
     height: auto;
 }
 
-p{
+p {
     line-height: 1.6;
 }

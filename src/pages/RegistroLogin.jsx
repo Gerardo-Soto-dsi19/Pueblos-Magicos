@@ -1,76 +1,174 @@
 import { Outlet } from 'react-router-dom'
+import { useState, useEffect } from 'react';
+import axios from "axios"
+import Swal from 'sweetalert2';
+
+
 
 function RegistroLogin() {
+  const [formData, setFormData] = useState({
+    user_name: '',
+    password: '',
+    password_confirmation: '',
+    nombre: '',
+    apellido_pat: '',
+    apellido_mat: '',
+    id_tipo_usuario: ''
+  });
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    }
+  });
+  const handleChange = (e) => {
+    const { name, value, type, files } = e.target;
+
+    if (type === 'file') {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: files[0],
+      }));
+    } else if (name === 'id_tipo_usuario') {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const datosToSend = {
+        data: {
+          user_name: formData.user_name,
+          password: formData.password,
+          password_confirmation: formData.password_confirmation,
+          nombre: formData.nombre,
+          apellido_pat: formData.apellido_pat,
+          apellido_mat: formData.apellido_mat,
+          id_tipo_usuario: formData.id_tipo_usuario
+        }
+      }
+      const response = await axios.post('http://localhost/api/users/registrar', datosToSend, {
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        console.log('Datos enviados exitosamente');
+        Toast.fire({
+          icon: "success",
+          title: "Se ha registrado con exito!"
+        });
+      } else if (response.status === 422) {
+        console.log('Unprocessable Contentaaaa');
+      } else {
+        console.log('Error al enviar los datos:');
+      }
+    } catch (error) {
+      if (error.response && error.response.data) {
+        // Imprimir la respuesta de la API
+        console.log('Error al enviar los datos:', error.response.data);
+        const camposNoLlenados = Object.entries(error.response.data.data).flatMap(([campo, errores]) =>
+          errores.map((error) => `-${error}`)
+        );
+
+        const mensajeError = `Los siguientes campos no se llenaron correctamente:\n\n\n${camposNoLlenados.join('\n\n')}`;
+
+
+        Swal.fire({
+          title: 'Error',
+          text: mensajeError,
+          icon: 'error',
+        })
+      }
+    }
+  };
   return (
     <div className='md:flex justify-center items-center'>
       <div className="border-slate-700 shadow-lg rounded-lg mt-10 mb-10 px-20">
         <h1>Registrar usuario</h1>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="space-y-12 mb-10">
             <div className="border-b border-gray-900/10 pb-12">
               <h2 className="text-base font-semibold leading-7 text-gray-900">Información Personal</h2>
               <p className="mt-1 text-sm leading-6 text-gray-600">Utilice una dirección email permanente en la que pueda recibir correos.</p>
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-6">
-                  <label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">
+                  <label htmlFor="nombre" className="block text-sm font-medium leading-6 text-gray-900">
                     Nombre(s)
                   </label>
                   <div className="mt-2">
                     <input
                       type="text"
-                      name="first-name"
-                      id="first-name"
-                      autoComplete="given-name"
+                      name="nombre"
+                      id="nombre"
+                      value={formData.nombre} onChange={handleChange}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
 
                 <div className="sm:col-span-3">
-                  <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
+                  <label htmlFor="apellido_pat" className="block text-sm font-medium leading-6 text-gray-900">
                     Primer apellido
                   </label>
                   <div className="mt-2">
                     <input
                       type="text"
-                      name="last-name"
-                      id="last-name"
-                      autoComplete="family-name"
+                      name="apellido_pat"
+                      id="apellido_pat"
+                      value={formData.apellido_pat} onChange={handleChange}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
 
                 <div className="sm:col-span-3">
-                  <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
+                  <label htmlFor="apellido_mat" className="block text-sm font-medium leading-6 text-gray-900">
                     Segundo apellido
                   </label>
                   <div className="mt-2">
                     <input
                       type="text"
-                      name="last-name"
-                      id="last-name"
-                      autoComplete="family-name"
+                      name="apellido_mat"
+                      id="apellido_mat"
+                      value={formData.apellido_mat} onChange={handleChange}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
 
                 <div className="sm:col-span-6">
-                  <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+                  <label htmlFor="user_name" className="block text-sm font-medium leading-6 text-gray-900">
                     Correo
                   </label>
                   <div className="mt-2">
                     <input
-                      id="email"
-                      name="email"
+                      id="user_name"
+                      name="user_name"
                       type="email"
-                      autoComplete="email"
+                      value={formData.user_name} onChange={handleChange}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
-                
+
                 <div className="sm:col-span-3">
                   <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
                     Contraseña
@@ -80,21 +178,22 @@ function RegistroLogin() {
                       id="password"
                       name="password"
                       type="password"
-                      autoComplete="email"
+                      value={formData.password} onChange={handleChange}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
 
                 <div className="sm:col-span-3">
-                  <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+                  <label htmlFor="password_confirmation" className="block text-sm font-medium leading-6 text-gray-900">
                     Confirmar contraseña
                   </label>
                   <div className="mt-2">
                     <input
-                      id="passwordConfirm"
-                      name="passwordConfirm"
-                      type="passwordConfirm"                      
+                      id="password_confirmation"
+                      name="password_confirmation"
+                      type="password_confirmation"
+                      value={formData.password_confirmation} onChange={handleChange}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
@@ -108,11 +207,13 @@ function RegistroLogin() {
                   <legend className="text-sm font-semibold leading-6 text-gray-900">Tipo pueblo Mágico</legend>
                   <p className="mt-1 text-sm leading-6 text-gray-600">Por favor indique que a que sector esta enfocado</p>
                   <div className="mt-6 space-y-6">
-                  <div className="flex items-center gap-x-3">
+                    <div className="flex items-center gap-x-3">
                       <input
                         id="push-pueblo"
-                        name="push-notifications"
+                        name="id_tipo_usuario"
                         type="radio"
+                        value={2}
+                        onChange={handleChange}
                         className="form-radio h-4 w-4 text-[#6C1D45]"
                       />
                       <label htmlFor="push-pueblo" className="block text-sm font-medium leading-6 text-gray-900">
@@ -122,8 +223,10 @@ function RegistroLogin() {
                     <div className="flex items-center gap-x-3">
                       <input
                         id="push-hotelero"
-                        name="push-notifications"
+                        name="id_tipo_usuario"
                         type="radio"
+                        value={3}
+                        onChange={handleChange}
                         className="form-radio h-4 w-4 text-[#6C1D45]"
                       />
                       <label htmlFor="push-hotelero" className="block text-sm font-medium leading-6 text-gray-900">
@@ -133,8 +236,10 @@ function RegistroLogin() {
                     <div className="flex items-center gap-x-3">
                       <input
                         id="push-restaurantero"
-                        name="push-notifications"
+                        name="id_tipo_usuario"
                         type="radio"
+                        value={4}
+                        onChange={handleChange}
                         className="form-radio h-4 w-4 text-[#6C1D45]"
                       />
                       <label htmlFor="push-restaurantero" className="block text-sm font-medium leading-6 text-gray-900">

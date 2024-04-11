@@ -1,9 +1,81 @@
-import { Outlet, Link } from 'react-router-dom'
+import { Outlet, Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../components/AuthContext';
+import axios from "axios"
+import Swal from 'sweetalert2';
 
 const Login = () => {
+    const [formData, setFormData] = useState({
+        'user_name': '',
+        'password': ''
+    });
+
+    const navigate = useNavigate();
+    const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value,
+        }));
+    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const dataToSend = {
+            data: {
+                user_name: formData.user_name,
+                password: formData.password
+            }
+        }
+        try {
+            const response = await axios.post('http://localhost/api/users/login', dataToSend, {
+                headers: {
+                    'accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (response.status === 200) {
+                sessionStorage.setItem('accessToken', response.data.access_token)
+                const responseCSRF = axios.get('http://localhost/sanctum/csrf-cookie', {
+                    headers: {
+                        'accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    }
+                });                
+                if ((await responseCSRF).status === 204) {
+                    navigate('/formulario/registro')
+                    setIsAuthenticated(true)
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de inicio de sesión',
+                        text: (await responseCSRF).data.error,
+                    });
+                }
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de inicio de sesión',
+                    text: response.data.error,
+                });
+            }
+        } catch (error) {
+            if (error.response && error.response.data) {
+                // Imprimir la respuesta de la API
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Credenciales incorrectas',
+                    text: 'Nombre de usuario o contraseña no válidos',
+                });
+
+            }
+        }
+    }
     return (
         <>
-            <div className='md:flex justify-center items-center'>
+            <div className='md:flex justify-center items-center mt-10 '>
                 <div className=" bg-white shadow-lg md:w-96 rounded-lg mb-10">
                     <div className="flex min-h-full flex-1 flex-col justify-center py-4 lg:px-8 b">
                         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -16,18 +88,18 @@ const Login = () => {
                         </div>
 
                         <div className=" sm:mx-auto sm:w-full sm:max-w-sm">
-                            <form className="shadow-md rounded-lg py-10 px-5 mb-10 space-y-6" action="#" method="POST">
+                            <form onSubmit={handleSubmit} className="shadow-md rounded-lg py-10 px-5 mb-10 space-y-6" action="#" method="POST">
                                 <div>
-                                    <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-                                        Usuario
+                                    <label htmlFor="user_name" className="block text-sm font-medium leading-6 text-gray-900">
+                                        Correo
                                     </label>
                                     <div className="mt-2">
                                         <input
-                                            id="email"
-                                            name="email"
+                                            id="user_name"
+                                            name="user_name"
                                             type="email"
-                                            autoComplete="email"
-                                            required
+                                            value={formData.user_name} onChange={handleChange}
+
                                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-zinc-900 sm:text-sm sm:leading-6"
                                         />
                                     </div>
@@ -49,8 +121,7 @@ const Login = () => {
                                             id="password"
                                             name="password"
                                             type="password"
-                                            autoComplete="current-password"
-                                            required
+                                            value={formData.password} onChange={handleChange}
                                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-zinc-800 sm:text-sm sm:leading-6"
                                         />
                                     </div>

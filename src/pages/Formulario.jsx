@@ -1,160 +1,200 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import axios from "axios"
 import FormData from 'form-data';
+import Swal from 'sweetalert2';
+import { AuthContext } from '../components/AuthContext';
 
 function Formulario() {
+  const { isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    id_pueblo: '',
-    categoria: '',
-    titulo: '',
-    descripcion: '',
-    dias_servicio: '',
-    horario_inicio: '',
-    horario_fin: '',
-    precio: '',
-    latitud: '',
-    longitud: '',
-    calle: '',
-    colonia: '',
-    estado: '',
-    alcaldia: '',
-    CP: '',
-    numInt: '',
-    numExt: '',
-    imgPrincipal: null,
-    arrayGaleria: [],
-  });
+  if (!isAuthenticated) {
+    console.log('Error: el usuario no ha sido autenticado');
+    return <Navigate to="/" replace/>
+  }
+    const [formData, setFormData] = useState({
+      id_pueblo: '',
+      categoria: '',
+      titulo: '',
+      descripcion: '',
+      dias_servicio: '',
+      horario_inicio: '',
+      horario_fin: '',
+      precio: '',
+      latitud: '',
+      longitud: '',
+      calle: '',
+      colonia: '',
+      estado: '',
+      alcaldia: '',
+      CP: '',
+      numInt: '',
+      numExt: '',
+      imgPrincipal: null,
+      arrayGaleria: [],
+    });
 
-  const [puebloMagico, setPuebloMagico] = useState([])
-  const [categoria, setCategoria] = useState([])
-  const [estado, setEstado] = useState([])
-  const [imagenPrincipal, setImagenPrincipal] = useState(null);
-  const [imagenesAdicionales, setImagenesAdicionales] = useState([]);
-
-  /* Seteo de combos  */
-  useEffect(() => {
-    axios.get('http://localhost/api/tiposervicios')
-      .then(response => {
-        setCategoria(response.data.data)
-      })
-      .catch(error => {
-        console.error('Error fetching states:', error);
-      });
-  }, []);
+    const [puebloMagico, setPuebloMagico] = useState([])
+    const [categoria, setCategoria] = useState([])
+    const [estado, setEstado] = useState([])
 
 
-  useEffect(() => {
-    axios.get('http://localhost/api/pueblosmagicos')
-      .then(response => { setPuebloMagico(response.data.data) })
-      .catch(error => {
-        console.error('Error fetching pueblos:', error);
-      });
-  }, []);
-
-  useEffect(() => {
-    axios.get('http://localhost/api/catestados')
-      .then(response => { setEstado(response.data.data) })
-      .catch(error => {
-        console.error('Error fetching estados:', error);
-      });
-  }, []);
-
-  const handleChange = (e) => {
-    const { name, files } = e.target;
-
-    if (name === 'imgPrincipal') {
-      setFormData((prevState) => ({
-        ...prevState,
-        imgPrincipal: files[0],
-      }));
-    } else if (name === 'arrayGaleria') {
-      setFormData((prevState) => ({
-        ...prevState,
-        arrayGaleria: Array.from(files),
-      }));
-    } else {
-      setFormData((prevState) => ({
-        ...prevState,
-        [name]: e.target.value,
-      }));
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const formDataToSend = new FormData();
-
-      if (formData.imgPrincipal) {
-        formDataToSend.append('imgPrincipal', formData.imgPrincipal);
-      }
-    
-      // Agrega las imágenes adicionales
-      if (formData.arrayGaleria.length > 0) {
-        formData.arrayGaleria.forEach((imagen) => {
-          formDataToSend.append('arrayGaleria', imagen);
+    /* Seteo de combos  */
+    useEffect(() => {
+      axios.get('http://localhost/api/tiposervicios')
+        .then(response => {
+          setCategoria(response.data.data)
+        })
+        .catch(error => {
+          console.error('Error fetching states:', error);
         });
-      }
+    }, []);
 
-      const datosToSend = {
-        data: {
-          id_tipo_servicio: formData.categoria,
-          municipio: formData.alcaldia,
-          CP: formData.CP,
-          int: formData.numInt,
-          ext: formData.numExt,
-          colonia: formData.colonia,
-          calle: formData.calle,
-          dias_servicio: formData.dias_servicio,
-          horario_inicio: formData.horario_inicio,
-          horario_fin: formData.horario_fin,
-          precio: formData.precio,
-          titulo: formData.titulo,
-          descripcion: formData.descripcion,
-          latitud: formData.latitud,
-          longitud: formData.longitud,
-          imgPrincipal: formData.imgPrincipal,
-          arrayGaleria: formData.arrayGaleria,
-          id_estado: formData.estado,
-          id_usuario: '1',
-          id_pueblo: formData.id_pueblo,
+
+    useEffect(() => {
+      axios.get('http://localhost/api/pueblosmagicos')
+        .then(response => { setPuebloMagico(response.data.data) })
+        .catch(error => {
+          console.error('Error fetching pueblos:', error);
+        });
+    }, []);
+
+    useEffect(() => {
+      axios.get('http://localhost/api/catestados')
+        .then(response => { setEstado(response.data.data) })
+        .catch(error => {
+          console.error('Error fetching estados:', error);
+        });
+    }, []);
+
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      }
+    });
+
+
+    const handleChange = (e) => {
+      const { name, files } = e.target;
+
+      if (name === 'imgPrincipal') {
+        setFormData((prevState) => ({
+          ...prevState,
+          imgPrincipal: files[0],
+        }));
+      } else if (name === 'arrayGaleria') {
+        setFormData((prevState) => ({
+          ...prevState,
+          arrayGaleria: Array.from(files),
+        }));
+      } else {
+        setFormData((prevState) => ({
+          ...prevState,
+          [name]: e.target.value,
+        }));
+      }
+    };
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+        const formDataToSend = new FormData();
+
+        if (formData.imgPrincipal) {
+          formDataToSend.append('imgPrincipal', formData.imgPrincipal);
+        }
+
+        // Agrega las imágenes adicionales
+        if (formData.arrayGaleria.length > 0) {
+          formData.arrayGaleria.forEach((imagen) => {
+            formDataToSend.append('arrayGaleria', imagen);
+          });
+        }
+
+        const datosToSend = {
+          data: {
+            id_tipo_servicio: formData.categoria,
+            municipio: formData.alcaldia,
+            CP: formData.CP,
+            int: formData.numInt,
+            ext: formData.numExt,
+            colonia: formData.colonia,
+            calle: formData.calle,
+            dias_servicio: formData.dias_servicio,
+            horario_inicio: formData.horario_inicio,
+            horario_fin: formData.horario_fin,
+            precio: formData.precio,
+            titulo: formData.titulo,
+            descripcion: formData.descripcion,
+            latitud: formData.latitud,
+            longitud: formData.longitud,
+            imgPrincipal: formData.imgPrincipal,
+            arrayGaleria: formData.arrayGaleria,
+            id_estado: formData.estado,
+            id_usuario: '1',
+            id_pueblo: formData.id_pueblo,
+          }
+        }
+
+        const response = await axios.post('http://localhost/api/servicios/registrar', datosToSend, {
+          headers: {
+            'accept': 'application/json',
+            'Content-Type': 'multipart/form-data',
+          },
+
+        });
+        if (response.status === 200 || response.status === 201) {
+          console.log('Datos enviados exitosamente');
+          Toast.fire({
+            icon: "success",
+            title: "Se ha registrado la solicitud con exito!"
+          });
+        }
+        else if (response.status === 422) {
+          console.log('Unprocessable Contentaaaa');
+        } else {
+          console.log('Error al enviar los datos:');
+
+        }
+      } catch (error) {
+        if (error.response && error.response.data) {
+          // Imprimir la respuesta de la API
+          console.log('Error al enviar los datossss:', error.response.data);
+          const camposNoLlenados = Object.entries(error.response.data.data).flatMap(([campo, errores]) =>
+            errores.map((error) => `-${error}`)
+          );
+
+          const mensajeError = `Los siguientes campos no se llenaron correctamente:\n\n\n${camposNoLlenados.join('\n\n')}`;
+
+
+          Swal.fire({
+            title: 'Error',
+            text: mensajeError,
+            icon: 'error',
+          })
         }
       }
-      console.log(datosToSend);
-
-      const response = await axios.post('http://localhost/api/servicios/registrar', datosToSend, {
-        headers: {
-          'accept': 'application/json',
-          'Content-Type': 'multipart/form-data',
-          
-        },
-
-      });
-      if (response.status === 200 || response.status === 201) {
-        console.log('Datos enviados exitosamente');
-      }
-      else if (response.status === 422) {
-        console.log('Unprocessable Content');
-      } else {
-        console.log('Error al enviar los datos:');
-      }
-    } catch (error) {
-      console.error('Error al enviar los datos:', error);
     }
-  }
+  
 
   return (
     <>
       <div className="md:flex justify-center items-center ">
-        <form onSubmit={handleSubmit} className="shadow-lg rounded-lg mt-5 mb-10 px-14">
+        <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-lg mt-5 mb-10 px-14">
           <div className="space-y-12 mb-10">
             <h1>Formulario</h1>
-            <div className="border-b border-gray-900/10 pb-12">
+            <div className="border-b border-gray-900/10 pb-11">
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-3">
                   <label htmlFor="#" className="block text-sm font-medium leading-6 text-gray-900">
-                    Pueblo Magico
+                    Pueblo Mágico
                   </label>
                   <div className="mt-2">
                     <select
@@ -172,7 +212,7 @@ function Formulario() {
                 </div>
                 <div className="sm:col-span-3">
                   <label htmlFor="#" className="block text-sm font-medium leading-6 text-gray-900">
-                    Categoria
+                    Categoría
                   </label>
                   <div className="mt-2">
                     <select
@@ -191,7 +231,7 @@ function Formulario() {
 
                 <div className="col-span-full">
                   <label htmlFor="titulo" className="block text-sm font-medium leading-6 text-gray-900">
-                    Titulo
+                    Título
                   </label>
                   <div className="mt-2">
                     <input
@@ -205,15 +245,14 @@ function Formulario() {
                   </div>
                   <div className="mt-2">
                     <label htmlFor="descripcion" className="block text-sm font-medium leading-6 text-gray-900">
-                      Descripcion
+                      Descripción
                     </label>
                     <textarea
                       id="descripcion"
                       name="descripcion"
                       rows={3}
                       value={formData.descripcion} onChange={handleChange}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      defaultValue={''}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"                      
                     />
                   </div>
                 </div>
@@ -341,7 +380,7 @@ function Formulario() {
 
                 <div className="sm:col-span-3">
                   <label htmlFor="alcaldia" className="block text-sm font-medium leading-6 text-gray-900">
-                    Alcaldia/Municipio
+                    Alcaldía/Municipio
                   </label>
                   <div className="mt-2">
                     <input
@@ -374,7 +413,7 @@ function Formulario() {
 
                 <div className="sm:col-span-2">
                   <label htmlFor="CP" className="block text-sm font-medium leading-6 text-gray-900">
-                    Codigo Postal
+                    Código Postal
                   </label>
                   <div className="mt-2">
                     <input
@@ -441,7 +480,7 @@ function Formulario() {
 
                 <div className="col-span-full">
                   <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900">
-                    Imagenes de galeria
+                    Imágenes de galería
                   </label>
                   <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                     <div className="text-center">
