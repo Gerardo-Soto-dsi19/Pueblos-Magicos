@@ -9,6 +9,7 @@ import Formulario from './pages/Formulario'
 import RegistroLogin from './pages/RegistroLogin'
 import RecuperarContraseña from './pages/RecuperarContraseña'
 import GestorSolicitudes from './pages/GestorSolicitudes'
+import GestionSolicitudes from './pages/GestionSolicitudes'
 
 
 
@@ -35,6 +36,10 @@ const router = createBrowserRouter([{
       {
         path: '/gestion-solicitudes',
         element: <GestorSolicitudes />
+      },
+      {
+        path: '/gestor-solicitudes',
+        element: <GestionSolicitudes />
       }
     ]
   },

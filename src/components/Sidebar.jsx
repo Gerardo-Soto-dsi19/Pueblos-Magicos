@@ -1,11 +1,34 @@
-import { FaInbox, FaCheckCircle, FaClock } from "react-icons/fa";
+import { useContext } from "react";
+import { AuthContext } from './AuthContext';
+import { Link } from "react-router-dom"
+import { FaInbox, FaCheckCircle, FaClock, FaExclamationCircle, FaSignInAlt ,FaSignOutAlt} from "react-icons/fa";
 import ListadoSolicitudes from "./ListadoSolicitudes";
 
 function Sidebar() {
+    const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);        
+    const authToken = sessionStorage.getItem('accessToken');
+
+
+    const handleLogout = () => {
+        try{
+                        
+            const response = axios.post('http://localhost/api/users/logout',null, {
+                headers: {                                     
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });            
+            console.log("Sesion finalizada");
+            setIsAuthenticated(false);
+            sessionStorage.removeItem('accessToken')
+        }catch(error){
+            console.log(error.response.data);
+        }
+        
+    };
     return (
-        <div className='md:flex md: min-h-screen'>
+        <div className='md:flex '>
             <aside className="md:w-1/6 bg-[#6C1D45] text-white  border-white flex flex-col" >
-                <div className='mb-32'>
+                <div className='md:mb-32'>
                     <div className=' mx-auto'>
                         <img src="../logo-ipn-lema-vertical-blanco.png" />
                     </div>
@@ -37,11 +60,39 @@ function Sidebar() {
                             <FaClock className="mr-2" /> Solicitudes pendientes
                         </a>
                     </li>
+                    <li className='mb-2 w-full text-center'>
+                        <a
+                            href="#"
+                            className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                        >
+                            <FaExclamationCircle className="mr-2" /> Solicitudes con observación
+                        </a>
+                    </li>
                 </ul>
+                <div id="login" className=" mt-96 px-2 pt-10">
+                        {isAuthenticated ? (
+                            <Link
+                                onClick={handleLogout}
+                                className="flex items-center gap-2 py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                            >
+                                <FaSignOutAlt/>Cerrar sesión
+                            </Link>
+
+                        ) : (
+                            <Link
+                                to="/login"
+                                className="flex items-center gap-2 py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                            >
+                                <FaSignInAlt/>Iniciar sesión
+                            </Link>
+
+                        )}
+                    </div>
             </aside>
+            
             <main className='md:w-5/6'>
-                <h1 className="px-4 mt-4">Gestion de solicitudes</h1>
-                <div>
+                <h1 className=" mt-5 border-b-2 mx-3">Gestión de publicaciones</h1>                
+                <div className="mt-10">
                     <ListadoSolicitudes/>
                 </div>
             </main>

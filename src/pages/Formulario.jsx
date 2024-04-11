@@ -187,7 +187,7 @@ function Formulario() {
   return (
     <>
       <div className="md:flex justify-center items-center ">
-        <form onSubmit={handleSubmit} className="shadow-lg rounded-lg mt-5 mb-10 px-14">
+        <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-lg mt-5 mb-10 px-14">
           <div className="space-y-12 mb-10">
             <h1>Formulario</h1>
             <div className="border-b border-gray-900/10 pb-11">
