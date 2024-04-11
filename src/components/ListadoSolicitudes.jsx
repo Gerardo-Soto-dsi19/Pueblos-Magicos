@@ -4,8 +4,8 @@ import Solicitud from "./Solicitud"
 function ListadoSolicitudes() {
     return (
         <>
-{/* Filtro de servicios
-             <div className='md:flex flex-col my-5 px-2 '>
+
+            <div className='md:flex flex-col my-5 px-2 '>
                 <div className="bg-white md:flex gap-10 md:px-5 py-5 md:py-5 shadow-md rounded-md">
                     <div className="flex items-center gap-x-3">
                         <input
@@ -42,7 +42,7 @@ function ListadoSolicitudes() {
                     </div>
 
                 </div>
-            </div > */}
+            </div >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Solicitud />
                 <Solicitud />
