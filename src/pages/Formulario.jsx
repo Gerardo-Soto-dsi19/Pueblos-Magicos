@@ -8,181 +8,185 @@ import { AuthContext } from '../components/AuthContext';
 function Formulario() {
   const { isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
-
+  const token = sessionStorage.getItem('accessToken')
   if (!isAuthenticated) {
     console.log('Error: el usuario no ha sido autenticado');
-    return <Navigate to="/" replace/>
+    return <Navigate to="/" replace />
   }
-    const [formData, setFormData] = useState({
-      id_pueblo: '',
-      categoria: '',
-      titulo: '',
-      descripcion: '',
-      dias_servicio: '',
-      horario_inicio: '',
-      horario_fin: '',
-      precio: '',
-      latitud: '',
-      longitud: '',
-      calle: '',
-      colonia: '',
-      estado: '',
-      alcaldia: '',
-      CP: '',
-      numInt: '',
-      numExt: '',
-      imgPrincipal: null,
-      arrayGaleria: [],
-    });
+  const [formData, setFormData] = useState({
+    id_pueblo: '',
+    categoria: '',
+    titulo: '',
+    descripcion: '',
+    dias_servicio: '',
+    horario_inicio: '',
+    horario_fin: '',
+    precio: '',
+    latitud: '',
+    longitud: '',
+    calle: '',
+    colonia: '',
+    estado: '',
+    alcaldia: '',
+    CP: '',
+    numInt: '',
+    numExt: '',
+    imgPrincipal: null,
+    arrayGaleria: [],
+  });
 
-    const [puebloMagico, setPuebloMagico] = useState([])
-    const [categoria, setCategoria] = useState([])
-    const [estado, setEstado] = useState([])
+  const [puebloMagico, setPuebloMagico] = useState([])
+  const [categoria, setCategoria] = useState([])
+  const [estado, setEstado] = useState([])
 
 
-    /* Seteo de combos  */
-    useEffect(() => {
-      axios.get('http://localhost/api/tiposervicios')
-        .then(response => {
-          setCategoria(response.data.data)
+  /* Seteo de combos  */
+  useEffect(() => {
+    axios.get('http://localhost/api/tiposervicios')
+      .then(response => {
+        setCategoria(response.data.data)
+      })
+      .catch(error => {
+        console.error('Error fetching states:', error);
+      });
+  }, []);
+
+
+  useEffect(() => {
+    axios.get('http://localhost/api/pueblosmagicos')
+      .then(response => { setPuebloMagico(response.data.data) })
+      .catch(error => {
+        console.error('Error fetching pueblos:', error);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios.get('http://localhost/api/catestados')
+      .then(response => { setEstado(response.data.data) })
+      .catch(error => {
+        console.error('Error fetching estados:', error);
+      });
+  }, []);
+
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    }
+  });
+
+
+  const handleChange = (e) => {
+    const { name, files } = e.target;
+
+    if (name === 'imgPrincipal') {
+      setFormData((prevState) => ({
+        ...prevState,
+        imgPrincipal: files[0],
+      }));
+    } else if (name === 'arrayGaleria') {
+      setFormData((prevState) => ({
+        ...prevState,
+        arrayGaleria: Array.from(files),
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: e.target.value,
+      }));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const formDataToSend = new FormData();
+
+      if (formData.imgPrincipal) {
+        formDataToSend.append('imgPrincipal', formData.imgPrincipal);
+      }
+
+      // Agrega las imágenes adicionales
+      if (formData.arrayGaleria.length > 0) {
+        formData.arrayGaleria.forEach((imagen) => {
+          formDataToSend.append('arrayGaleria', imagen);
+        });
+      }
+
+      const datosToSend = {
+        data: {
+          id_tipo_servicio: formData.categoria,
+          municipio: formData.alcaldia,
+          CP: formData.CP,
+          int: formData.numInt,
+          ext: formData.numExt,
+          colonia: formData.colonia,
+          calle: formData.calle,
+          dias_servicio: formData.dias_servicio,
+          horario_inicio: formData.horario_inicio,
+          horario_fin: formData.horario_fin,
+          precio: formData.precio,
+          titulo: formData.titulo,
+          descripcion: formData.descripcion,
+          latitud: formData.latitud,
+          longitud: formData.longitud,
+          imgPrincipal: formData.imgPrincipal,
+          arrayGaleria: formData.arrayGaleria,
+          id_estado: formData.estado,
+          id_usuario: '1',
+          id_pueblo: formData.id_pueblo,
+        }
+      }
+
+      const response = await axios.post('http://localhost/api/servicios/registrar', datosToSend, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'accept': 'application/json',
+          'Content-Type': 'multipart/form-data',
+        },
+
+      });
+      if (response.status === 200 || response.status === 201) {
+        console.log('Datos enviados exitosamente');
+        Toast.fire({
+          icon: "success",
+          title: "Se ha registrado la solicitud con exito!"
+        });
+      }
+      else if (response.status === 422) {
+        console.log('Unprocessable Contentaaaa');
+      } else if (response.status === 401) {
+        console.log('Usuario no autenticado');
+      }
+      else {
+        console.log('Error al enviar los datos:');
+
+      }
+    } catch (error) {
+      if (error.response && error.response.data) {
+        // Imprimir la respuesta de la API
+        console.log('Error al enviar los datossss:', error.response.data);
+        const camposNoLlenados = Object.entries(error.response.data.data).flatMap(([campo, errores]) =>
+          errores.map((error) => `-${error}`)
+        );
+
+        const mensajeError = `Los siguientes campos no se llenaron correctamente:\n\n\n${camposNoLlenados.join('\n\n')}`;
+
+
+        Swal.fire({
+          title: 'Error',
+          text: mensajeError,
+          icon: 'error',
         })
-        .catch(error => {
-          console.error('Error fetching states:', error);
-        });
-    }, []);
-
-
-    useEffect(() => {
-      axios.get('http://localhost/api/pueblosmagicos')
-        .then(response => { setPuebloMagico(response.data.data) })
-        .catch(error => {
-          console.error('Error fetching pueblos:', error);
-        });
-    }, []);
-
-    useEffect(() => {
-      axios.get('http://localhost/api/catestados')
-        .then(response => { setEstado(response.data.data) })
-        .catch(error => {
-          console.error('Error fetching estados:', error);
-        });
-    }, []);
-
-    const Toast = Swal.mixin({
-      toast: true,
-      position: "top-end",
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true,
-      didOpen: (toast) => {
-        toast.onmouseenter = Swal.stopTimer;
-        toast.onmouseleave = Swal.resumeTimer;
-      }
-    });
-
-
-    const handleChange = (e) => {
-      const { name, files } = e.target;
-
-      if (name === 'imgPrincipal') {
-        setFormData((prevState) => ({
-          ...prevState,
-          imgPrincipal: files[0],
-        }));
-      } else if (name === 'arrayGaleria') {
-        setFormData((prevState) => ({
-          ...prevState,
-          arrayGaleria: Array.from(files),
-        }));
-      } else {
-        setFormData((prevState) => ({
-          ...prevState,
-          [name]: e.target.value,
-        }));
-      }
-    };
-
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      try {
-        const formDataToSend = new FormData();
-
-        if (formData.imgPrincipal) {
-          formDataToSend.append('imgPrincipal', formData.imgPrincipal);
-        }
-
-        // Agrega las imágenes adicionales
-        if (formData.arrayGaleria.length > 0) {
-          formData.arrayGaleria.forEach((imagen) => {
-            formDataToSend.append('arrayGaleria', imagen);
-          });
-        }
-
-        const datosToSend = {
-          data: {
-            id_tipo_servicio: formData.categoria,
-            municipio: formData.alcaldia,
-            CP: formData.CP,
-            int: formData.numInt,
-            ext: formData.numExt,
-            colonia: formData.colonia,
-            calle: formData.calle,
-            dias_servicio: formData.dias_servicio,
-            horario_inicio: formData.horario_inicio,
-            horario_fin: formData.horario_fin,
-            precio: formData.precio,
-            titulo: formData.titulo,
-            descripcion: formData.descripcion,
-            latitud: formData.latitud,
-            longitud: formData.longitud,
-            imgPrincipal: formData.imgPrincipal,
-            arrayGaleria: formData.arrayGaleria,
-            id_estado: formData.estado,
-            id_usuario: '1',
-            id_pueblo: formData.id_pueblo,
-          }
-        }
-
-        const response = await axios.post('http://localhost/api/servicios/registrar', datosToSend, {
-          headers: {
-            'accept': 'application/json',
-            'Content-Type': 'multipart/form-data',
-          },
-
-        });
-        if (response.status === 200 || response.status === 201) {
-          console.log('Datos enviados exitosamente');
-          Toast.fire({
-            icon: "success",
-            title: "Se ha registrado la solicitud con exito!"
-          });
-        }
-        else if (response.status === 422) {
-          console.log('Unprocessable Contentaaaa');
-        } else {
-          console.log('Error al enviar los datos:');
-
-        }
-      } catch (error) {
-        if (error.response && error.response.data) {
-          // Imprimir la respuesta de la API
-          console.log('Error al enviar los datossss:', error.response.data);
-          const camposNoLlenados = Object.entries(error.response.data.data).flatMap(([campo, errores]) =>
-            errores.map((error) => `-${error}`)
-          );
-
-          const mensajeError = `Los siguientes campos no se llenaron correctamente:\n\n\n${camposNoLlenados.join('\n\n')}`;
-
-
-          Swal.fire({
-            title: 'Error',
-            text: mensajeError,
-            icon: 'error',
-          })
-        }
       }
     }
-  
+  }
+
 
   return (
     <>
@@ -252,7 +256,7 @@ function Formulario() {
                       name="descripcion"
                       rows={3}
                       value={formData.descripcion} onChange={handleChange}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"                      
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>

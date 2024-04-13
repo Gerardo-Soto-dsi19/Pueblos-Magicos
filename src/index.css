@@ -10,7 +10,7 @@
     --white-alpha-color: rgba(255, 255, 255, 0.5);
     --black-alpha-color: rgba(0, 0, 0, 0.5);
     --text-color: #222;
-    --link-color: #81DAF5;
+    --link-color: #6C1D45;
     --font: "Raleway", sans-serif;
     --max-width: 1200px;
     --header-heigth: 4rem;
@@ -83,4 +83,37 @@ img {
 
 p {
     line-height: 1.6;
+}
+
+.pagination{
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5rem;
+    font-size: 1.2rem;
+    gap: 5px;
+}
+.spinner-custom{
+    fill: #6C1D45;
+    
+}
+.pagination .page-num{
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-weight: 400;
+    
+}
+.pagination .page-num:hover{
+    background-color: #6C1D45;
+    color: #fff;
+}
+.pagination .active{
+    background-color: #6C1D45;
+    color: #fff;
+}
+.dropDown-custom{
+    background: #6C1D45;
+    
 }
