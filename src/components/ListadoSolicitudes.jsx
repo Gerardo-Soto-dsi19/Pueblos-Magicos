@@ -13,7 +13,7 @@ function ListadoSolicitudes() {
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [openModal, setOpenModal] = useState(false);
-
+    const [selectedServiceId, setSelectedServiceId] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -31,7 +31,7 @@ function ListadoSolicitudes() {
                 setServicios((await response).data.data.servicios.data)
                 setTotalPages((await response).data.data.servicios.last_page);
                 setIsLoading(false);
-
+                console.log(response);
             } catch (e) {
                 console.error('Error fetching data: ', e);
                 setIsLoading(false);
@@ -42,6 +42,18 @@ function ListadoSolicitudes() {
 
     const handlePageClick = (event) => {
         setCurrentPage(event.selected);
+    };
+
+    const handleCardClick = (id) => {
+        console.log('ID de la card: ', id);
+        setSelectedServiceId(id);
+        setOpenModal(true);
+    };
+    const handleModalClose = () => {
+        if (openModal) {
+            setOpenModal(false);
+            setSelectedServiceId(null);
+        }
     };
 
     if (isLoading) {
@@ -120,7 +132,8 @@ function ListadoSolicitudes() {
                         </p>
                         <p className="font-bold mb-3 text-gray-700 uppercase">
                             Servicio:{' '}
-                            <span className="font-normal normal-case">Sector Hotelero</span>
+                            
+                            <span className="font-normal normal-case">{servicio.tipo_servicio.servicio}</span>
                         </p>
                         <p className="font-bold mb-3 text-gray-700 uppercase">
                             Pueblo Mágico:{' '}
@@ -128,7 +141,7 @@ function ListadoSolicitudes() {
                         </p>
                         <p
                             className=" text-center cursor-pointer underline mt-10"
-                            onClick={() => setOpenModal(true)}
+                            onClick={() => handleCardClick(servicio.id)}
                         >
                             Ver más...
                         </p>
@@ -150,38 +163,40 @@ function ListadoSolicitudes() {
                     activeLinkClassName={'active'}
                 />
             </div>
-            <Modal show={openModal} onClose={() => setOpenModal(false)}>
+            <Modal show={openModal} onClose={handleModalClose}>
                 <Modal.Header>Publicación</Modal.Header>
                 <Modal.Body >
                     <ModalSolicitud
-                        value={'Barcelo'} />
+                        serviceId={selectedServiceId}
+                    />
                 </Modal.Body>
                 <Modal.Footer>
-                    <div className="flex justify-between flex-wrap gap-4">
-                        <Tooltip content="Aceptar publicación">
-                            <button
-                                type="button"
-                                className="md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full"
-                            >
-                                <HiCheckCircle />
-                            </button>
-                        </Tooltip>
-                        <Tooltip content="Editar publicación">
-                            <button
-                                type="button"
-                                className="md:flex-1 py-3 px-3  bg-slate-950 hover:bg-slate-800 text-white rounded-full"
-                            >
-                                <HiOutlinePencilAlt />
-                            </button>
-                        </Tooltip>
-                        <Tooltip content="Rechazar publicación">
-                            <button
-                                type="button"
-                                className="py-3 px-3 bg-[#707372] hover:bg-[#8D9293] text-white rounded-full"
-                            >
-                                <HiXCircle />
-                            </button>
-                        </Tooltip>
+                    <div className="flex float-end gap-4">                        
+                            <Tooltip content="Aceptar publicación">
+                                <button
+                                    type="button"
+                                    className="md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full"
+                                >
+                                    <HiCheckCircle />
+                                </button>
+                            </Tooltip>
+                            <Tooltip content="Editar publicación">
+                                <button
+                                    type="button"
+                                    className="md:flex-1 py-3 px-3  bg-slate-950 hover:bg-slate-800 text-white rounded-full"
+                                >
+                                    <HiOutlinePencilAlt />
+                                </button>
+                            </Tooltip>
+                            <Tooltip content="Rechazar publicación">
+                                <button
+                                    type="button"
+                                    className="py-3 px-3 bg-[#707372] hover:bg-[#8D9293] text-white rounded-full"
+                                >
+                                    <HiXCircle />
+                                </button>
+                            </Tooltip>                        
+
                     </div>
                 </Modal.Footer>
             </Modal>
