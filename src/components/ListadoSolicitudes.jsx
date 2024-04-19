@@ -107,6 +107,7 @@ function ListadoSolicitudes() {
 
                 </div>
             </div >
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {servicios.map((servicio) => (
                     <div
@@ -148,6 +149,7 @@ function ListadoSolicitudes() {
                     </div>
                 ))}
             </div>
+
             <div className="mt-10">
                 <ReactPaginate
                     breakLabel={'...'}
@@ -163,6 +165,7 @@ function ListadoSolicitudes() {
                     activeLinkClassName={'active'}
                 />
             </div>
+            
             <Modal show={openModal} onClose={handleModalClose}>
                 <Modal.Header>Publicación</Modal.Header>
                 <Modal.Body >
