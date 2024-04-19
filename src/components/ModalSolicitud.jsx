@@ -60,14 +60,13 @@ function ModalSolicitud({ serviceId }) {
                     '_method': 'put',
                     'Content-Type': 'application/json'
                 }
-            }).then(response => {
-                console.log('Componente afectado:', response.data);
-                if(tipo_img ===1 ){
-                    setImageData(prevImage => prevImage.filter(image => image.id !== id ));
-                }else{
+            }).then(response => {                
+                if (tipo_img === 1) {
+                    setImageData(prevImage => prevImage.filter(image => image.id !== id));
+                } else {
                     setImagesDataGallery(prevImages => prevImages.filter(image => image.id !== id));
                 }
-                
+
             })
 
         } catch (error) {
@@ -168,7 +167,6 @@ function ModalSolicitud({ serviceId }) {
 
     return (
         <>
-
             <div className='md:flex justify-between'>
                 <div className='mt-5 md:w-[50%]'>
                     <Label>Pueblo Mágico</Label>
@@ -177,7 +175,6 @@ function ModalSolicitud({ serviceId }) {
                             <Dropdown.Item key={option.id} >{option.nombre}</Dropdown.Item>
                         ))}
                     </Dropdown>
-
                 </div>
                 <div className='mt-5 md:w-[50%]'>
                     <Label>Categoría</Label>
@@ -217,6 +214,7 @@ function ModalSolicitud({ serviceId }) {
                 </div>
 
             </div>
+
             <div className="md:flex flex-row md:space-x-6">
                 <div className="mt-5">
                     <Label>Precio</Label>
@@ -231,6 +229,7 @@ function ModalSolicitud({ serviceId }) {
                     <TextInput type="text" defaultValue={serviceData.detalle_servicio?.coordenada.longitud ?? 'N/A'} />
                 </div>
             </div>
+
             <div className="md:flex flex-row md:space-x-6">
                 <div className="w-full mt-5">
                     <Label>Calle</Label>
@@ -241,6 +240,7 @@ function ModalSolicitud({ serviceId }) {
                     <TextInput type="text" defaultValue={serviceData.direccion?.colonia ?? 'N/A'} />
                 </div>
             </div>
+
             <div className='md:flex flex-row md:space-x-6'>
                 <div className="w-full mt-5">
                     <Label>Alcaldía/Municipio</Label>
@@ -255,6 +255,7 @@ function ModalSolicitud({ serviceId }) {
                     </Dropdown>
                 </div>
             </div>
+
             <div className="md:flex flex-row md:space-x-6">
                 <div className="mt-5">
                     <Label>Código Postal</Label>
@@ -294,7 +295,7 @@ function ModalSolicitud({ serviceId }) {
                     <div className="mt-5 flex justify-center">
                         <div className='w-40 flex justify-center'>
                             <div className="bg-white shadow-md rounded-md overflow-hidden">
-                                <div className='relative'>                                    
+                                <div className='relative'>
                                     <button className='absolute  right-1 bg-white rounded-full p-1 hover:bg-gray-100'
                                         onClick={() => {
                                             Swal.fire({
@@ -351,7 +352,6 @@ function ModalSolicitud({ serviceId }) {
                         </div>
                     </div>
                 )}
-
             </div >
 
             <div className='mt-5 border-t-2'>
@@ -408,7 +408,7 @@ function ModalSolicitud({ serviceId }) {
                                             <HiX />
                                         </button>
                                     </div>
-                                    <div className="">
+                                    <div>
                                         <img
                                             key={image.id}
                                             src={getImageUrl(image)}
@@ -445,7 +445,6 @@ function ModalSolicitud({ serviceId }) {
                     )}
                 </div>
             </div >
-
         </>
     )
 }

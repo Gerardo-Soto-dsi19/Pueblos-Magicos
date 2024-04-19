@@ -9,31 +9,34 @@ import axios from 'axios';
 function Sidebar() {
     const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
     const authToken = sessionStorage.getItem('accessToken');
-    const [error, setError] = useState(null);
+    const [selectedFilter, setSelectedFilter] = useState('all');
 
+    const handleFilterChange = (filter) => {
+        setSelectedFilter(filter);
+    };
 
     const handleLogout = async () => {
         try {
             await axios.post('http://localhost/api/users/logout', null, {
-              headers: {
-                'Authorization': `Bearer ${authToken}`
-              }
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
             });
             console.log("Sesión finalizada");
             setIsAuthenticated(false);
             sessionStorage.removeItem('accessToken');
-          } catch (error) {
+        } catch (error) {
             if (error.response) {
-              console.error("Error al cerrar sesión:", error.response.data);
-              // Muestra un mensaje de error al usuario o realiza otras acciones
+                console.error("Error al cerrar sesión:", error.response.data);
+                // Muestra un mensaje de error al usuario o realiza otras acciones
             } else if (error.request) {
-              console.error("Error de solicitud:", error.request);
-              // Maneja el error de solicitud
+                console.error("Error de solicitud:", error.request);
+                // Maneja el error de solicitud
             } else {
-              console.error("Error desconocido:", error.message);
-              // Maneja el error desconocido
+                console.error("Error desconocido:", error.message);
+                // Maneja el error desconocido
             }
-          }
+        }
     };
     return (
         <div className='md:flex '>
@@ -45,45 +48,47 @@ function Sidebar() {
                 </div>
                 <ul className="flex flex-col items-center">
                     <li className='mb-2 w-full '>
-                        <a href="#"
+                        <Link
+                            onClick={() => handleFilterChange('all')}
                             className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
                         >
                             <FaInbox className="mr-2" />
                             Todas las solicitudes
-                        </a>
+                        </Link>
                     </li>
 
                     <li className='mb-2 w-full text-center'>
-                        <a
-                            href="#"
+                        <Link
+                            onClick={() => handleFilterChange('2')}
                             className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
                         >
                             <FaCheckCircle className="mr-2" />Solicitudes aceptadas
-                        </a>
+                        </Link>
                     </li>
 
                     <li className='mb-2 w-full text-center'>
-                        <a
-                            href="#"
+                        <Link
+                            onClick={() => handleFilterChange('1')}
                             className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
                         >
                             <FaClock className="mr-2" /> Solicitudes pendientes
-                        </a>
+                        </Link>
                     </li>
                     <li className='mb-2 w-full text-center'>
-                        <a
-                            href="#"
+                        <Link
+                            onClick={() => handleFilterChange('3')}
                             className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
                         >
                             <FaExclamationCircle className="mr-2" /> Solicitudes con observación
-                        </a>
+                        </Link>
                     </li>
                 </ul>
                 <div className=" mt-96 px-2 pt-10">
                     {isAuthenticated ? (
+
                         <Link
                             onClick={handleLogout}
-                            className="flex items-center gap-2 py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                            className="flex items-center gap-2 py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white "
                         >
                             <FaSignOutAlt />Cerrar sesión
                         </Link>
@@ -103,8 +108,11 @@ function Sidebar() {
             <main className='md:w-5/6'>
                 <h1 className=" mt-5 border-b-2 mx-3">Gestión de publicaciones</h1>
                 <div className="mt-10">
-                    <ListadoSolicitudes />
-                </div>           
+                    {console.log(selectedFilter)}
+                    <ListadoSolicitudes
+                        tipoSolicitud={selectedFilter}
+                    />
+                </div>
             </main>
 
         </div>
