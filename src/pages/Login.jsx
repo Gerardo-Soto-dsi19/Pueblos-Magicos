@@ -4,6 +4,7 @@ import { AuthContext } from '../components/AuthContext';
 import axios from "axios"
 import Swal from 'sweetalert2';
 import { Spinner } from 'flowbite-react';
+import { data } from 'autoprefixer';
 
 
 
@@ -39,10 +40,10 @@ const Login = () => {
                     'accept': 'application/json',
                     'Content-Type': 'application/json',
                 }
-            });
-
+            });            
             if (response.status === 200) {
-                sessionStorage.setItem('accessToken', response.data.access_token)
+                sessionStorage.setItem('accessToken', response.data.access_token)                
+                localStorage.setItem('user_name',response.data.user.id )
                 const responseCSRF = axios.get('http://localhost/sanctum/csrf-cookie', {
                     headers: {
                         'accept': 'application/json',
@@ -76,7 +77,7 @@ const Login = () => {
                 });
 
             }
-        } finally {
+        } finally {            
             setIsLoading(false);
         }
     }

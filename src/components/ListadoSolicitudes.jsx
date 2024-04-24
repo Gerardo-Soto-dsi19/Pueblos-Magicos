@@ -8,6 +8,7 @@ import ModalSolicitud from './ModalSolicitud'
 import NoDataCard from './NoDataCard';
 import { HiCheckCircle, HiOutlinePencilAlt, HiXCircle } from "react-icons/hi";
 
+
 function ListadoSolicitudes({ tipoSolicitud }) {
     const [servicios, setServicios] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -16,7 +17,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     const [openModal, setOpenModal] = useState(false);
     const [selectedServiceId, setSelectedServiceId] = useState(null);
     const [emptyData, setEmptyData] = useState(false);
-
+    const [isEditable, setIsEditable] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -104,11 +105,14 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     };
     const handleModalClose = () => {
         if (openModal) {
+            setIsEditable(false);
             setOpenModal(false);
             setSelectedServiceId(null);
         }
     };
-
+    const handleEditable = () => {
+        setIsEditable(true);
+    }
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-screen">
@@ -231,10 +235,11 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 <Modal.Body >
                     <ModalSolicitud
                         serviceId={selectedServiceId}
+                        isEditable={isEditable}
                     />
                 </Modal.Body>
-                <Modal.Footer>
-                    <div className="flex float-end gap-4">
+                <Modal.Footer className="flex items-center justify-end gap-4">
+                    <div className="flex flex-row-reverse gap-x-7">
                         <Tooltip content="Aceptar publicación">
                             <button
                                 type="button"
@@ -248,6 +253,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                             <button
                                 type="button"
                                 className="md:flex-1 py-3 px-3  bg-slate-950 hover:bg-slate-800 text-white rounded-full"
+                                onClick={handleEditable}
                             >
                                 <HiOutlinePencilAlt />
                             </button>

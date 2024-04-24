@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
-import { TextInput, Textarea, Label, Dropdown } from "flowbite-react"
+import { TextInput, Textarea, Label, Dropdown, Tooltip, Spinner } from "flowbite-react"
+import { MdDataSaverOn } from "react-icons/md";
 import { HiX } from "react-icons/hi";
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import React from 'react';
+import FormData from 'form-data';
 
 
 
-function ModalSolicitud({ serviceId }) {
+function ModalSolicitud({ serviceId, isEditable }) {
     const [puebloMagico, setPuebloMagico] = useState([])
     const [categoria, setCategoria] = useState([])
     const [estado, setEstado] = useState([])
@@ -16,10 +18,15 @@ function ModalSolicitud({ serviceId }) {
     const [galleryImages, setGalleryImages] = useState([]);
     const [imageData, setImageData] = useState(null);
     const [imagesDataGallery, setImagesDataGallery] = useState([]);
+    const [initialValues, setInitialValues] = useState({});
+    const [formValues, setFormValues] = useState(initialValues);
+    const [newimage, setNewImage] = useState(false);
 
 
     const handleMainImageUpload = (event) => {
+        const { files } = event.target;
         if (imageData != null) {
+            setNewImage(false);
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
@@ -28,12 +35,18 @@ function ModalSolicitud({ serviceId }) {
         } else {
             const file = event.target.files[0];
             setMainImage(file);
+            setNewImage(true);
+            setFormValues((prevState) => ({
+                ...prevState,
+                imagen_principal: files[0],
+            }));
         }
     };
 
     const handleGalleryImageUpload = (event) => {
         const files = event.target.files;
         setGalleryImages([...galleryImages, ...Array.from(files)]);
+
     };
 
     const handleRemoveMainImage = () => {
@@ -41,7 +54,7 @@ function ModalSolicitud({ serviceId }) {
     };
 
     const handleRemoveDataMainImage = (id, name, tipo_img) => {
-        console.log(id, name, tipo_img);
+
         const token = sessionStorage.getItem('accessToken');
         const imageDataToDelete = {
             data: {
@@ -60,7 +73,7 @@ function ModalSolicitud({ serviceId }) {
                     '_method': 'put',
                     'Content-Type': 'application/json'
                 }
-            }).then(response => {                
+            }).then(response => {
                 if (tipo_img === 1) {
                     setImageData(prevImage => prevImage.filter(image => image.id !== id));
                 } else {
@@ -104,6 +117,9 @@ function ModalSolicitud({ serviceId }) {
             });
     }, []);
 
+
+
+    /* Seteo de informacion en inputs */
     useEffect(() => {
         const fetchServiceData = async () => {
             try {
@@ -114,21 +130,53 @@ function ModalSolicitud({ serviceId }) {
                     },
                 };
                 const response = await axios.get(`http://localhost/api/servicios/${serviceId}`, config);
-                setServiceData(response.data.data.servicio[0]);
+                const serviceData = response.data.data.servicio[0];
 
-                const mainImageData = response.data.data.servicio[0].imagenes.find(
-                    (image) => image.id_tipo_imagen === 1
-                );
+                if (serviceData) {
+                    const newInitialValues = {
+                        id_pueblo: serviceData?.pueblo?.id || '',
+                        pueblo: serviceData?.pueblo?.nombre || '',
+                        id_categoria: serviceData?.tipo_servicio?.id || '',
+                        categoria: serviceData?.tipo_servicio?.servicio || '',
+                        titulo: serviceData.detalle_servicio?.titulo || '',
+                        descripcion: serviceData.detalle_servicio?.descripcion || '',
+                        dias_servicio: serviceData.detalle_servicio?.dias_servicio || '',
+                        horario_inicio: serviceData.detalle_servicio?.horario.horario_inicio || '',
+                        horario_fin: serviceData.detalle_servicio?.horario.horario_fin || '',
+                        precios: serviceData.detalle_servicio?.precios || '',
+                        latitud: serviceData.detalle_servicio?.coordenada.latitud || '',
+                        longitud: serviceData.detalle_servicio?.coordenada.longitud || '',
+                        calle: serviceData.direccion?.calle || '',
+                        colonia: serviceData.direccion?.colonia || '',
+                        alcaldia: serviceData.direccion?.municipio || '',
+                        id_estado: serviceData.direccion.estado.id || '',
+                        estado: serviceData.direccion.estado.nombre || '',
+                        CP: serviceData.direccion?.CP || '',
+                        int: serviceData.direccion?.int || '',
+                        ext: serviceData.direccion?.ext || '',
+                    };
 
-                setImageData(mainImageData);
+                    setInitialValues(newInitialValues);
+                    setFormValues(newInitialValues);
+                    setServiceData(serviceData);
 
-                const galleryImageData = response.data.data.servicio[0].imagenes.filter(
-                    (image) => image.id_tipo_imagen === 2
-                );
-                setImagesDataGallery(galleryImageData);
+                    const mainImageData = response.data.data.servicio[0].imagenes.find(
+                        (image) => image.id_tipo_imagen === 1
+                    );
 
+                    setImageData(mainImageData);
+
+                    const galleryImageData = response.data.data.servicio[0].imagenes.filter(
+                        (image) => image.id_tipo_imagen === 2
+                    );
+                    setImagesDataGallery(galleryImageData);
+                } else {
+                    console.error('No se encontraron datos de servicio');
+                }
             } catch (e) {
-                console.error('Error fetching service data: ', e);
+                console.error('Error fetching service data:', e);
+                // O también puedes acceder a las propiedades del objeto de error
+                console.error('Error fetching service data:', e.message, e.response);
             }
         };
 
@@ -152,33 +200,146 @@ function ModalSolicitud({ serviceId }) {
     };
 
 
+
+    const handleChange = (e) => {
+        const { name, files } = e.target;
+        if (name === 'imgPrincipal') {
+            setFormValues((prevValues) => ({
+                ...prevValues,
+                imgPrincipal: files[0],
+            }))
+        } else if (name === 'arrayGaleria') {
+            setFormValues((prevValues) => ({
+                ...prevValues,
+                arrayGaleria: Array.from(files),
+            }))
+        } else {
+            setFormValues((prevValues) => ({
+                ...prevValues,
+                [name]: e.target.value,
+            }));
+        }
+    };
+    const updatedFields = {
+        data: {
+
+            servicio: {
+                id_tipo_servicio: formValues.id_categoria,
+                id_usuario: localStorage.getItem("user_name"),
+                id_pueblo: formValues.id_pueblo,
+                id_estatus: 1,
+            },
+            servicio_detalles: {
+                dias_servicio: formValues.dias_servicio,
+                precios: formValues.precios,
+                titulo: formValues.titulo,
+                descripcion: formValues.descripcion,
+            },
+            coordenadas: {
+                longitud: formValues.longitud,
+                latitud: formValues.latitud,
+            },
+            horarios: {
+                horario_inicio: formValues.horario_inicio,
+                horario_fin: formValues.horario_fin,
+            },
+
+            direccion: {
+                calle: formValues.calle,
+                municipio: formValues.alcaldia,
+                CP: formValues.CP,
+                int: formValues.int,
+                ext: formValues.ext,
+                colonia: formValues.colonia,
+                id_estado: formValues.id_estado,
+            },
+        }
+    };
+    const updateService = async (updatedFields) => {
+        try {
+            const token = sessionStorage.getItem('accessToken');
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    '_method': 'put',
+                    'Content-Type': 'application/json'
+                }
+            };
+            const response = await axios.put(`http://localhost/api/servicios/${serviceId}`, updatedFields, config);
+            console.log('Servicio actualizado exitosamente:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error('Error al actualizar el servicio:', error);
+            throw error;
+        }
+    };
+
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+
+        if (newimage) {
+            const file = formValues.imagen_principal;
+
+            try {
+                const formData = new FormData();
+                formData.append('data[imagen_principal]', file);
+
+                const token = sessionStorage.getItem('accessToken');
+
+                const response = await axios.post(`http://localhost/api/servicios/${serviceId}`, formData, {
+                    headers: {
+                        '_method': 'PUT',
+                        Authorization: `Bearer ${token}`,
+                        'accept': 'application/json',
+                        'Content-Type': 'multipart/form-data',
+                    }
+                });
+                console.log('Servicio actualizado exitosamente:', response.data);
+                return response.data;
+            } catch (error) {
+                console.error('Error al actualizar el servicio:', error);
+                throw error;
+            }
+        }
+    };
+
+
+
+
+
+
+    /*         try {
+                const response = await updateService(updatedFields);
+                console.log('Servicio actualizado exitosamente:', response.data);
+            } catch (error) {
+                console.error('Error al actualizar el servicio:', error);
+            } */
     useEffect(() => {
     }, [serviceData]);
 
     if (!serviceData) {
-        return <div>Cargando...</div>;
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="lds-ring">
+                    <Spinner className="spinner-custom" size="xl" />
+                </div>
+            </div>)
     }
-
-
-    const handleImageUpload = (event) => {
-        const files = event.target.files;
-        setImages([...images, ...Array.from(files)]);
-    };
 
     return (
         <>
             <div className='md:flex justify-between'>
                 <div className='mt-5 md:w-[50%]'>
                     <Label>Pueblo Mágico</Label>
-                    <Dropdown label={serviceData.pueblo.nombre} dismissOnClick={false} color={'gray'}>
+                    <Dropdown name='id_pueblo' label={formValues.pueblo} dismissOnClick={false} color={'gray'}>
                         {puebloMagico.map((option) => (
-                            <Dropdown.Item key={option.id} >{option.nombre}</Dropdown.Item>
+                            <Dropdown.Item key={option.id} value={option.id} >{option.nombre}</Dropdown.Item>
                         ))}
                     </Dropdown>
                 </div>
                 <div className='mt-5 md:w-[50%]'>
                     <Label>Categoría</Label>
-                    <Dropdown label={serviceData.tipo_servicio.servicio} dismissOnClick={false} color={'gray'}>
+                    <Dropdown name='categoria' label={formValues.categoria} dismissOnClick={false} color={'gray'}>
                         {categoria.map((option) => (
                             <Dropdown.Item key={option.id} value={option.id}>{option.servicio}</Dropdown.Item>
                         ))}
@@ -189,28 +350,56 @@ function ModalSolicitud({ serviceId }) {
             <div className='mt-5 block'>
                 <Label>Título</Label>
                 <TextInput
-                    defaultValue={serviceData.detalle_servicio?.titulo ?? 'N/A'}></TextInput>
+                    name="titulo"
+                    type='text'
+                    value={formValues.titulo}
+                    readOnly={!isEditable}
+                    onChange={handleChange}
+                />
+
             </div>
 
             <div className='mt-5 block'>
                 <Label>Descripción</Label>
                 <Textarea
-                    defaultValue={serviceData.detalle_servicio?.descripcion ?? 'N/A'}
-                    rows={4} />
+                    name="descripcion"
+                    value={formValues.descripcion}
+                    rows={4}
+                    readOnly={!isEditable}
+                    onChange={handleChange}
+                />
             </div>
 
             <div className='md:flex flex-row md:space-x-6'>
                 <div className="w-full mt-5">
                     <Label>Días de servicio</Label>
-                    <TextInput type="text" defaultValue={serviceData.detalle_servicio?.dias_servicio ?? 'N/A'} />
+                    <TextInput
+                        name='dias_servicio'
+                        type="text"
+                        value={formValues.dias_servicio || 'N/A'}
+                        readOnly={!isEditable}
+                        onChange={handleChange}
+                    />
                 </div>
                 <div className="w-full mt-5">
                     <Label>Horario de apertura</Label>
-                    <TextInput type="time" defaultValue={serviceData.detalle_servicio?.horario.horario_inicio ?? 'N/A'} />
+                    <TextInput
+                        name='horario_inicio'
+                        type="time"
+                        value={formValues.horario_inicio || 'N/A'}
+                        readOnly={!isEditable}
+                        onChange={handleChange}
+                    />
                 </div>
                 <div className="w-full mt-5">
                     <Label>Horario de cierre</Label>
-                    <TextInput type="time" defaultValue={serviceData.detalle_servicio?.horario.horario_fin ?? 'N/A'} />
+                    <TextInput
+                        name='horario_fin'
+                        type="time"
+                        value={formValues.horario_fin || 'N/A'}
+                        readOnly={!isEditable}
+                        onChange={handleChange}
+                    />
                 </div>
 
             </div>
@@ -218,39 +407,77 @@ function ModalSolicitud({ serviceId }) {
             <div className="md:flex flex-row md:space-x-6">
                 <div className="mt-5">
                     <Label>Precio</Label>
-                    <TextInput type="text" defaultValue={serviceData.detalle_servicio?.precios ?? 'N/A'} />
+                    <TextInput
+                        name='precio'
+                        type="text"
+                        value={formValues.precios || 'N/A'}
+                        readOnly={!isEditable}
+                        onChange={handleChange}
+                    />
                 </div>
                 <div className="mt-5">
                     <Label>Latitud</Label>
-                    <TextInput type="text" defaultValue={serviceData.detalle_servicio?.coordenada.latitud ?? 'N/A'} />
+                    <TextInput
+                        name='latitud'
+                        type="text"
+                        value={formValues.latitud || 'N/A'}
+                        readOnly={!isEditable}
+                        onChange={handleChange}
+                    />
                 </div>
                 <div className="mt-5">
                     <Label>Longitud</Label>
-                    <TextInput type="text" defaultValue={serviceData.detalle_servicio?.coordenada.longitud ?? 'N/A'} />
+                    <TextInput
+                        name='longitud'
+                        type="text"
+                        value={formValues.longitud || 'N/A'}
+                        readOnly={!isEditable}
+                        onChange={handleChange}
+                    />
                 </div>
             </div>
 
             <div className="md:flex flex-row md:space-x-6">
                 <div className="w-full mt-5">
                     <Label>Calle</Label>
-                    <TextInput type="text" defaultValue={serviceData.direccion?.calle ?? 'N/A'} />
+                    <TextInput
+                        name='calle'
+                        type="text"
+                        value={formValues.calle || 'N/A'}
+                        readOnly={!isEditable}
+                        onChange={handleChange}
+                    />
                 </div>
                 <div className="w-full mt-5">
                     <Label>Colonia</Label>
-                    <TextInput type="text" defaultValue={serviceData.direccion?.colonia ?? 'N/A'} />
+                    <TextInput
+                        name='colonia'
+                        type="text"
+                        value={formValues.colonia || 'N/A'}
+                        readOnly={!isEditable}
+                        onChange={handleChange}
+                    />
                 </div>
             </div>
 
             <div className='md:flex flex-row md:space-x-6'>
                 <div className="w-full mt-5">
                     <Label>Alcaldía/Municipio</Label>
-                    <TextInput type="text" defaultValue={serviceData.direccion?.municipio ?? 'N/A'} />
+                    <TextInput
+                        name="municipio"
+                        type="text"
+                        value={formValues.alcaldia || 'N/A'}
+                        readOnly={!isEditable}
+                        onChange={handleChange}
+                    />
                 </div>
                 <div className="w-full mt-5">
                     <Label>Estado</Label>
-                    <Dropdown label={serviceData.direccion.estado.nombre} dismissOnClick={false} color={'gray'}>
+                    <Dropdown label={formValues.estado} dismissOnClick={false} color={'gray'}>
                         {estado.map((option) => (
-                            <Dropdown.Item key={option.id} value={option.id}>{option.nombre}</Dropdown.Item>
+                            <Dropdown.Item key={option.id} value={option}>
+                                {option.nombre}
+                            </Dropdown.Item>
                         ))}
                     </Dropdown>
                 </div>
@@ -259,32 +486,49 @@ function ModalSolicitud({ serviceId }) {
             <div className="md:flex flex-row md:space-x-6">
                 <div className="mt-5">
                     <Label>Código Postal</Label>
-                    <TextInput type="text" defaultValue={serviceData.direccion?.CP ?? 'N/A'} />
+                    <TextInput
+                        name='CP'
+                        type="text"
+                        value={formValues.CP || 'N/A'}
+                        readOnly={!isEditable}
+                        onChange={handleChange}
+                    />
                 </div>
                 <div className="mt-5">
                     <Label>Núm. Int</Label>
-                    <TextInput type="text" defaultValue={serviceData.direccion?.int ?? 'N/A'} />
+                    <TextInput
+                        name='numInt'
+                        type="text"
+                        value={formValues.int || 'N/A'}
+                        readOnly={!isEditable}
+                        onChange={handleChange}
+                    />
                 </div>
                 <div className="mt-5">
                     <Label>Núm. Ext</Label>
-                    <TextInput type="text" defaultValue={serviceData.direccion?.ext ?? 'N/A'} />
-
+                    <TextInput
+                        name='numExt'
+                        type="text"
+                        value={formValues.ext || 'N/A'}
+                        readOnly={!isEditable}
+                        onChange={handleChange}
+                    />
                 </div>
             </div>
 
             <div className="mt-5 border-t-2">
                 <div className='mt-3'>
-                    <Label>Imagen principal </Label>
+                    <Label htmlFor="imagen_principal">Imagen principal </Label>
                 </div>
                 <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                     <div className="text-center">
                         <div className="mt-4 flex text-sm leading-6 text-gray-600">
                             <label
-                                htmlFor="imgPrincipal"
+                                htmlFor="imagen_principal"
                                 className="relative cursor-pointer rounded-md bg-white font-semibold text-[#6c1d45] focus-within:outline-none focus-within:ring-2 focus-within:ring-[#6c1d45] focus-within:ring-offset-2 hover:text-[#6A294A]"
                             >
                                 <span>Sube un archivo</span>
-                                <input id="imgPrincipal" name="imgPrincipal" type="file" className="sr-only" onChange={handleMainImageUpload} />
+                                <input id="imagen_principal" name="imagen_principal" type="file" className="sr-only" onChange={handleMainImageUpload} />
                             </label>
                             <p className="pl-1">o arrastra y suelta</p>
                         </div>
@@ -296,7 +540,9 @@ function ModalSolicitud({ serviceId }) {
                         <div className='w-40 flex justify-center'>
                             <div className="bg-white shadow-md rounded-md overflow-hidden">
                                 <div className='relative'>
-                                    <button className='absolute  right-1 bg-white rounded-full p-1 hover:bg-gray-100'
+                                    <button
+                                        className='absolute  right-1 bg-white rounded-full p-1 hover:bg-gray-100'
+                                        hidden={!isEditable}
                                         onClick={() => {
                                             Swal.fire({
                                                 title: '¿Estás seguro?',
@@ -382,6 +628,7 @@ function ModalSolicitud({ serviceId }) {
                                     <div className='relative'>
                                         <button
                                             className="absolute right-0 bg-white rounded-full p-1 hover:bg-gray-100"
+                                            hidden={!isEditable}
                                             onClick={() => {
                                                 Swal.fire({
                                                     title: '¿Estás seguro?',
@@ -443,6 +690,20 @@ function ModalSolicitud({ serviceId }) {
                             </div>
                         </div>
                     )}
+                </div>
+                <div className="mt-6 flex justify-end" >
+                    <div>
+                        <Tooltip content="Guardar publicación">
+                            <button
+                                type="submit"
+                                className="md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full"
+                                hidden={!isEditable}
+                                onClick={handleUpdate}
+                            >
+                                <MdDataSaverOn />
+                            </button>
+                        </Tooltip>
+                    </div>
                 </div>
             </div >
         </>
