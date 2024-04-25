@@ -18,7 +18,7 @@ function ModalSolicitud({ serviceId, isEditable }) {
     const [serviceData, setServiceData] = useState(null);
     const [mainImage, setMainImage] = useState(null);
     const [galleryImages, setGalleryImages] = useState([]);
-    const [imageData, setImageData] = useState(null);
+    const [imageData, setImageData] = useState([]);
     const [imagesDataGallery, setImagesDataGallery] = useState([]);
     const [initialValues, setInitialValues] = useState({});
     const [formValues, setFormValues] = useState(initialValues);
@@ -88,15 +88,15 @@ function ModalSolicitud({ serviceId, isEditable }) {
         setMainImage(null);
     };
 
-    const handleRemoveDataMainImage = (id, name, tipo_img) => {
+    const handleRemoveDataMainImage = (_id_, _name_, _tipo_img_) => {
 
         const token = sessionStorage.getItem('accessToken');
         const imageDataToDelete = {
             data: {
                 imagenes_eliminar: [
                     {
-                        id: id,
-                        nombre: name
+                        id: _id_,
+                        nombre: _name_
                     }
                 ]
             }
@@ -108,20 +108,28 @@ function ModalSolicitud({ serviceId, isEditable }) {
                     '_method': 'put',
                     'Content-Type': 'application/json'
                 }
-            }).then(response => {
-                if (tipo_img === 1) {                    
-                    setImageData(prevImage =>  prevImage.filter(image => image.id !== id));
+            }).then(_response_ => {
+                if (_tipo_img_ === 1) {
+                    setImageData(prevImages => {
+                        if (Array.isArray(prevImages)) {
+                            return prevImages.filter(image => image.id !== _id_);
+                        } else {                            
+                            return [];
+                        }
+                    });
                 } else {
-                    //setImagesDataGallery(prevImages => prevImages.filter(image => image.id !== id));
+                    setImagesDataGallery(prevImages => {
+                        if (Array.isArray(prevImages)) {
+                            return prevImages.filter(image => image.id !== _id_);
+                        } else {                            
+                            return [];
+                        }
+                    });
                 }
-
             })
-
         } catch (error) {
             console.error('Error:', error);
         }
-
-
     }
 
     /* Seteo de combos  */
@@ -221,17 +229,22 @@ function ModalSolicitud({ serviceId, isEditable }) {
     }, [serviceId, serviceData]);
 
     const getImageUrl = (imageData) => {
+        if (imageData && imageData.archivo && imageData.archivo.trim().length > 0) {
+            try {
+                const binaryData = atob(imageData.archivo);
+                const arrayBuffer = new ArrayBuffer(binaryData.length);
+                const uint8Array = new Uint8Array(arrayBuffer);
 
-        const binaryData = atob(imageData.archivo);
-        const arrayBuffer = new ArrayBuffer(binaryData.length);
-        const uint8Array = new Uint8Array(arrayBuffer);
+                for (let i = 0; i < binaryData.length; i++) {
+                    uint8Array[i] = binaryData.charCodeAt(i);
+                }
 
-        for (let i = 0; i < binaryData.length; i++) {
-            uint8Array[i] = binaryData.charCodeAt(i);
-        }
-
-        const blob = new Blob([uint8Array], { type: 'image/jpeg' });
-        return URL.createObjectURL(blob);
+                const blob = new Blob([uint8Array], { type: 'image/jpeg' });
+                return URL.createObjectURL(blob);
+            } catch (error) {
+                throw error
+            }
+        } 
     };
 
     const handleChange = (e) => {
