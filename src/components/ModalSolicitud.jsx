@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { TextInput, Textarea, Label, Dropdown, Tooltip, Spinner } from "flowbite-react"
+import { TextInput, Textarea, Label, Tooltip, Spinner } from "flowbite-react"
 import { MdDataSaverOn } from "react-icons/md";
 import { HiX } from "react-icons/hi";
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import React from 'react';
 import FormData from 'form-data';
+import { data } from 'autoprefixer';
 
 
 
@@ -22,8 +23,19 @@ function ModalSolicitud({ serviceId, isEditable }) {
     const [initialValues, setInitialValues] = useState({});
     const [formValues, setFormValues] = useState(initialValues);
     const [newimage, setNewImage] = useState(false);
+    const [newImageGallery, setNewImageGallery] = useState(false);
 
-
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
+    });
 
     const handleMainImageUpload = (event) => {
         const { files } = event.target;
@@ -41,13 +53,11 @@ function ModalSolicitud({ serviceId, isEditable }) {
                 title: "Oops...",
                 text: "No puedes cargar dos imagenes de perfil"
             });
-        }
-
-        else {
+        } else {
             const file = event.target.files[0];
             setMainImage(file);
             setNewImage(true);
-            
+
             setFormValues((prevState) => ({
                 ...prevState,
                 imagen_principal: files[0],
@@ -57,7 +67,20 @@ function ModalSolicitud({ serviceId, isEditable }) {
 
     const handleGalleryImageUpload = (event) => {
         const files = event.target.files;
-        setGalleryImages([...galleryImages, ...Array.from(files)]);
+        if (!isEditable) {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Debes elegir la opción editar publicación para cargar una nueva imagen"
+            });
+        } else {
+            setNewImageGallery(true);
+            setGalleryImages([...galleryImages, ...Array.from(files)]);
+            setFormValues((prevState) => ({
+                ...prevState,
+                imagenes_nuevas: Array.from(files),
+            }));
+        }
 
     };
 
@@ -86,10 +109,10 @@ function ModalSolicitud({ serviceId, isEditable }) {
                     'Content-Type': 'application/json'
                 }
             }).then(response => {
-                if (tipo_img === 1) {
-                    setImageData(prevImage => prevImage.filter(image => image.id !== id));
+                if (tipo_img === 1) {                    
+                    setImageData(prevImage =>  prevImage.filter(image => image.id !== id));
                 } else {
-                    setImagesDataGallery(prevImages => prevImages.filter(image => image.id !== id));
+                    //setImagesDataGallery(prevImages => prevImages.filter(image => image.id !== id));
                 }
 
             })
@@ -211,8 +234,6 @@ function ModalSolicitud({ serviceId, isEditable }) {
         return URL.createObjectURL(blob);
     };
 
-
-
     const handleChange = (e) => {
         const { name, files } = e.target;
         if (name === 'imgPrincipal') {
@@ -267,6 +288,7 @@ function ModalSolicitud({ serviceId, isEditable }) {
             },
         }
     };
+
     const updateService = async (updatedFields) => {
         try {
             const token = sessionStorage.getItem('accessToken');
@@ -278,7 +300,6 @@ function ModalSolicitud({ serviceId, isEditable }) {
                 }
             };
             const response = await axios.put(`http://localhost/api/servicios/${serviceId}`, updatedFields, config);
-            console.log('Servicio actualizado exitosamente:', response.data);
             return response.data;
         } catch (error) {
             console.error('Error al actualizar el servicio:', error);
@@ -302,38 +323,67 @@ function ModalSolicitud({ serviceId, isEditable }) {
 
                 const response = await axios.post(`http://localhost/api/servicios/${serviceId}`, formData, {
                     headers: {
-
                         Authorization: `Bearer ${token}`,
                         'Accept': 'application/json',
                         'Content-Type': 'multipart/form-data',
                     }
                 });
-                console.log('Servicio actualizado exitosamente:', response.data);
+                Toast.fire({
+                    icon: "success",
+                    title: "Se ha cargado la imagen exitosamente"
+                });
                 return response.data;
             } catch (error) {
                 console.error('Error al actualizar el servicio:', error);
                 throw error;
             }
+        } else if (newImageGallery) {
+
+            const formDataGallery = new FormData();
+
+            for (const file of formValues.imagenes_nuevas) {
+                formDataGallery.append('data[imagenes_nuevas][]', file);
+            }
+            formDataGallery.append('_method', 'PUT');
+            try {
+                const token = sessionStorage.getItem('accessToken');
+                const response = await axios.post(`http://localhost/api/servicios/${serviceId}`, formDataGallery, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Accept': 'application/json',
+                        'Content-Type': 'multipart/form-data',
+                    }
+                });
+                Toast.fire({
+                    icon: "success",
+                    title: "Se han cargado las imagenes exitosamente"
+                });
+                return response.data;
+            } catch (error) {
+                Toast.fire({
+                    icon: "error",
+                    title: "Error al cargar las imagenes"
+                });
+                throw error;
+            }
+        } else {
+            try {
+                const response = await updateService(updatedFields);
+                Toast.fire({
+                    icon: "success",
+                    title: "Se han actualizado la información exitosamente"
+                });
+            } catch (error) {
+                Toast.fire({
+                    icon: "error",
+                    title: "Error al cargar las imagenes"
+                });
+                throw error;
+            }
         }
-        //    try {
-        //     const response = await updateService(updatedFields);
-        //     console.log('Servicio actualizado exitosamente:', response.data);
-        // } catch (error) {
-        //     console.error('Error al actualizar el servicio:', error);
-        // } 
+
     };
 
-
-
-
-
-
-    /*         try {
-                const response = await updateService(updatedFields);
-                console.log('Servicio actualizado exitosamente:', response.data);
-            } catch (error) {
-                console.error('Error al actualizar el servicio:', error);
-            } */
     useEffect(() => {
     }, [serviceData]);
 
@@ -349,21 +399,34 @@ function ModalSolicitud({ serviceId, isEditable }) {
     return (
         <>
             <div className='md:flex justify-between'>
-                <div className='mt-5 md:w-[50%]'>
+                <div className='mt-5'>
                     <Label>Pueblo Mágico</Label>
-                    <Dropdown name='id_pueblo' label={formValues.pueblo} dismissOnClick={false} color={'gray'}>
-                        {puebloMagico.map((option) => (
-                            <Dropdown.Item key={option.id} value={option.id} >{option.nombre}</Dropdown.Item>
+                    <select
+                        name='id_pueblo'
+                        value={formValues.id_pueblo}
+                        onChange={handleChange}
+                        isD
+                        className="w-full h-11 rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
+                    >
+                        <option value={formValues.pueblo}>{formValues.pueblo}</option>
+                        {puebloMagico.map((item) => (
+                            <option key={item.id} value={item.id}>{item.nombre}</option>
                         ))}
-                    </Dropdown>
+                    </select>
                 </div>
-                <div className='mt-5 md:w-[50%]'>
+                <div className='mt-5 '>
                     <Label>Categoría</Label>
-                    <Dropdown name='categoria' label={formValues.categoria} dismissOnClick={false} color={'gray'}>
-                        {categoria.map((option) => (
-                            <Dropdown.Item key={option.id} value={option.id}>{option.servicio}</Dropdown.Item>
+                    <select
+                        name='categoria'
+                        value={formValues.categoria}
+                        onChange={handleChange}
+                        className="w-full h-11 rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
+                    >
+                        <option value={formValues.categoria}>{formValues.categoria}</option>
+                        {categoria.map((item) => (
+                            <option key={item.id} value={item.id}>{item.servicio}</option>
                         ))}
-                    </Dropdown>
+                    </select>
                 </div>
             </div>
 
@@ -428,7 +491,7 @@ function ModalSolicitud({ serviceId, isEditable }) {
                 <div className="mt-5">
                     <Label>Precio</Label>
                     <TextInput
-                        name='precio'
+                        name='precios'
                         type="text"
                         value={formValues.precios || 'N/A'}
                         readOnly={!isEditable}
@@ -484,7 +547,7 @@ function ModalSolicitud({ serviceId, isEditable }) {
                 <div className="w-full mt-5">
                     <Label>Alcaldía/Municipio</Label>
                     <TextInput
-                        name="municipio"
+                        name="alcaldia"
                         type="text"
                         value={formValues.alcaldia || 'N/A'}
                         readOnly={!isEditable}
@@ -493,13 +556,17 @@ function ModalSolicitud({ serviceId, isEditable }) {
                 </div>
                 <div className="w-full mt-5">
                     <Label>Estado</Label>
-                    <Dropdown label={formValues.estado} dismissOnClick={false} color={'gray'}>
-                        {estado.map((option) => (
-                            <Dropdown.Item key={option.id} value={option}>
-                                {option.nombre}
-                            </Dropdown.Item>
+                    <select
+                        name='estado'
+                        value={formValues.estado} onChange={handleChange}
+                        className="block w-full h-11 rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
+                    >
+                        <option value={formValues.estado}>{formValues.estado}</option>
+                        {estado.map((item) => (
+                            <option key={item.id} value={item.id}>{item.nombre}</option>
                         ))}
-                    </Dropdown>
+                    </select>
+
                 </div>
             </div>
 
@@ -517,7 +584,7 @@ function ModalSolicitud({ serviceId, isEditable }) {
                 <div className="mt-5">
                     <Label>Núm. Int</Label>
                     <TextInput
-                        name='numInt'
+                        name='int'
                         type="text"
                         value={formValues.int || 'N/A'}
                         readOnly={!isEditable}
@@ -527,7 +594,7 @@ function ModalSolicitud({ serviceId, isEditable }) {
                 <div className="mt-5">
                     <Label>Núm. Ext</Label>
                     <TextInput
-                        name='numExt'
+                        name='ext'
                         type="text"
                         value={formValues.ext || 'N/A'}
                         readOnly={!isEditable}
