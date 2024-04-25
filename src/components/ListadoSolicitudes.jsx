@@ -7,7 +7,8 @@ import '../index.css'
 import ModalSolicitud from './ModalSolicitud'
 import NoDataCard from './NoDataCard';
 import { HiCheckCircle, HiOutlinePencilAlt, HiXCircle } from "react-icons/hi";
-
+import FormData from 'form-data';
+import Swal from 'sweetalert2';
 
 function ListadoSolicitudes({ tipoSolicitud }) {
     const [servicios, setServicios] = useState([]);
@@ -43,7 +44,6 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         } finally {
             setIsLoading(false);
         }
-
     };
     const getFilteredData = async (id_estatus, page) => {
         try {
@@ -64,13 +64,11 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 return response.data.data.servicios;
             }
         } catch (e) {
-            console.error('Error fetching data: ', e);
             throw e;
         }
     };
 
     const handleAccept = () => {
-        console.log(selectedServiceId);
         const token = sessionStorage.getItem('accessToken')
         const dataToSend = {
             data: {
@@ -113,6 +111,58 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     const handleEditable = () => {
         setIsEditable(true);
     }
+    const confirmButtonStyle = {
+        backgroundColor: '#6C1D45',
+        color: '#FFFFFF', 
+    };
+    const handleReject = async () => {
+        const { value: observaciones } = await Swal.fire({
+            title: 'Rechazar solicitud',
+            input: 'textarea',
+            inputPlaceholder: 'Ingrese las observaciones...',
+            showCancelButton: true,
+            confirmButtonColor:'#6C1D45',
+            confirmButtonText: 'Enviar',
+            cancelButtonText: 'Cancelar',                                    
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Por favor, ingrese las observaciones';
+                }
+            }
+        })
+        if (observaciones) {
+            const token = sessionStorage.getItem('accessToken');
+
+            const _form_data_ = new FormData();
+
+            _form_data_.append('data[id_servicio]', selectedServiceId);
+            _form_data_.append('data[id_usuario]', localStorage.getItem('user_name'));
+            _form_data_.append('data[observacion]', observaciones)
+            try {
+                const _response_ = axios.post('http://localhost/api/observaciones', _form_data_, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'accept': 'application/json',
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                Swal.fire({
+                    icon: "success",
+                    title: "Ok",
+                    text: "Las observaciones fueron enviadas con exito"
+                });
+                throw _response_
+            } catch (error) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Error al enviar las observaciones"
+                });
+                throw error;
+            }
+        }
+    }
+
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-screen">
@@ -262,6 +312,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                             <button
                                 type="button"
                                 className="py-3 px-3 bg-[#707372] hover:bg-[#8D9293] text-white rounded-full"
+                                onClick={handleReject}
                             >
                                 <HiXCircle />
                             </button>

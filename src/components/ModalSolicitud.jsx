@@ -6,10 +6,6 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import React from 'react';
 import FormData from 'form-data';
-import { data } from 'autoprefixer';
-
-
-
 
 function ModalSolicitud({ serviceId, isEditable }) {
     const [puebloMagico, setPuebloMagico] = useState([])
