@@ -6,7 +6,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import React from 'react';
 import FormData from 'form-data';
-import { data } from 'autoprefixer';
+
 
 
 
@@ -24,19 +24,30 @@ function ModalSolicitud({ serviceId, isEditable }) {
     const [newimage, setNewImage] = useState(false);
 
 
+
     const handleMainImageUpload = (event) => {
         const { files } = event.target;
-        if (imageData != null) {
+        if (!isEditable) {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Debes elegir la opción editar publicación para cargar una nueva imagen"
+            });
+        }
+        else if (imageData != null) {
             setNewImage(false);
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
                 text: "No puedes cargar dos imagenes de perfil"
             });
-        } else {
+        }
+
+        else {
             const file = event.target.files[0];
             setMainImage(file);
             setNewImage(true);
+            
             setFormValues((prevState) => ({
                 ...prevState,
                 imagen_principal: files[0],
@@ -280,18 +291,18 @@ function ModalSolicitud({ serviceId, isEditable }) {
 
         if (newimage) {
             const file = formValues.imagen_principal;
-            
+
             try {
                 const formData = new FormData();
-                
+
                 formData.append('data[imagen_principal]', file);
-                formData.append('_method','PUT');
-                
+                formData.append('_method', 'PUT');
+
                 const token = sessionStorage.getItem('accessToken');
 
                 const response = await axios.post(`http://localhost/api/servicios/${serviceId}`, formData, {
                     headers: {
-                        
+
                         Authorization: `Bearer ${token}`,
                         'Accept': 'application/json',
                         'Content-Type': 'multipart/form-data',
@@ -304,12 +315,12 @@ function ModalSolicitud({ serviceId, isEditable }) {
                 throw error;
             }
         }
-            //    try {
-            //     const response = await updateService(updatedFields);
-            //     console.log('Servicio actualizado exitosamente:', response.data);
-            // } catch (error) {
-            //     console.error('Error al actualizar el servicio:', error);
-            // } 
+        //    try {
+        //     const response = await updateService(updatedFields);
+        //     console.log('Servicio actualizado exitosamente:', response.data);
+        // } catch (error) {
+        //     console.error('Error al actualizar el servicio:', error);
+        // } 
     };
 
 
