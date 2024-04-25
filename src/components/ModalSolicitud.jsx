@@ -6,6 +6,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import React from 'react';
 import FormData from 'form-data';
+import { data } from 'autoprefixer';
 
 
 
@@ -279,18 +280,20 @@ function ModalSolicitud({ serviceId, isEditable }) {
 
         if (newimage) {
             const file = formValues.imagen_principal;
-
+            
             try {
                 const formData = new FormData();
+                
                 formData.append('data[imagen_principal]', file);
-
+                formData.append('_method','PUT');
+                
                 const token = sessionStorage.getItem('accessToken');
 
                 const response = await axios.post(`http://localhost/api/servicios/${serviceId}`, formData, {
                     headers: {
-                        '_method': 'PUT',
+                        
                         Authorization: `Bearer ${token}`,
-                        'accept': 'application/json',
+                        'Accept': 'application/json',
                         'Content-Type': 'multipart/form-data',
                     }
                 });
@@ -301,6 +304,12 @@ function ModalSolicitud({ serviceId, isEditable }) {
                 throw error;
             }
         }
+            //    try {
+            //     const response = await updateService(updatedFields);
+            //     console.log('Servicio actualizado exitosamente:', response.data);
+            // } catch (error) {
+            //     console.error('Error al actualizar el servicio:', error);
+            // } 
     };
 
 
