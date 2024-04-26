@@ -40,78 +40,88 @@ function Sidebar() {
     };
     return (
         <div className='md:flex '>
-            <aside className="md:w-1/6 bg-[#6C1D45] text-white  border-white flex flex-col" >
-                <div className='md:mb-32 md:mt-20'>
-                    <div className=' mx-auto'>
-                        <img src="../logo-ipn-lema-vertical-blanco.png" />
+            <aside className="md:w-1/6 h-[100%] bg-[#6C1D45] text-white  border-white flex flex-col" >
+                <div className="">
+                    <div className='md:mb-32'>
+                        <div className=' mx-auto'>
+                            <img src="../logo-ipn-lema-vertical-blanco.png" />
+                        </div>
                     </div>
-                </div>
-                <ul className="flex flex-col items-center">
-                    <li className='mb-2 w-full '>
-                        <Link
-                            onClick={() => handleFilterChange('all')}
-                            className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
-                        >
-                            <FaInbox className="mr-2" />
-                            Todas las solicitudes
-                        </Link>
-                    </li>
 
-                    <li className='mb-2 w-full text-center'>
-                        <Link
-                            onClick={() => handleFilterChange('2')}
-                            className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
-                        >
-                            <FaCheckCircle className="mr-2" />Solicitudes aceptadas
-                        </Link>
-                    </li>
+                    <div>
+                        <ul>
+                            <li className='mb-2 w-full '>
+                                <Link
+                                    onClick={() => handleFilterChange('all')}
+                                    className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                                >
+                                    <FaInbox className="mr-2" />
+                                    Todas las solicitudes
+                                </Link>
+                            </li>
 
-                    <li className='mb-2 w-full text-center'>
-                        <Link
-                            onClick={() => handleFilterChange('1')}
-                            className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
-                        >
-                            <FaClock className="mr-2" /> Solicitudes pendientes
-                        </Link>
-                    </li>
-                    <li className='mb-2 w-full text-center'>
-                        <Link
-                            onClick={() => handleFilterChange('3')}
-                            className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
-                        >
-                            <FaExclamationCircle className="mr-2" /> Solicitudes con observación
-                        </Link>
-                    </li>
-                </ul>
-                <div className=" mt-96 px-2 pt-10">
-                    {isAuthenticated ? (
+                            <li className='mb-2 w-full text-center'>
+                                <Link
+                                    onClick={() => handleFilterChange('2')}
+                                    className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                                >
+                                    <FaCheckCircle className="mr-2" />Solicitudes aceptadas
+                                </Link>
+                            </li>
 
-                        <Link
-                            onClick={handleLogout}
-                            className="flex items-center gap-2 py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white "
-                        >
-                            <FaSignOutAlt />Cerrar sesión
-                        </Link>
+                            <li className='mb-2 w-full text-center'>
+                                <Link
+                                    onClick={() => handleFilterChange('1')}
+                                    className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                                >
+                                    <FaClock className="mr-2" /> Solicitudes pendientes
+                                </Link>
+                            </li>
+                            <li className='mb-2 w-full text-center'>
+                                <Link
+                                    onClick={() => handleFilterChange('3')}
+                                    className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                                >
+                                    <FaExclamationCircle className="mr-2" /> Solicitudes con observación
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+                    <div className="flex justify-center mt-72">
 
-                    ) : (
-                        <Link
-                            to="/login"
-                            className="flex items-center gap-2 py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
-                        >
-                            <FaSignInAlt />Iniciar sesión
-                        </Link>
+                    </div>
+                    <div className="mt-10">
+                        {isAuthenticated ? (
+                            <Link
+                                onClick={handleLogout}
+                                className="flex items-center gap-2 py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white "
+                            >
+                                <FaSignOutAlt />Cerrar sesión
+                            </Link>
 
-                    )}
+                        ) : (
+                            <Link
+                                to="/login"
+                                className="flex items-center gap-2 py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                            >
+                                <FaSignInAlt />Iniciar sesión
+                            </Link>
+
+                        )}
+                    </div>
+
                 </div>
             </aside>
 
             <main className='md:w-5/6'>
                 <h1 className=" mt-5 border-b-2 mx-3">Gestión de publicaciones</h1>
-                <div className="mt-10">
-                    {console.log(selectedFilter)}
+                <div className="mt-10">                    
                     <ListadoSolicitudes
                         tipoSolicitud={selectedFilter}
                     />
+                    <div className="flex justify-center">
+                        <Link className="text-[#6C1D45] text-xs">Terminos y condiciones</Link>
+                    </div>
                 </div>
             </main>
 

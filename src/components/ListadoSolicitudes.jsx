@@ -276,7 +276,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 ))}
             </div>
             {/*Pagination*/}
-            <div className="mt-10">
+            <div className="mt-20">
                 <ReactPaginate
                     breakLabel={'...'}
                     previousLabel={'Anterior'}
