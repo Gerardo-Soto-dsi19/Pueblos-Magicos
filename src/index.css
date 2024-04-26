@@ -34,7 +34,7 @@ body {
     margin: 0;
     overflow-x: hidden;
     color: var(--text-color);
-    background-color:#F7F7F7;
+    background-color: #F7F7F7;
 }
 
 a {
@@ -85,35 +85,39 @@ p {
     line-height: 1.6;
 }
 
-.pagination{
-    list-style: none;
+.spinner-custom {
+    fill: #6C1D45;
+
+}
+
+.pagination {
     display: flex;
     justify-content: center;
-    align-items: center;
+    list-style: none;
+    padding: 0;
     margin-bottom: 5rem;
-    font-size: 1.2rem;
-    gap: 5px;
 }
-.spinner-custom{
-    fill: #6C1D45;
-    
+
+.pagination li {
+    margin: 0 5px;
 }
-.pagination .page-num{
-    padding: 8px 15px;
-    cursor: pointer;
+
+.pagination li a {
+    display: block;
+    padding: 5px 10px;
+    background-color: #f2f2f2;
+    color: #6C1D45;
+    text-decoration: none;
     border-radius: 3px;
-    font-weight: 400;
-    
 }
-.pagination .page-num:hover{
+
+.pagination li.active a {
     background-color: #6C1D45;
+    /* Cambiado el color de fondo */
     color: #fff;
+    /* El color del texto sigue siendo blanco */
 }
-.pagination .active{
-    background-color: #6C1D45;
-    color: #fff;
-}
-.dropDown-custom{
-    background: #6C1D45;
-    
+
+.pagination li a:hover {
+    background-color: #e6e6e6;
 }

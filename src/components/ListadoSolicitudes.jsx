@@ -28,24 +28,18 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         try {
             setIsLoading(true);
             const data = await getFilteredData(tipoSolicitud, currentPage);
-
-            if (data && data.data && data.data.length > 0) {
-                setServicios(data.data);
-                setTotalPages(data.last_page);
-                setEmptyData(false);
-                console.log(servicios);
-            } else {
-                setServicios([]);
-                setTotalPages(0);
-                setEmptyData(true)
-                console.log('No se encontraron datos');
-            }
+            const newServicios = data.data || [];
+            setServicios(newServicios);
+            setTotalPages(data.last_page);
+            setEmptyData(newServicios.length === 0); // Actualiza emptyData directamente
         } catch (e) {
             console.error('Error fetching data: ', e);
+            setEmptyData(true); // Si hay un error, establece emptyData a true
         } finally {
             setIsLoading(false);
         }
     };
+
     const getFilteredData = async (id_estatus, page) => {
         try {
             const token = sessionStorage.getItem('accessToken');
@@ -95,7 +89,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     }
 
     const handlePageClick = (event) => {
-        setCurrentPage(event.selected);
+        setCurrentPage((event.selected));
     };
 
     const handleCardClick = (id) => {
@@ -178,40 +172,56 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         <>
 
             {/*Menú filtros tipo servicio */}
-            <div className='md:flex flex-col my-5 px-2 '>
-                <div className="bg-white md:flex gap-10 md:px-5 py-5 md:py-5 shadow-md rounded-md">
-                    <div className="flex items-center gap-x-3">
-                        <input
-                            id="push-nothing"
-                            name="push-notifications"
-                            type="radio"
-                            className="form-radio h-4 w-4 text-[#5A1236]"
-                        />
-                        <label htmlFor="push-nothing" className="block text-sm font-medium leading-6 text-gray-900">
-                            Pueblo Magico
-                        </label>
+            <div className='md:flex flex-col my-5 px-2'>
+                <div className="md:flex flex-col bg-white md:gap-4 px-5 py-5 shadow-md rounded-md">
+                    <div >
+                        <h3 className="md:flex flex-col border-b-2">Ordenar por:</h3>
                     </div>
-                    <div className="flex items-center gap-x-3">
-                        <input
-                            id="push-email"
-                            name="push-notifications"
-                            type="radio"
-                            className="form-radio h-4 w-4 text-[#5A1236]"
-                        />
-                        <label htmlFor="push-email" className="block text-sm font-medium leading-6 text-gray-900">
-                            Sector Hotelero
-                        </label>
-                    </div>
-                    <div className="flex items-center gap-x-3">
-                        <input
-                            id="push-nothing"
-                            name="push-notifications"
-                            type="radio"
-                            className="form-radio h-4 w-4 text-[#5A1236]"
-                        />
-                        <label htmlFor="push-nothing" className="block text-sm font-medium leading-6 text-gray-900">
-                            Sector Restaurantero
-                        </label>
+                    <div className="md:flex items-center gap-3">
+                        <div className="flex items-center gap-x-3 md:mt-1 sm:mt-5">
+                            <input
+                                id="push-nothing"
+                                name="push-notifications"
+                                type="radio"
+                                className="form-radio h-4 w-4 text-[#5A1236]"
+                            />
+                            <label htmlFor="push-nothing" className="block text-sm font-medium leading-6 text-gray-900">
+                                Pueblo Magico
+                            </label>
+                        </div>
+                        <div className="flex items-center gap-x-3 sm:mt-2">
+                            <input
+                                id="push-email"
+                                name="push-notifications"
+                                type="radio"
+                                className="form-radio h-4 w-4 text-[#5A1236]"
+                            />
+                            <label htmlFor="push-email" className="block text-sm font-medium leading-6 text-gray-900">
+                                Sector Hotelero
+                            </label>
+                        </div>
+                        <div className="flex items-center gap-x-3 sm:mt-2">
+                            <input
+                                id="push-nothing"
+                                name="push-notifications"
+                                type="radio"
+                                className="form-radio h-4 w-4 text-[#5A1236]"
+                            />
+                            <label htmlFor="push-nothing" className="block text-sm font-medium leading-6 text-gray-900">
+                                Sector Restaurantero
+                            </label>
+                        </div>
+                        <div className="flex items-center gap-x-3 sm:mt-2">
+                            <input
+                                id="push-nothing"
+                                name="push-notifications"
+                                type="radio"
+                                className="form-radio h-4 w-4 text-[#5A1236]"
+                            />
+                            <label htmlFor="push-nothing" className="block text-sm font-medium leading-6 text-gray-900">
+                                Festividades
+                            </label>
+                        </div>
                     </div>
 
                 </div>
@@ -258,10 +268,10 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                                 Estado: {' '}
                                 <Badge
                                     color={
-                                        servicio.estatus.id === 1 ? 'warning'                                        
-                                        :servicio.estatus.id === 2 ? 'success'
-                                        :servicio.estatus.id === 3 ? 'failure'
-                                        :'gray'
+                                        servicio.estatus.id === 1 ? 'warning'
+                                            : servicio.estatus.id === 2 ? 'success'
+                                                : servicio.estatus.id === 3 ? 'failure'
+                                                    : 'gray'
                                     }
                                     className="h-auto">{servicio.estatus.estado}</Badge>
                             </p>
@@ -276,19 +286,16 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 ))}
             </div>
             {/*Pagination*/}
-            <div className="mt-20">
+            <div className="mt-10">
                 <ReactPaginate
                     breakLabel={'...'}
-                    previousLabel={'Anterior'}
-                    nextLabel={'Siguiente'}
-                    pageCount={totalPages}
-                    pageRangeDisplayed={3}
+                    nextLabel="Siguiente"
                     onPageChange={handlePageClick}
-                    containerClassName={'pagination'}
-                    pageLinkClassName={'page-num'}
-                    previousLinkClassName={'page-num'}
-                    nextLinkClassName={'page-num'}
-                    activeLinkClassName={'active'}
+                    pageRangeDisplayed={3}
+                    pageCount={totalPages}
+                    previousLabel="Anterior"
+                    renderOnZeroPageCount={null}
+                    className="pagination"
                 />
             </div>
 

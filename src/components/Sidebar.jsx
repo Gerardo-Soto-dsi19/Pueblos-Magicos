@@ -115,7 +115,7 @@ function Sidebar() {
 
             <main className='md:w-5/6'>
                 <h1 className=" mt-5 border-b-2 mx-3">Gestión de publicaciones</h1>
-                <div className="mt-10">                    
+                <div>                    
                     <ListadoSolicitudes
                         tipoSolicitud={selectedFilter}
                     />
