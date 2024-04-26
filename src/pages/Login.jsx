@@ -97,7 +97,7 @@ const Login = () => {
                     <div className="flex min-h-full flex-1 flex-col justify-center py-4 lg:px-8 b">
                         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                             <div className=' mx-auto'>
-                                <img src="../public/logo-ipn-lema-vertical-color.png" />
+                                <img src="../logo-ipn-lema-vertical-color.png" />
                             </div>
                             <h2 className=" text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
                                 Acceda a su cuenta

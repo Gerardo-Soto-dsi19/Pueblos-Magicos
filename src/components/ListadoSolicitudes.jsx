@@ -2,7 +2,7 @@
 import axios from "axios"
 import ReactPaginate from "react-paginate";
 import React, { useEffect, useState } from 'react'
-import { Carousel, Spinner, Modal, Tooltip } from "flowbite-react"
+import { Carousel, Spinner, Modal, Tooltip, Badge } from "flowbite-react"
 import '../index.css'
 import ModalSolicitud from './ModalSolicitud'
 import NoDataCard from './NoDataCard';
@@ -32,7 +32,8 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             if (data && data.data && data.data.length > 0) {
                 setServicios(data.data);
                 setTotalPages(data.last_page);
-                setEmptyData(false)
+                setEmptyData(false);
+                console.log(servicios);
             } else {
                 setServicios([]);
                 setTotalPages(0);
@@ -111,19 +112,16 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     const handleEditable = () => {
         setIsEditable(true);
     }
-    const confirmButtonStyle = {
-        backgroundColor: '#6C1D45',
-        color: '#FFFFFF', 
-    };
+
     const handleReject = async () => {
         const { value: observaciones } = await Swal.fire({
             title: 'Rechazar solicitud',
             input: 'textarea',
             inputPlaceholder: 'Ingrese las observaciones...',
             showCancelButton: true,
-            confirmButtonColor:'#6C1D45',
+            confirmButtonColor: '#6C1D45',
             confirmButtonText: 'Enviar',
-            cancelButtonText: 'Cancelar',                                    
+            cancelButtonText: 'Cancelar',
             inputValidator: (value) => {
                 if (!value) {
                     return 'Por favor, ingrese las observaciones';
@@ -162,6 +160,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             }
         }
     }
+
 
     if (isLoading) {
         return (
@@ -254,6 +253,19 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                             Pueblo Mágico:{' '}
                             <span className="font-normal normal-case">{servicio.pueblo.nombre}</span>
                         </p>
+                        <div className="flex">
+                            <p className="flex font-bold gap-3 text-gray-700 uppercase">
+                                Estado: {' '}
+                                <Badge
+                                    color={
+                                        servicio.estatus.id === 1 ? 'warning'                                        
+                                        :servicio.estatus.id === 2 ? 'success'
+                                        :servicio.estatus.id === 3 ? 'failure'
+                                        :'gray'
+                                    }
+                                    className="h-auto">{servicio.estatus.estado}</Badge>
+                            </p>
+                        </div>
                         <p
                             className=" text-center cursor-pointer underline mt-10"
                             onClick={() => handleCardClick(servicio.id)}
