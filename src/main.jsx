@@ -2,13 +2,12 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { AuthContext, AuthProvider } from './components/AuthContext'
+import { AuthProvider } from './components/AuthContext'
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import Formulario from './pages/Formulario'
 import RegistroLogin from './pages/RegistroLogin'
 import RecuperarContraseña from './pages/RecuperarContraseña'
-import GestorSolicitudes from './pages/GestorSolicitudes'
 import GestionSolicitudes from './pages/GestionSolicitudes'
 
 
@@ -32,11 +31,7 @@ const router = createBrowserRouter([{
       {
         path: '/formulario/registro',
         element: <Formulario />
-      },
-      {
-        path: '/gestion-solicitudes',
-        element: <GestorSolicitudes />
-      },
+      },      
       {
         path: '/gestor-solicitudes',
         element: <GestionSolicitudes />
