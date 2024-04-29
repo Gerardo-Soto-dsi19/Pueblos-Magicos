@@ -1,10 +1,54 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, memo } from 'react';
+import React from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import axios from "axios"
 import FormData from 'form-data';
 import Swal from 'sweetalert2';
 import { AuthContext } from '../components/AuthContext';
 import { HiX } from "react-icons/hi";
+
+
+const MemoizedSelectCategoria = React.memo((props) => (
+  <select
+    name='categoria'
+    value={props.value}
+    onChange={props.onChange}
+    className="block w-full rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
+  >
+    <option value="">Seleccionar...</option>
+    {props.options.map((item) => (
+      <option key={item.id} value={item.id}>{item.servicio}</option>
+    ))}
+  </select>
+));
+
+const MemoizedSelectPuebloMagico = React.memo((props) => (
+  <select
+    name='id_pueblo'
+    value={props.value}
+    onChange={props.onChange}
+    className="block w-full rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
+  >
+    <option value="">Seleccionar...</option>
+    {props.options.map((item) => (
+      <option key={item.id} value={item.id}>{item.nombre}</option>
+    ))}
+  </select>
+));
+
+const MemoizedSelectEstado = React.memo((props) => (
+  <select
+    name='estado'
+    value={props.value}
+    onChange={props.onChange}
+    className="block w-full rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
+  >
+    <option value="">Seleccionar...</option>
+    {props.options.map((item) => (
+      <option key={item.id} value={item.id}>{item.nombre}</option>
+    ))}
+  </select>
+));
 
 function Formulario() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -45,32 +89,26 @@ function Formulario() {
     setMainImage(null);
   };
 
-  /* Seteo de combos  */
   useEffect(() => {
-    axios.get('http://localhost/api/tiposervicios')
-      .then(response => {
-        setCategoria(response.data.data)
-      })
-      .catch(error => {
-        console.error('Error fetching states:', error);
-      });
-  }, []);
+    console.log('useEffect se ejecutó');
+    const fetchData = async () => {
+      try {
+        const [categoriasResponse, pueblosMagicosResponse, estadosResponse] = await Promise.all([
+          axios.get('http://localhost/api/tiposervicios'),
+          axios.get('http://localhost/api/pueblosmagicos'),
+          axios.get('http://localhost/api/catestados'),
+        ]);
 
+        setCategoria(categoriasResponse.data.data);
+        setPuebloMagico(pueblosMagicosResponse.data.data);
+        setEstado(estadosResponse.data.data);
+        console.log('useEffect se desmontó');
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-  useEffect(() => {
-    axios.get('http://localhost/api/pueblosmagicos')
-      .then(response => { setPuebloMagico(response.data.data) })
-      .catch(error => {
-        console.error('Error fetching pueblos:', error);
-      });
-  }, []);
-
-  useEffect(() => {
-    axios.get('http://localhost/api/catestados')
-      .then(response => { setEstado(response.data.data) })
-      .catch(error => {
-        console.error('Error fetching estados:', error);
-      });
+    fetchData();
   }, []);
 
   const Toast = Swal.mixin({
@@ -207,17 +245,11 @@ function Formulario() {
                 Pueblo Mágico
               </label>
               <div className="mt-2">
-                <select
-                  name='id_pueblo'
+                <MemoizedSelectPuebloMagico
                   value={formData.id_pueblo}
                   onChange={handleChange}
-                  className="block w-full rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
-                >
-                  <option value="">Seleccionar...</option>
-                  {puebloMagico.map((item) => (
-                    <option key={item.id} value={item.id}>{item.nombre}</option>
-                  ))}
-                </select>
+                  options={puebloMagico}
+                />
               </div>
             </div>
             <div className="sm:col-span-3">
@@ -225,17 +257,11 @@ function Formulario() {
                 Categoría
               </label>
               <div className="mt-2">
-                <select
-                  name='categoria'
+                <MemoizedSelectCategoria
                   value={formData.categoria}
                   onChange={handleChange}
-                  className="block w-full rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
-                >
-                  <option value="">Seleccionar...</option>
-                  {categoria.map((item) => (
-                    <option key={item.id} value={item.id}>{item.servicio}</option>
-                  ))}
-                </select>
+                  options={categoria}
+                />
               </div>
             </div>
 
@@ -408,16 +434,11 @@ function Formulario() {
                 Estado
               </label>
               <div className="mt-2">
-                <select
-                  name='estado'
-                  value={formData.estado} onChange={handleChange}
-                  className="block w-full rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
-                >
-                  <option value="">Seleccionar...</option>
-                  {estado.map((item) => (
-                    <option key={item.id} value={item.id}>{item.nombre}</option>
-                  ))}
-                </select>
+                <MemoizedSelectEstado
+                  value={formData.estado}
+                  onChange={handleChange}
+                  options={estado}
+                />
               </div>
             </div>
 
@@ -542,7 +563,7 @@ function Formulario() {
                           <HiX />
                         </button>
                       </div>
-                      <div className="h-36">
+                      <div className="md:h-36">
                         <img src={URL.createObjectURL(image)} alt={`Image ${index}`} key={index} />
                       </div>
                     </div>
