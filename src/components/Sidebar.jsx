@@ -1,7 +1,8 @@
 import { useState, useContext } from "react";
 import { AuthContext } from './AuthContext';
 import { Link } from "react-router-dom"
-import { FaInbox, FaCheckCircle, FaClock, FaExclamationCircle, FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
+import { FaInbox, FaCheckCircle, FaClock, FaExclamationCircle, FaSignInAlt, FaSignOutAlt, FaRegistered } from "react-icons/fa";
+import { RiAddBoxFill  } from "react-icons/ri";
 import ListadoSolicitudes from "./ListadoSolicitudes";
 import Swal from 'sweetalert2';
 import axios from 'axios';
@@ -28,13 +29,10 @@ function Sidebar() {
         } catch (error) {
             if (error.response) {
                 console.error("Error al cerrar sesión:", error.response.data);
-                // Muestra un mensaje de error al usuario o realiza otras acciones
             } else if (error.request) {
                 console.error("Error de solicitud:", error.request);
-                // Maneja el error de solicitud
             } else {
                 console.error("Error desconocido:", error.message);
-                // Maneja el error desconocido
             }
         }
     };
@@ -85,6 +83,14 @@ function Sidebar() {
                                     <FaExclamationCircle className="mr-2" /> Solicitudes con observación
                                 </Link>
                             </li>
+                            <li className='mb-2 w-full text-center'>
+                                <Link
+                                    to= "/formulario/registro"                                
+                                className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                                >
+                                    <RiAddBoxFill  className="mr-2" /> Registrar nueva publicación
+                                </Link>
+                            </li>
                         </ul>
                     </div>
                     <div className="flex justify-center mt-72">
@@ -111,21 +117,21 @@ function Sidebar() {
                     </div>
 
                 </div>
-            </aside>
+            </aside >
 
             <main className='md:w-5/6'>
                 <h1 className=" mt-5 border-b-2 mx-3">Gestión de publicaciones</h1>
-                <div>                    
+                <div>
                     <ListadoSolicitudes
                         tipoSolicitud={selectedFilter}
                     />
                     <div className="flex justify-center">
-                        <Link className="text-[#6C1D45] text-xs">Terminos y condiciones</Link>
+                        <Link className="text-[#6C1D45] text-xs">Términos y condiciones</Link>
                     </div>
                 </div>
             </main>
 
-        </div>
+        </div >
     )
 }
 

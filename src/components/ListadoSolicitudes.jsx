@@ -155,7 +155,6 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         }
     }
 
-
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-screen">
@@ -170,62 +169,96 @@ function ListadoSolicitudes({ tipoSolicitud }) {
 
     return (
         <>
-
             {/*Menú filtros tipo servicio */}
             <div className='md:flex flex-col my-5 px-2'>
                 <div className="md:flex flex-col bg-white md:gap-4 px-5 py-5 shadow-md rounded-md">
                     <div >
                         <h3 className="md:flex flex-col border-b-2">Ordenar por:</h3>
                     </div>
-                    <div className="md:flex items-center gap-3">
+                    <div className="md:flex items-center gap-10">
                         <div className="flex items-center gap-x-3 md:mt-1 sm:mt-5">
                             <input
-                                id="push-nothing"
+                                id="servicio_hotelero"
                                 name="push-notifications"
                                 type="radio"
                                 className="form-radio h-4 w-4 text-[#5A1236]"
+                                
                             />
-                            <label htmlFor="push-nothing" className="block text-sm font-medium leading-6 text-gray-900">
-                                Pueblo Magico
+                            <label htmlFor="servicio_hotelero" className="block text-sm font-medium leading-6 text-gray-900">
+                            Sector Hotelero
                             </label>
                         </div>
                         <div className="flex items-center gap-x-3 sm:mt-2">
                             <input
-                                id="push-email"
+                                id="servicio_restaurantero"
                                 name="push-notifications"
                                 type="radio"
                                 className="form-radio h-4 w-4 text-[#5A1236]"
                             />
-                            <label htmlFor="push-email" className="block text-sm font-medium leading-6 text-gray-900">
-                                Sector Hotelero
+                            <label htmlFor="servicio_restaurantero" className="block text-sm font-medium leading-6 text-gray-900">
+                            Sector Restaurantero
                             </label>
                         </div>
                         <div className="flex items-center gap-x-3 sm:mt-2">
                             <input
-                                id="push-nothing"
+                                id="servicio_restaurantero"
                                 name="push-notifications"
                                 type="radio"
                                 className="form-radio h-4 w-4 text-[#5A1236]"
                             />
-                            <label htmlFor="push-nothing" className="block text-sm font-medium leading-6 text-gray-900">
-                                Sector Restaurantero
+                            <label htmlFor="servicio_" className="block text-sm font-medium leading-6 text-gray-900">
+                                Sector Tours
                             </label>
                         </div>
                         <div className="flex items-center gap-x-3 sm:mt-2">
                             <input
-                                id="push-nothing"
+                                id="servicio_festividades"
                                 name="push-notifications"
                                 type="radio"
                                 className="form-radio h-4 w-4 text-[#5A1236]"
                             />
-                            <label htmlFor="push-nothing" className="block text-sm font-medium leading-6 text-gray-900">
+                            <label htmlFor="servicio_" className="block text-sm font-medium leading-6 text-gray-900">
+                                Sector Sitios
+                            </label>
+                        </div>
+                        <div className="flex items-center gap-x-3 sm:mt-2">
+                            <input
+                                id="servicio_festividades"
+                                name="push-notifications"
+                                type="radio"
+                                className="form-radio h-4 w-4 text-[#5A1236]"
+                            />
+                            <label htmlFor="servicio_" className="block text-sm font-medium leading-6 text-gray-900">
                                 Festividades
+                            </label>
+                        </div>
+                        <div className="flex items-center gap-x-3 sm:mt-2">
+                            <input
+                                id="servicio_festividades"
+                                name="push-notifications"
+                                type="radio"
+                                className="form-radio h-4 w-4 text-[#5A1236]"
+                            />
+                            <label htmlFor="servicio_" className="block text-sm font-medium leading-6 text-gray-900">
+                                Sector Sitios
+                            </label>
+                        </div>
+                        <div className="flex items-center gap-x-3 sm:mt-2">
+                            <input
+                                id="servicio_festividades"
+                                name="push-notifications"
+                                type="radio"
+                                className="form-radio h-4 w-4 text-[#5A1236]"
+                            />
+                            <label htmlFor="servicio_" className="block text-sm font-medium leading-6 text-gray-900">
+                                Sector Cerca de ustedes
                             </label>
                         </div>
                     </div>
 
                 </div>
             </div >
+            
             <div>
                 {/* Renderiza tus otros componentes */}
                 {emptyData && <NoDataCard />}

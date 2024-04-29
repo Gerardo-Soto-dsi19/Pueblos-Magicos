@@ -138,7 +138,7 @@ function Formulario() {
           imgPrincipal: formData.imgPrincipal,
           arrayGaleria: formData.arrayGaleria,
           id_estado: formData.estado,
-          id_usuario: '1',
+          id_usuario: localStorage.getItem('user_name'),
           id_pueblo: formData.id_pueblo,
         }
       }
