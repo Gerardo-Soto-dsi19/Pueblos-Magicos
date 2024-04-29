@@ -6,7 +6,8 @@ import FormData from 'form-data';
 import Swal from 'sweetalert2';
 import { AuthContext } from '../components/AuthContext';
 import { HiX } from "react-icons/hi";
-
+import FormInput from '../components/Formulario/FormInput';
+import FileUpload from '../components/Formulario/FileUpload';
 
 const MemoizedSelectCategoria = React.memo((props) => (
   <select
@@ -89,8 +90,7 @@ function Formulario() {
     setMainImage(null);
   };
 
-  useEffect(() => {
-    console.log('useEffect se ejecutó');
+  useEffect(() => {    
     const fetchData = async () => {
       try {
         const [categoriasResponse, pueblosMagicosResponse, estadosResponse] = await Promise.all([
@@ -101,8 +101,7 @@ function Formulario() {
 
         setCategoria(categoriasResponse.data.data);
         setPuebloMagico(pueblosMagicosResponse.data.data);
-        setEstado(estadosResponse.data.data);
-        console.log('useEffect se desmontó');
+        setEstado(estadosResponse.data.data);        
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -266,19 +265,13 @@ function Formulario() {
             </div>
 
             <div className="col-span-full">
-              <label htmlFor="titulo" className="block text-sm font-medium leading-6 text-gray-900">
-                Título
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="titulo"
-                  id="titulo"
-                  value={formData.titulo} onChange={handleChange}
-                  autoComplete="street-address"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
+              <FormInput
+                label="Titulo"
+                id="titulo"
+                name="titulo"
+                value={formData.titulo}
+                onChange={handleChange}
+              />
               <div className="mt-2">
                 <label htmlFor="descripcion" className="block text-sm font-medium leading-6 text-gray-900">
                   Descripción
@@ -580,7 +573,7 @@ function Formulario() {
             </button>
             <button
               type="submit"
-              className="rounded-md bg-[#5A1236] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[rgb(90,18,54,0.9)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="rounded-md bg-[#6C1D45] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[rgb(90,18,54,0.9)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Registrar
             </button>
