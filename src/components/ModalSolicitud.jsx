@@ -645,8 +645,8 @@ function ModalSolicitud({ serviceId, isEditable }) {
                                                 text: 'Esta acción eliminará la imagen de manera permanente',
                                                 icon: 'warning',
                                                 showCancelButton: true,
-                                                confirmButtonColor: '#3085d6',
-                                                cancelButtonColor: '#d33',
+                                                confirmButtonColor: '#6C1D45',
+                                                cancelButtonColor: '#707372',
                                                 confirmButtonText: 'Sí, eliminar',
                                                 cancelButtonText: 'Cancelar'
                                             }).then((result) => {
@@ -731,8 +731,8 @@ function ModalSolicitud({ serviceId, isEditable }) {
                                                     text: 'Esta acción eliminará la imagen de manera permanente',
                                                     icon: 'warning',
                                                     showCancelButton: true,
-                                                    confirmButtonColor: '#3085d6',
-                                                    cancelButtonColor: '#d33',
+                                                    confirmButtonColor: '#6C1D45',
+                                                    cancelButtonColor: '#707372',
                                                     confirmButtonText: 'Sí, eliminar',
                                                     cancelButtonText: 'Cancelar'
 

@@ -259,8 +259,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 </div>
             </div >
             
-            <div>
-                {/* Renderiza tus otros componentes */}
+            <div>                
                 {emptyData && <NoDataCard />}
             </div>
             {/*Cards */}
