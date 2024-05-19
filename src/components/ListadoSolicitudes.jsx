@@ -81,6 +81,13 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 }
             }).then(response => {
                 console.log('Componente afectado:', response.data);
+                Swal.fire({
+                    icon: "success",
+                    title: "Ok",
+                    text: "La publicación fue aceptada con éxito"
+                });
+                fetchData();
+                setOpenModal(false);
             })
         }
         catch (error) {
@@ -125,13 +132,13 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         if (observaciones) {
             const token = sessionStorage.getItem('accessToken');
 
-            const _form_data_ = new FormData();
+            const formData = new FormData();
 
-            _form_data_.append('data[id_servicio]', selectedServiceId);
-            _form_data_.append('data[id_usuario]', localStorage.getItem('user_name'));
-            _form_data_.append('data[observacion]', observaciones)
+            formData.append('data[id_servicio]', selectedServiceId);
+            formData.append('data[id_usuario]', localStorage.getItem('user_name'));
+            formData.append('data[observacion]', observaciones)
             try {
-                const _response_ = axios.post('http://localhost/api/observaciones', _form_data_, {
+                const response = axios.post('http://localhost/api/observaciones', formData, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'accept': 'application/json',
@@ -143,8 +150,9 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                     title: "Ok",
                     text: "Las observaciones fueron enviadas con exito"
                 });
-                throw _response_
+                throw response
             } catch (error) {
+                console.log(error);
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
