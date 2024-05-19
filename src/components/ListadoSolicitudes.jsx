@@ -145,12 +145,19 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                         'Content-Type': 'multipart/form-data',
                     },
                 });
-                Swal.fire({
-                    icon: "success",
-                    title: "Ok",
-                    text: "Las observaciones fueron enviadas con exito"
-                });
-                throw response
+                console.log((await response).status);
+                if ((await response).status === 200) {
+                    console.log('OK al if de observaciones');
+                    Swal.fire({
+                        icon: "success",
+                        title: "Rechazada",
+                        text: "Las observaciones fueron enviadas con éxito"
+                    });
+                    setOpenModal(false);
+                    fetchData();
+                } else {
+                    throw new Error('Error al enviar las observaciones');
+                }
             } catch (error) {
                 console.log(error);
                 Swal.fire({
@@ -190,10 +197,10 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                                 name="push-notifications"
                                 type="radio"
                                 className="form-radio h-4 w-4 text-[#5A1236]"
-                                
+
                             />
                             <label htmlFor="servicio_hotelero" className="block text-sm font-medium leading-6 text-gray-900">
-                            Sector Hotelero
+                                Sector Hotelero
                             </label>
                         </div>
                         <div className="flex items-center gap-x-3 sm:mt-2">
@@ -204,7 +211,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                                 className="form-radio h-4 w-4 text-[#5A1236]"
                             />
                             <label htmlFor="servicio_restaurantero" className="block text-sm font-medium leading-6 text-gray-900">
-                            Sector Restaurantero
+                                Sector Restaurantero
                             </label>
                         </div>
                         <div className="flex items-center gap-x-3 sm:mt-2">
@@ -266,8 +273,8 @@ function ListadoSolicitudes({ tipoSolicitud }) {
 
                 </div>
             </div >
-            
-            <div>                
+
+            <div>
                 {emptyData && <NoDataCard />}
             </div>
             {/*Cards */}
