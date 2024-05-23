@@ -4,7 +4,6 @@ import { Link } from "react-router-dom"
 import { FaInbox, FaCheckCircle, FaClock, FaExclamationCircle, FaSignInAlt, FaSignOutAlt, FaRegistered } from "react-icons/fa";
 import { RiAddBoxFill  } from "react-icons/ri";
 import ListadoSolicitudes from "./ListadoSolicitudes";
-import Swal from 'sweetalert2';
 import axios from 'axios';
 
 function Sidebar() {

@@ -27,41 +27,62 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     const fetchData = async () => {
         try {
             setIsLoading(true);
-            const data = await getFilteredData(tipoSolicitud, currentPage);
-            const newServicios = data.data || [];
+            const { data, last_page } = await getFilteredData(tipoSolicitud, currentPage);
+            const newServicios = data || [];
             setServicios(newServicios);
-            setTotalPages(data.last_page);
-            setEmptyData(newServicios.length === 0); // Actualiza emptyData directamente
+            setTotalPages(last_page);
+            setEmptyData(newServicios.length === 0 || last_page === 0);
         } catch (e) {
             console.error('Error fetching data: ', e);
-            setEmptyData(true); // Si hay un error, establece emptyData a true
+            setEmptyData(true);
         } finally {
             setIsLoading(false);
         }
     };
 
     const getFilteredData = async (id_estatus, page) => {
-        try {
-            const token = sessionStorage.getItem('accessToken');
-            const config = {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                params: {
-                    page: page + 1,
-                }
-            };
-            if (id_estatus === 'all') {
-                const response = await axios.get('http://localhost/api/servicios', config);
-                return response.data.data.servicios;
-            } else {
-                const response = await axios.get(`http://localhost/api/servicios/filtrar/estatus/${id_estatus}`, config);
-                return response.data.data.servicios;
+        const token = sessionStorage.getItem('accessToken');
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            params: {
+                page: page + 1
             }
+        };
+
+        try {
+            let response;
+            if (id_estatus === 'all') {
+                response = await axios.get('http://localhost/api/servicios', config);
+            } else {
+                response = await axios.get(`http://localhost/api/servicios/filtrar/estatus/${id_estatus}`, config);
+            }
+
+            const data = response.data.data.servicios;
+            const totalPages = data.last_page;
+            const currentPage = data.current_page;
+
+            // Si la página solicitada es mayor que el número total de páginas, establece la página a la última disponible
+            const adjustedPage = currentPage > totalPages ? totalPages : currentPage;
+            if (adjustedPage !== currentPage) {
+                config.params.page = adjustedPage;
+
+                // Realiza la solicitud con la página ajustada
+                if (id_estatus === 'all') {
+                    response = await axios.get('http://localhost/api/servicios', config);
+                } else {
+                    response = await axios.get(`http://localhost/api/servicios/filtrar/estatus/${id_estatus}`, config);
+                }
+            }
+
+            return response.data.data.servicios;
         } catch (e) {
             throw e;
         }
     };
+    const maxPageIndex = totalPages > 0 ? totalPages - 1 : 0;
+    const clampedForcePage = Math.min(currentPage, maxPageIndex);
 
     const handleAccept = () => {
         const token = sessionStorage.getItem('accessToken')
@@ -96,7 +117,9 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     }
 
     const handlePageClick = (event) => {
-        setCurrentPage((event.selected));
+        const newPage = event.selected;
+        setCurrentPage(newPage);
+        fetchData();
     };
 
     const handleCardClick = (id) => {
@@ -334,6 +357,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             </div>
             {/*Pagination*/}
             <div className="mt-10">
+                
                 <ReactPaginate
                     breakLabel={'...'}
                     nextLabel="Siguiente"
@@ -343,6 +367,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                     previousLabel="Anterior"
                     renderOnZeroPageCount={null}
                     className="pagination"
+                    forcePage={clampedForcePage}
                 />
             </div>
 
