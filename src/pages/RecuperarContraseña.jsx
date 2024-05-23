@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom'
 
 function RecuperarContraseña() {
   return (
-    <div className='md:flex justify-center items-center'>
+    <div className='md:flex justify-center items-center mt-10 sm: mx-10'>
       <div className='bg-white shadow-lg md:w-96 rounded-lg mb-10'>
         <div className='flex min-h-full flex-1 flex-col justify-center'>
           <div className="sm:mx-auto sm:w-full sm:max-w-sm">

@@ -9,6 +9,7 @@ import Formulario from './pages/Formulario'
 import RegistroLogin from './pages/RegistroLogin'
 import RecuperarContraseña from './pages/RecuperarContraseña'
 import GestionSolicitudes from './pages/GestionSolicitudes'
+import ResetPassword from './components/ResetPassword'
 
 
 
@@ -27,6 +28,10 @@ const router = createBrowserRouter([{
       {
         path: '/recuperar/contraseña',
         element: <RecuperarContraseña />
+      },
+      {
+        path:'/reset-password',
+        element: <ResetPassword/>
       },
       {
         path: '/formulario/registro',
