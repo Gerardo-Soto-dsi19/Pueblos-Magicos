@@ -1,11 +1,12 @@
 import { Outlet } from 'react-router-dom'
-import { useState, useEffect } from 'react';
-import axios from "axios"
+import { useState } from 'react';
 import Swal from 'sweetalert2';
-
+import { createUser } from '../api/api'
+import { Spinner } from 'flowbite-react'
 
 
 function RegistroLogin() {
+  const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     user_name: '',
     password: '',
@@ -15,6 +16,17 @@ function RegistroLogin() {
     apellido_mat: '',
     id_tipo_usuario: ''
   });
+  const resetData = () => {
+    setFormData({
+      user_name: '',
+      password: '',
+      password_confirmation: '',
+      nombre: '',
+      apellido_pat: '',
+      apellido_mat: '',
+      id_tipo_usuario: ''
+    })
+  }
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -49,7 +61,7 @@ function RegistroLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true)
     try {
       const datosToSend = {
         data: {
@@ -62,12 +74,7 @@ function RegistroLogin() {
           id_tipo_usuario: formData.id_tipo_usuario
         }
       }
-      const response = await axios.post('http://localhost/api/users/registrar', datosToSend, {
-        headers: {
-          'accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await createUser(datosToSend)
 
       if (response.status === 200 || response.status === 201) {
         console.log('Datos enviados exitosamente');
@@ -75,6 +82,7 @@ function RegistroLogin() {
           icon: "success",
           title: "Se ha registrado con exito!"
         });
+        resetData();
       } else if (response.status === 422) {
         console.log('Unprocessable Contentaaaa');
       } else {
@@ -97,13 +105,26 @@ function RegistroLogin() {
           icon: 'error',
         })
       }
+    } finally {
+      setIsLoading(false)
     }
   };
   return (
     <div className='md:flex justify-center items-center bg-white'>
       <div className="border-slate-700 shadow-lg rounded-lg mt-10 mb-10 px-20">
-        <h1>Registrar usuario</h1>
-        <form onSubmit={handleSubmit}>
+        {isLoading ? (
+          <div className="flex justify-center items-center h-screen">
+            <div className="flex flex-col items-center">
+              <h3 className="mb-4">Enviando solicitud</h3>
+              <div className="lds-ring">
+                <Spinner className="spinner-custom" size="xl" />
+              </div>
+            </div>
+          </div>
+        ) : (
+        
+        <form onSubmit={handleSubmit} className='mt-10'>
+          <h1>Registrar usuario</h1>
           <div className="space-y-12 mb-10">
             <div className="border-b border-gray-900/10 pb-12">
               <h2 className="text-base font-semibold leading-7 text-gray-900">Información Personal</h2>
@@ -264,6 +285,8 @@ function RegistroLogin() {
             </button>
           </div>
         </form>
+
+        )}
       </div>
       <Outlet />
     </div>
