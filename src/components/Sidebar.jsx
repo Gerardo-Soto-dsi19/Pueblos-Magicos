@@ -2,13 +2,12 @@ import { useState, useContext } from "react";
 import { AuthContext } from './AuthContext';
 import { Link } from "react-router-dom"
 import { FaInbox, FaCheckCircle, FaClock, FaExclamationCircle, FaSignInAlt, FaSignOutAlt, FaRegistered } from "react-icons/fa";
-import { RiAddBoxFill  } from "react-icons/ri";
+import { RiAddBoxFill } from "react-icons/ri";
 import ListadoSolicitudes from "./ListadoSolicitudes";
-import axios from 'axios';
+import { fetchLogOut } from '../api/api'
 
 function Sidebar() {
-    const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
-    const authToken = sessionStorage.getItem('accessToken');
+    const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);    
     const [selectedFilter, setSelectedFilter] = useState('all');
 
     const handleFilterChange = (filter) => {
@@ -17,12 +16,7 @@ function Sidebar() {
 
     const handleLogout = async () => {
         try {
-            await axios.post('http://localhost/api/users/logout', null, {
-                headers: {
-                    'Authorization': `Bearer ${authToken}`
-                }
-            });
-            console.log("Sesión finalizada");
+            await fetchLogOut();            
             setIsAuthenticated(false);
             sessionStorage.removeItem('accessToken');
         } catch (error) {
@@ -84,10 +78,10 @@ function Sidebar() {
                             </li>
                             <li className='mb-2 w-full text-center'>
                                 <Link
-                                    to= "/formulario/registro"                                
-                                className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                                    to="/formulario/registro"
+                                    className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
                                 >
-                                    <RiAddBoxFill  className="mr-2" /> Registrar nueva publicación
+                                    <RiAddBoxFill className="mr-2" /> Registrar nueva publicación
                                 </Link>
                             </li>
                         </ul>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, memo } from 'react';
 import React from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 import FormData from 'form-data';
 import Swal from 'sweetalert2';

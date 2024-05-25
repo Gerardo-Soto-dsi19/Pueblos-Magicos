@@ -38,15 +38,27 @@ export const loginUser = async (data) => {
 
 export const fetchAuthTokens = async () => {
   try {
-    const config = getRequestConfig({
-      'accept': 'application/json',
-      'Content-Type': 'application/json',
-    })
+    const config = {
+      headers:{
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+    }
     const response = await axios.get(`/sanctum/csrf-cookie`, config)
-
+    return response
   } catch (error) {
     console.error('Error fetching auth tokens:', error);
 
+  }
+}
+/* Servicio para el Log-out */
+export const fetchLogOut = async () => {
+  try {
+    const config = getAuthConfig()
+    const response = await axios.post('/users/logout', null, config)
+    return response
+  } catch (error) {
+    throw error
   }
 }
 /* Servicios para registrar usuarios */
@@ -66,7 +78,7 @@ export const createUser = async (data) => {
 /* Servicios para el Formulario*/
 export const getTypesServices = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/tiposervicios`);
+    const response = await axios.get('/tiposervicios');
     return response
   } catch (error) {
     console.error('Error fetching categorías:', error);
@@ -76,7 +88,7 @@ export const getTypesServices = async () => {
 
 export const getMagicTowns = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/pueblosmagicos`);
+    const response = await axios.get('/pueblosmagicos');
     return response
   } catch (error) {
     console.error('Error fetching pueblos mágicos:', error);
@@ -86,7 +98,7 @@ export const getMagicTowns = async () => {
 
 export const getStateCatalogue = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/catestados`);
+    const response = await axios.get('/catestados');
     return response
   } catch (error) {
     console.error('Error fetching estados:', error);
@@ -100,13 +112,13 @@ export const createService = async (datos) => {
       'accept': 'application/json',
       'Content-Type': 'multipart/form-data',
     })
-    const response = await axios.post(`${API_BASE_URL}/servicios/registrar`, datos, config)
+    const response = await axios.post('servicios/registrar', datos, config)
     return response
   } catch (error) {
     throw error
   }
 }
-
+/* Servicios para recuperar contraseña */
 export const resetPasswordService = async (user) => {
   try {
     const requestData = {
@@ -115,13 +127,16 @@ export const resetPasswordService = async (user) => {
       },
     };
 
-    const response = await axios.post(`${API_BASE_URL}/forgot-password`, requestData);
+    const response = await axios.post('/forgot-password', requestData);
     return response.data;
   } catch (error) {
     console.error('Error al realizar la solicitud:', error);
     throw error;
   }
 }
+
+/* Servicio para filtros de aside */
+
 export const getAllServices = async (page) => {
   try {
     const config = {
@@ -130,7 +145,7 @@ export const getAllServices = async (page) => {
         page: page + 1
       }
     };
-    const response = await axios.get(`${API_BASE_URL}/servicios`, config)
+    const response = await axios.get('/servicios', config)
     return response.data
   } catch (error) {
     throw error
@@ -145,9 +160,10 @@ export const getServicesFiltered = async (id_status, page) => {
         page: page + 1
       }
     };
-    const response = await axios.get(`${API_BASE_URL}/servicios/filtrar/estatus/${id_estatus}`, config)
+    const response = await axios.get(`/servicios/filtrar/estatus/${id_status}`, config)
     return response.data
   } catch (error) {
     throw error
   }
 }
+/* Servicios para  */
