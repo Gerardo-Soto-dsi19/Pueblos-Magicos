@@ -4,7 +4,8 @@ import { AuthContext } from '../components/AuthContext';
 import axios from "axios"
 import Swal from 'sweetalert2';
 import { Spinner } from 'flowbite-react';
-import { data } from 'autoprefixer';
+import { loginUser, fetchAuthTokens } from '../api/api'
+
 
 
 
@@ -25,31 +26,32 @@ const Login = () => {
             [name]: value,
         }));
     }
+
     const handleSubmit = async (e) => {
+
         e.preventDefault();
         setIsLoading(true);
+
         const dataToSend = {
             data: {
                 user_name: formData.user_name,
                 password: formData.password
             }
-        }
+        };
+
         try {
-            const response = await axios.post('http://localhost/api/users/login', dataToSend, {
-                headers: {
-                    'accept': 'application/json',
-                    'Content-Type': 'application/json',
-                }
-            });            
+
+            const response = await loginUser(dataToSend)
+            console.log(response.status);
             if (response.status === 200) {
-                sessionStorage.setItem('accessToken', response.data.access_token)                
-                localStorage.setItem('user_name',response.data.user.id )
+                sessionStorage.setItem('accessToken', response.data.access_token)
+                localStorage.setItem('user_name', response.data.user.id)                
                 const responseCSRF = axios.get('http://localhost/sanctum/csrf-cookie', {
                     headers: {
                         'accept': 'application/json',
                         'Content-Type': 'application/json',
                     }
-                });
+                });                
                 if ((await responseCSRF).status === 204) {
                     navigate('/formulario/registro')
                     setIsAuthenticated(true)
@@ -77,7 +79,7 @@ const Login = () => {
                 });
 
             }
-        } finally {            
+        } finally {
             setIsLoading(false);
         }
     }

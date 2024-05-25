@@ -1,5 +1,5 @@
 import axios from "axios";
-
+axios.defaults.baseURL = 'http://localhost/api'
 const API_BASE_URL = 'http://localhost/api';
 const authToken = sessionStorage.getItem('accessToken');
 
@@ -21,6 +21,47 @@ const getRequestConfig = (additionalHeaders = {}) => {
     }
   };
 };
+
+/* Servicios para el login */
+export const loginUser = async (data) => {
+  try {
+    const config = getRequestConfig({
+      'accept': 'application/json',
+      'Content-Type': 'multipart/form-data',
+    })
+    const response = await axios.post('/users/login', data, config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
+
+export const fetchAuthTokens = async () => {
+  try {
+    const config = getRequestConfig({
+      'accept': 'application/json',
+      'Content-Type': 'application/json',
+    })
+    const response = await axios.get(`/sanctum/csrf-cookie`, config)
+
+  } catch (error) {
+    console.error('Error fetching auth tokens:', error);
+
+  }
+}
+/* Servicios para registrar usuarios */
+export const createUser = async (data) => {
+  try {
+    const config = getRequestConfig({
+      'accept': 'application/json',
+      'Content-Type': 'application/json',
+    });
+    const response = await axios.post('/users/registrar', data, config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
 
 /* Servicios para el Formulario*/
 export const getTypesServices = async () => {
