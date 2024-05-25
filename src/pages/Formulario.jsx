@@ -9,7 +9,7 @@ import { AuthContext } from '../components/AuthContext';
 import { HiX } from "react-icons/hi";
 import FormInput from '../components/Formulario/FormInput';
 import FileUpload from '../components/Formulario/FileUpload';
-
+import { getTypesServices, getMagicTowns, getStateCatalogue, createService} from '../api/api'
 const MemoizedSelectCategoria = React.memo((props) => (
   <select
     name='categoria'
@@ -142,9 +142,9 @@ function Formulario() {
     const fetchData = async () => {
       try {
         const [categoriasResponse, pueblosMagicosResponse, estadosResponse] = await Promise.all([
-          axios.get('http://localhost/api/tiposervicios'),
-          axios.get('http://localhost/api/pueblosmagicos'),
-          axios.get('http://localhost/api/catestados'),
+          getTypesServices(),
+          getMagicTowns(),
+          getStateCatalogue(),
         ]);
 
         setCategoria(categoriasResponse.data.data);
@@ -233,16 +233,9 @@ function Formulario() {
           id_usuario: localStorage.getItem('user_name'),
           id_pueblo: formData.id_pueblo,
         }
-      }
-
-      const response = await axios.post('http://localhost/api/servicios/registrar', datosToSend, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'accept': 'application/json',
-          'Content-Type': 'multipart/form-data',
-        },
-
-      });
+      }      
+      const response = await createService(datosToSend);
+      console.log(response);
       if (response.status === 200 || response.status === 201) {
         console.log('Datos enviados exitosamente');
         Toast.fire({
@@ -258,7 +251,6 @@ function Formulario() {
       }
       else {
         console.log('Error al enviar los datos:');
-
       }
     } catch (error) {
       if (error.response && error.response.data) {
