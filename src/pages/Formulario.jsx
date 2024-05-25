@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, memo } from 'react';
 import React from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import axios from "axios"
+
 import FormData from 'form-data';
 import Swal from 'sweetalert2';
 import { Spinner } from 'flowbite-react'
@@ -9,7 +9,7 @@ import { AuthContext } from '../components/AuthContext';
 import { HiX } from "react-icons/hi";
 import FormInput from '../components/Formulario/FormInput';
 import FileUpload from '../components/Formulario/FileUpload';
-import { getTypesServices, getMagicTowns, getStateCatalogue, createService} from '../api/api'
+import { createService, getTypesServices, getMagicTowns, getStateCatalogue } from '../api/api'
 const MemoizedSelectCategoria = React.memo((props) => (
   <select
     name='categoria'
@@ -54,33 +54,12 @@ const MemoizedSelectEstado = React.memo((props) => (
 
 function Formulario() {
   const { isAuthenticated } = useContext(AuthContext);
-  const navigate = useNavigate();
-  const token = sessionStorage.getItem('accessToken')
+
   if (!isAuthenticated) {
     console.log('Error: el usuario no ha sido autenticado');
     return <Navigate to="/" replace />
   }
-  const initialFormData = {
-    id_pueblo: '',
-    categoria: '',
-    titulo: '',
-    descripcion: '',
-    dias_servicio: '',
-    horario_inicio: '',
-    horario_fin: '',
-    precio: '',
-    latitud: '',
-    longitud: '',
-    calle: '',
-    colonia: '',
-    estado: '',
-    alcaldia: '',
-    CP: '',
-    numInt: '',
-    numExt: '',
-    imgPrincipal: null,
-    arrayGaleria: [],
-  }
+
   const [formData, setFormData] = useState({
     id_pueblo: '',
     categoria: '',
@@ -233,9 +212,8 @@ function Formulario() {
           id_usuario: localStorage.getItem('user_name'),
           id_pueblo: formData.id_pueblo,
         }
-      }      
-      const response = await createService(datosToSend);
-      console.log(response);
+      }
+      const response = await createService(datosToSend)
       if (response.status === 200 || response.status === 201) {
         console.log('Datos enviados exitosamente');
         Toast.fire({
