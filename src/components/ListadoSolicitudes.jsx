@@ -9,6 +9,7 @@ import NoDataCard from './NoDataCard';
 import { HiCheckCircle, HiOutlinePencilAlt, HiXCircle } from "react-icons/hi";
 import FormData from 'form-data';
 import Swal from 'sweetalert2';
+import { getAllServices, getServicesFiltered, fetchAccept, fetchObservations } from '../api/api'
 
 function ListadoSolicitudes({ tipoSolicitud }) {
     const [servicios, setServicios] = useState([]);
@@ -85,7 +86,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     const clampedForcePage = Math.min(currentPage, maxPageIndex);
 
     const handleAccept = () => {
-        const token = sessionStorage.getItem('accessToken')
+        
         const dataToSend = {
             data: {
                 servicio: {
@@ -94,22 +95,14 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             }
         };
         try {
-            axios.put(`http://localhost/api/servicios/${selectedServiceId}`, dataToSend, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    '_method': 'put',
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                console.log('Componente afectado:', response.data);
-                Swal.fire({
-                    icon: "success",
-                    title: "Ok",
-                    text: "La publicación fue aceptada con éxito"
-                });
-                fetchData();
-                setOpenModal(false);
-            })
+            const response = fetchAccept(selectedServiceId, dataToSend)                        
+            Swal.fire({
+                icon: "success",
+                title: "Ok",
+                text: "La publicación fue aceptada con éxito"
+            });
+            fetchData();
+            setOpenModal(false);
         }
         catch (error) {
             console.error('Error:', error);
@@ -152,23 +145,13 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 }
             }
         })
-        if (observaciones) {
-            const token = sessionStorage.getItem('accessToken');
-
+        if (observaciones) {            
             const formData = new FormData();
-
             formData.append('data[id_servicio]', selectedServiceId);
             formData.append('data[id_usuario]', localStorage.getItem('user_name'));
             formData.append('data[observacion]', observaciones)
             try {
-                const response = axios.post('http://localhost/api/observaciones', formData, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'accept': 'application/json',
-                        'Content-Type': 'multipart/form-data',
-                    },
-                });
-                console.log((await response).status);
+                const response = fetchObservations(formData)                
                 if ((await response).status === 200) {
                     console.log('OK al if de observaciones');
                     Swal.fire({
@@ -357,7 +340,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             </div>
             {/*Pagination*/}
             <div className="mt-10">
-                
+
                 <ReactPaginate
                     breakLabel={'...'}
                     nextLabel="Siguiente"

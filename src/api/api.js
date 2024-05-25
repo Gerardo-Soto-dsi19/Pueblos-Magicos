@@ -39,7 +39,7 @@ export const loginUser = async (data) => {
 export const fetchAuthTokens = async () => {
   try {
     const config = {
-      headers:{
+      headers: {
         'accept': 'application/json',
         'Content-Type': 'application/json',
       }
@@ -135,8 +135,7 @@ export const resetPasswordService = async (user) => {
   }
 }
 
-/* Servicio para filtros de aside */
-
+/* Servicios para filtrar solicitudes (Todas, Aceptadas, Pendientes, Con observación) */
 export const getAllServices = async (page) => {
   try {
     const config = {
@@ -166,4 +165,32 @@ export const getServicesFiltered = async (id_status, page) => {
     throw error
   }
 }
-/* Servicios para  */
+
+/* Servicio para aceptar una solicitud */
+
+export const fetchAccept = async (id_service, data) => {
+  try {
+    const config = getRequestConfig({
+      '_method': 'put',
+      'Content-Type': 'application/json'
+    })
+    const response = await axios.put(`servicios/${id_service}`, data, config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
+
+/* Servicio para observaciones */
+export const fetchObservations = async (data) => {
+  try {
+    const config = getRequestConfig({
+      'accept': 'application/json',
+      'Content-Type': 'multipart/form-data',
+    })
+    const response = await axios.post('/observaciones', data, config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
