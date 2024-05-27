@@ -40,9 +40,7 @@ const Login = () => {
         };
 
         try {
-
-            const response = await loginUser(dataToSend)
-            console.log(response.status);
+            const response = await loginUser(dataToSend)            
             if (response.status === 200) {
                 sessionStorage.setItem('accessToken', response.data.access_token)
                 localStorage.setItem('user_name', response.data.user.id)                

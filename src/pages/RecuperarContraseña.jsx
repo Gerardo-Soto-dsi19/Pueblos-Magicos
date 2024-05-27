@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { resetPasswordService } from '../api/api';
+import { forgotPasswordService } from '../api/api';
 import { useNavigate } from "react-router-dom"
 import Swal from 'sweetalert2';
 import { Spinner } from 'flowbite-react';
@@ -13,12 +13,24 @@ function RecuperarContraseña() {
     e.preventDefault();
     setIsLoading(true)
     try {
-      const response = await resetPasswordService(email);
-      Swal.fire(response.data.status)
-      console.log(response.data.status);
-      navigate('/reset-password')
+      const response = await forgotPasswordService(email);
+      Swal.fire({
+        icon: 'success',        
+        title: 'Éxito!',
+        text: response.data.status,
+        confirmButtonColor: '#6c1d45',
+        confirmButtonText: 'Aceptar'
+      })
+
     } catch (error) {
-      Swal.fire( error.response.data.data.user_name)      
+      Swal.fire({
+        icon: 'error',        
+        title: 'Error',
+        text: error.response.data.data.user_name,
+        confirmButtonColor: '#6c1d45', 
+        confirmButtonText: 'Aceptar'
+      });
+      
     } finally {
       setIsLoading(false)
     }
@@ -63,13 +75,13 @@ function RecuperarContraseña() {
                 <div className='mt-6'>
                   <button
                     type="submit"
-                    className="flex w-full justify-center rounded-md bg-[#6c1d45] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+                    className="flex w-full justify-center rounded-md bg-[#6c1d45] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#8C3A68] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
                     disabled={isLoading}
                   >
                     {isLoading ? (
-                      <Spinner className='spinner-custom' aria-label="Spinner de carga"/>
-                    ):(
-                    'Recuperar'
+                      <Spinner className='spinner-custom' aria-label="Spinner de carga" />
+                    ) : (
+                      'Recuperar'
                     )}
                   </button>
                 </div>

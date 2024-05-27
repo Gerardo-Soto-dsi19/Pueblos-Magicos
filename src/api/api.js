@@ -119,7 +119,7 @@ export const createService = async (datos) => {
   }
 }
 /* Servicios para recuperar contraseña */
-export const resetPasswordService = async (user) => {
+export const forgotPasswordService = async (user) => {
   try {
     const requestData = {
       data: {
@@ -132,6 +132,14 @@ export const resetPasswordService = async (user) => {
   } catch (error) {
     console.error('Error al realizar la solicitud:', error);
     throw error;
+  }
+}
+export const resetPasswordService = async (data) => {
+  try {
+    const response = await axios.post('/password/reset', data);
+    return response.data
+  } catch (error) {
+    throw error
   }
 }
 
