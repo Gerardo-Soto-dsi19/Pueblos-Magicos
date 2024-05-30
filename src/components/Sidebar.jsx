@@ -7,8 +7,9 @@ import ListadoSolicitudes from "./ListadoSolicitudes";
 import { fetchLogOut } from '../api/api'
 
 function Sidebar() {
-    const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);    
+    const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
     const [selectedFilter, setSelectedFilter] = useState('all');
+    const [isOpen, setIsOpen] = useState(false);
 
     const handleFilterChange = (filter) => {
         setSelectedFilter(filter);
@@ -16,7 +17,7 @@ function Sidebar() {
 
     const handleLogout = async () => {
         try {
-            await fetchLogOut();            
+            await fetchLogOut();
             setIsAuthenticated(false);
             sessionStorage.removeItem('accessToken');
         } catch (error) {
@@ -38,8 +39,26 @@ function Sidebar() {
                             <img src="../logo-ipn-lema-vertical-blanco.png" />
                         </div>
                     </div>
+                    <button
+                        className="inline-flex items-center mb-5 p-2 ml-3 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                        onClick={() => setIsOpen(!isOpen)}
+                    >
+                        <svg
+                            className="w-6 h-6"
+                            aria-hidden="true"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                fillRule="evenodd"
+                                d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                                clipRule="evenodd"
+                            ></path>
+                        </svg>
+                    </button>
+                    <div className={`${isOpen ? 'block' : 'hidden'} w-full lg:block lg:w-auto`} id="mobile-menu">
 
-                    <div>
                         <ul>
                             <li className='mb-2 w-full '>
                                 <Link
@@ -76,7 +95,7 @@ function Sidebar() {
                                     <FaExclamationCircle className="mr-2" /> Solicitudes con observación
                                 </Link>
                             </li>
-                            <li className='mb-2 w-full text-center'>
+                            <li className='md:mb-2 w-full text-center'>
                                 <Link
                                     to="/formulario/registro"
                                     className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
@@ -85,28 +104,29 @@ function Sidebar() {
                                 </Link>
                             </li>
                         </ul>
-                    </div>
-                    <div className="flex justify-center mt-72">
+                        <div className="flex md:mt-72 sm: mt-10">
 
-                    </div>
-                    <div className="mt-10">
-                        {isAuthenticated ? (
-                            <Link
-                                onClick={handleLogout}
-                                className="flex items-center gap-2 py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white "
-                            >
-                                <FaSignOutAlt />Cerrar sesión
-                            </Link>
+                        </div>
+                        <div className="md:mt-10">
+                            {isAuthenticated ? (
+                                <Link
+                                    onClick={handleLogout}
+                                    className="flex items-center gap-2 py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white "
+                                >
+                                    <FaSignOutAlt />Cerrar sesión
+                                </Link>
 
-                        ) : (
-                            <Link
-                                to="/login"
-                                className="flex items-center gap-2 py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
-                            >
-                                <FaSignInAlt />Iniciar sesión
-                            </Link>
+                            ) : (
+                                <Link
+                                    to="/login"
+                                    className="flex items-center gap-2 py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                                >
+                                    <FaSignInAlt />Iniciar sesión
+                                </Link>
 
-                        )}
+                            )}
+                        </div>
+
                     </div>
 
                 </div>
