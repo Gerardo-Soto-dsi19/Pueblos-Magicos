@@ -1,6 +1,6 @@
 import axios from "axios";
 axios.defaults.baseURL = 'http://localhost/api'
-const API_BASE_URL = 'http://localhost/api';
+
 const authToken = sessionStorage.getItem('accessToken');
 
 const getAuthConfig = () => {
@@ -112,7 +112,7 @@ export const createService = async (datos) => {
       'accept': 'application/json',
       'Content-Type': 'multipart/form-data',
     })
-    const response = await axios.post('servicios/registrar', datos, config)
+    const response = await axios.post('/servicios/registrar', datos, config)
     return response
   } catch (error) {
     throw error
@@ -182,7 +182,7 @@ export const fetchAccept = async (id_service, data) => {
       '_method': 'put',
       'Content-Type': 'application/json'
     })
-    const response = await axios.put(`servicios/${id_service}`, data, config)
+    const response = await axios.put(`/servicios/${id_service}`, data, config)
     return response
   } catch (error) {
     throw error

@@ -85,8 +85,8 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     const maxPageIndex = totalPages > 0 ? totalPages - 1 : 0;
     const clampedForcePage = Math.min(currentPage, maxPageIndex);
 
-    const handleAccept = () => {
-        
+    const handleAccept = async () => {
+
         const dataToSend = {
             data: {
                 servicio: {
@@ -95,19 +95,36 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             }
         };
         try {
-            const response = fetchAccept(selectedServiceId, dataToSend)                        
-            Swal.fire({
-                icon: "success",
-                title: "Ok",
-                text: "La publicación fue aceptada con éxito"
-            });
-            fetchData();
-            setOpenModal(false);
-        }
-        catch (error) {
+
+            const response = await fetchAccept(selectedServiceId, dataToSend)
+            if (response.status === 200) {
+                // La solicitud fue exitosa
+                Swal.fire({
+                    icon: "success",
+                    title: "Ok",
+                    text: "La publicación fue aceptada con éxito"
+                });
+                fetchData();
+                setOpenModal(false);
+            } else {
+                // La solicitud no fue exitosa
+                const errorMessage = response.data ? response.data.error : 'Ocurrió un error al aceptar la publicación';
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: errorMessage
+                });
+            }
+        } catch (error) {
             console.error('Error:', error);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Ocurrió un error al intentar aceptar la publicación"
+            });
         }
     }
+
 
     const handlePageClick = (event) => {
         const newPage = event.selected;
@@ -145,13 +162,13 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 }
             }
         })
-        if (observaciones) {            
+        if (observaciones) {
             const formData = new FormData();
             formData.append('data[id_servicio]', selectedServiceId);
             formData.append('data[id_usuario]', localStorage.getItem('user_name'));
             formData.append('data[observacion]', observaciones)
             try {
-                const response = fetchObservations(formData)                
+                const response = await fetchObservations(formData)
                 if ((await response).status === 200) {
                     console.log('OK al if de observaciones');
                     Swal.fire({

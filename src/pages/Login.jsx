@@ -40,26 +40,26 @@ const Login = () => {
         };
 
         try {
-            const response = await loginUser(dataToSend)            
+            const response = await axios.post('http://localhost/api/users/login', dataToSend, {
+                headers: {
+                    'accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+            });
             if (response.status === 200) {
-                sessionStorage.setItem('accessToken', response.data.access_token)
-                localStorage.setItem('user_name', response.data.user.id)                
-                const responseCSRF = axios.get('http://localhost/sanctum/csrf-cookie', {
+                sessionStorage.setItem('accessToken', response.data.access_token);
+                localStorage.setItem('user_name', response.data.user.id);
+
+                // Obtener la cookie CSRF después de un inicio de sesión exitoso
+                await axios.get('http://localhost/sanctum/csrf-cookie', {
                     headers: {
                         'accept': 'application/json',
                         'Content-Type': 'application/json',
                     }
-                });                
-                if ((await responseCSRF).status === 204) {
-                    navigate('/formulario/registro')
-                    setIsAuthenticated(true)
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error de inicio de sesión',
-                        text: (await responseCSRF).data.error,
-                    });
-                }
+                });
+
+                navigate('/formulario/registro');
+                setIsAuthenticated(true);
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -75,7 +75,6 @@ const Login = () => {
                     title: 'Credenciales incorrectas',
                     text: 'Nombre de usuario o contraseña no válidos',
                 });
-
             }
         } finally {
             setIsLoading(false);
