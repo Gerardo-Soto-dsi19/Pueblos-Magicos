@@ -104,7 +104,7 @@ function Sidebar() {
                                 </Link>
                             </li>
                         </ul>
-                        <div className="flex md:mt-72 sm: mt-10">
+                        <div className="flex md:mt-60 sm: mt-10">
 
                         </div>
                         <div className="md:mt-10">
@@ -133,12 +133,12 @@ function Sidebar() {
             </aside >
 
             <main className='md:w-5/6'>
-                <h1 className=" mt-5 border-b-2 mx-3">Gestión de publicaciones</h1>
+                <h1 className=" mt-10 border-b-2 mx-5">Gestión de publicaciones</h1>
                 <div>
-                    <ListadoSolicitudes
+                    <ListadoSolicitudes                
                         tipoSolicitud={selectedFilter}
                     />
-                    <div className="flex justify-center">
+                    <div className="flex justify-center ">
                         <Link className="text-[#6C1D45] text-xs">Términos y condiciones</Link>
                     </div>
                 </div>

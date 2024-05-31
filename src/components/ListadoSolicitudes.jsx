@@ -20,6 +20,25 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     const [selectedServiceId, setSelectedServiceId] = useState(null);
     const [emptyData, setEmptyData] = useState(false);
     const [isEditable, setIsEditable] = useState(false);
+    let titulo;
+
+    switch (tipoSolicitud) {
+        case 'all':
+            titulo = 'Todas las solicitudes';
+            break;
+        case '1':
+            titulo = 'Solicitudes pendientes';
+            break;
+        case '2':
+            titulo = 'Solicitudes aceptadas';
+            break;
+        case '3':
+            titulo = 'Solicitudes con observación';
+            break;
+        default:
+            titulo = 'Título predeterminado';
+            break;
+    }
 
     useEffect(() => {
         fetchData();
@@ -203,105 +222,16 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         );
     }
 
-
-
     return (
         <>
-            {/*Menú filtros tipo servicio */}
-            <div className='md:flex flex-col my-5 px-2'>
-                <div className="md:flex flex-col bg-white md:gap-4 px-5 py-5 shadow-md rounded-md">
-                    <div >
-                        <h3 className="md:flex flex-col border-b-2">Ordenar por:</h3>
-                    </div>
-                    <div className="md:flex items-center gap-10">
-                        <div className="flex items-center gap-x-3 md:mt-1 sm:mt-5">
-                            <input
-                                id="servicio_hotelero"
-                                name="push-notifications"
-                                type="radio"
-                                className="form-radio h-4 w-4 text-[#5A1236]"
-
-                            />
-                            <label htmlFor="servicio_hotelero" className="block text-sm font-medium leading-6 text-gray-900">
-                                Sector Hotelero
-                            </label>
-                        </div>
-                        <div className="flex items-center gap-x-3 sm:mt-2">
-                            <input
-                                id="servicio_restaurantero"
-                                name="push-notifications"
-                                type="radio"
-                                className="form-radio h-4 w-4 text-[#5A1236]"
-                            />
-                            <label htmlFor="servicio_restaurantero" className="block text-sm font-medium leading-6 text-gray-900">
-                                Sector Restaurantero
-                            </label>
-                        </div>
-                        <div className="flex items-center gap-x-3 sm:mt-2">
-                            <input
-                                id="servicio_restaurantero"
-                                name="push-notifications"
-                                type="radio"
-                                className="form-radio h-4 w-4 text-[#5A1236]"
-                            />
-                            <label htmlFor="servicio_" className="block text-sm font-medium leading-6 text-gray-900">
-                                Sector Tours
-                            </label>
-                        </div>
-                        <div className="flex items-center gap-x-3 sm:mt-2">
-                            <input
-                                id="servicio_festividades"
-                                name="push-notifications"
-                                type="radio"
-                                className="form-radio h-4 w-4 text-[#5A1236]"
-                            />
-                            <label htmlFor="servicio_" className="block text-sm font-medium leading-6 text-gray-900">
-                                Sector Sitios
-                            </label>
-                        </div>
-                        <div className="flex items-center gap-x-3 sm:mt-2">
-                            <input
-                                id="servicio_festividades"
-                                name="push-notifications"
-                                type="radio"
-                                className="form-radio h-4 w-4 text-[#5A1236]"
-                            />
-                            <label htmlFor="servicio_" className="block text-sm font-medium leading-6 text-gray-900">
-                                Festividades
-                            </label>
-                        </div>
-                        <div className="flex items-center gap-x-3 sm:mt-2">
-                            <input
-                                id="servicio_festividades"
-                                name="push-notifications"
-                                type="radio"
-                                className="form-radio h-4 w-4 text-[#5A1236]"
-                            />
-                            <label htmlFor="servicio_" className="block text-sm font-medium leading-6 text-gray-900">
-                                Sector Sitios
-                            </label>
-                        </div>
-                        <div className="flex items-center gap-x-3 sm:mt-2">
-                            <input
-                                id="servicio_festividades"
-                                name="push-notifications"
-                                type="radio"
-                                className="form-radio h-4 w-4 text-[#5A1236]"
-                            />
-                            <label htmlFor="servicio_" className="block text-sm font-medium leading-6 text-gray-900">
-                                Sector Cerca de ustedes
-                            </label>
-                        </div>
-                    </div>
-
-                </div>
-            </div >
-
+            <div className="mt-10 mx-5">
+                <h2>{titulo}</h2>
+            </div>
             <div>
                 {emptyData && <NoDataCard />}
             </div>
             {/*Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
                 {servicios.map((servicio) => (
                     <div
                         key={servicio.id}
@@ -356,8 +286,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 ))}
             </div>
             {/*Pagination*/}
-            <div className="mt-10">
-
+            <div className="mt-24">
                 <ReactPaginate
                     breakLabel={'...'}
                     nextLabel="Siguiente"
