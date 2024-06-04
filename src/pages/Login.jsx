@@ -46,10 +46,11 @@ const Login = () => {
                     'Content-Type': 'application/json',
                 }
             });
+            console.log('contenido del response login', response.data.user.id_tipo_usuario);
             if (response.status === 200) {
                 sessionStorage.setItem('accessToken', response.data.access_token);
-                localStorage.setItem('user_name', response.data.user.id);
-
+                localStorage.setItem('user_name', response.data.user.id);                
+                sessionStorage.setItem('tu', response.data.user.id_tipo_usuario)
                 // Obtener la cookie CSRF después de un inicio de sesión exitoso
                 await axios.get('http://localhost/sanctum/csrf-cookie', {
                     headers: {
