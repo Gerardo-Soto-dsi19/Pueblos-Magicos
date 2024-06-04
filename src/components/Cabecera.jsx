@@ -87,6 +87,14 @@ function Cabecera() {
                                         Gestor de publicaciones
                                     </Link>
                                 </li>
+                                <li>
+                                    <Link
+                                        to="/gestor-roles"
+                                        className="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
+                                    >
+                                        Gestor de roles
+                                    </Link>
+                                </li>
                             </ul>
                         </nav>
                     </div>
