@@ -5,7 +5,7 @@ import Footer from './Footer'
 function Layout() {
   const location = useLocation();
 
-  const shouldHideHeaderFooter = location.pathname === '/gestor-solicitudes';
+  const shouldHideHeaderFooter = location.pathname === '/gestor-solicitudes' || location.pathname ==='/gestor-roles';
   return (
     <>
       {!shouldHideHeaderFooter && (
