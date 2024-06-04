@@ -310,36 +310,40 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 </Modal.Body>
                 <Modal.Footer className="flex items-center justify-end gap-4">
                     <div className="flex flex-row-reverse gap-x-7">
-                        <Tooltip content="Aceptar publicación">
-                            <button
-                                type="button"
-                                className="md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full"
-                                onClick={handleAccept}
-                            >
-                                <HiCheckCircle />
-                            </button>
-                        </Tooltip>
-                        <Tooltip content="Editar publicación">
-                            <button
-                                type="button"
-                                className="md:flex-1 py-3 px-3  bg-slate-950 hover:bg-slate-800 text-white rounded-full"
-                                onClick={handleEditable}
-                            >
-                                <HiOutlinePencilAlt />
-                            </button>
-                        </Tooltip>
-                        <Tooltip content="Rechazar publicación">
-                            <button
-                                type="button"
-                                className="py-3 px-3 bg-[#707372] hover:bg-[#8D9293] text-white rounded-full"
-                                onClick={handleReject}
-                            >
-                                <HiXCircle />
-                            </button>
-                        </Tooltip>
-
+                        {sessionStorage.getItem("tu") === "1" && (
+                            <>
+                                <Tooltip content="Aceptar publicación">
+                                    <button
+                                        type="button"
+                                        className="md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full"
+                                        onClick={handleAccept}
+                                    >
+                                        <HiCheckCircle />
+                                    </button>
+                                </Tooltip>
+                                <Tooltip content="Editar publicación">
+                                    <button
+                                        type="button"
+                                        className="md:flex-1 py-3 px-3  bg-slate-950 hover:bg-slate-800 text-white rounded-full"
+                                        onClick={handleEditable}
+                                    >
+                                        <HiOutlinePencilAlt />
+                                    </button>
+                                </Tooltip>
+                                <Tooltip content="Rechazar publicación">
+                                    <button
+                                        type="button"
+                                        className="py-3 px-3 bg-[#707372] hover:bg-[#8D9293] text-white rounded-full"
+                                        onClick={handleReject}
+                                    >
+                                        <HiXCircle />
+                                    </button>
+                                </Tooltip>
+                            </>
+                        )}
                     </div>
                 </Modal.Footer>
+
             </Modal>
         </>
     )

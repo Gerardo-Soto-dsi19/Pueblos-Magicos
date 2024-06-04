@@ -1,9 +1,9 @@
 import axios from "axios";
 axios.defaults.baseURL = 'http://localhost/api'
 
-const authToken = sessionStorage.getItem('accessToken');
 
 const getAuthConfig = () => {
+  const authToken = sessionStorage.getItem('accessToken');
   return {
     headers: {
       'Authorization': `Bearer ${authToken}`,
