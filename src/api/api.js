@@ -202,3 +202,16 @@ export const fetchObservations = async (data) => {
     throw error
   }
 }
+
+export const fetchTipoUsuario = async () => {
+  try {
+    const config = getRequestConfig({
+      'accept': 'application/json',
+      'Content-Type': 'multipart/form-data',
+    })
+    const response = await axios.get('/users', config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
