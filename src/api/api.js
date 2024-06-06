@@ -202,6 +202,7 @@ export const fetchObservations = async (data) => {
     throw error
   }
 }
+/* Servicios para obtener usuarios */
 
 export const fetchTipoUsuario = async () => {
   try {
@@ -210,6 +211,32 @@ export const fetchTipoUsuario = async () => {
       'Content-Type': 'multipart/form-data',
     })
     const response = await axios.get('/users', config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
+
+export const fetchTipoUsuarioById = async (id) => {
+  try {
+    const config = getRequestConfig({
+      'accept': 'application/json',
+      'Content-Type': 'multipart/form-data',
+    })
+    const response = await axios.get(`/users/${id}`, config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
+/* Servicio para obtener tipos de usuario*/
+
+export const fetchTypeUsers = async () => {
+  try {
+    const header = {
+      'accept': 'application/json'
+    }
+    const response = await axios.get('/cattiposUsers', header)
     return response
   } catch (error) {
     throw error

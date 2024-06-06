@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
+import Swal from 'sweetalert2';
 import CardSolicitud from './CardSolicitud'
 import { fetchTipoUsuario } from '../../api/api'
+
 function ListadoSolicitudRoles() {
     const [dataUser, setDataUser] = useState([]);
 
@@ -14,7 +16,7 @@ function ListadoSolicitudRoles() {
             //console.log(response);
             setDataUser(response)
         } catch (error) {
-
+            console.log(error);
         }
     }
     return (
