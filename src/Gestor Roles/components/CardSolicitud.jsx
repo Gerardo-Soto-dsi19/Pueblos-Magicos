@@ -4,15 +4,17 @@ import { HiDotsVertical } from "react-icons/hi";
 import { Modal } from 'flowbite-react'
 import { HiCheckCircle, HiXCircle } from "react-icons/hi";
 import Swal from 'sweetalert2';
-import { fetchTipoUsuarioById, fetchTypeUsers } from '../../api/api'
+import { fetchTipoUsuarioById, fetchTypeUsers, fetchUpdateRole } from '../../api/api'
 import '../../index.css'
 
-function CardSolicitud({ dataUsers }) {
+function CardSolicitud({ dataUsers, onDataUpdate }) {
     const [toggledUsers, setToggledUsers] = useState({});
     const [openModal, setOpenModal] = useState(false);
+    const [idUser, setIdUser] = useState('');
     const [dataInfoUsers, setDataInfoUsers] = useState([]);
     const [dataInfoUser, setDataInfoUser] = useState([]);
     const [rolUser, setRolUser] = useState([]);
+    const [selectedRole, setSelectedRole] = useState('');
 
     useEffect(() => {
         if (dataUsers && dataUsers.data && dataUsers.data.data && dataUsers.data.data.usuarios) {
@@ -31,9 +33,14 @@ function CardSolicitud({ dataUsers }) {
 
     }
 
+    const handleRoleChange = (event) => {
+        setSelectedRole(event.target.value);
+    };
+
     const handleCardClick = (id) => {
         setOpenModal(true)
         fetchUserById(id)
+        setIdUser(id)
         handleTypesUsers()
     }
 
@@ -81,7 +88,40 @@ function CardSolicitud({ dataUsers }) {
             const successText = isUserToggled ? 'El usuario ha sido dado de baja exitosamente.' : 'El usuario ha sido activado exitosamente.';
             Swal.fire(successTitle, successText, 'success');
         }
-    };
+    }
+
+    const handleChangeRole = async () => {
+        try {
+            const result = await Swal.fire({
+                title: '¿Estás seguro?',
+                text: '¿Deseas cambiar el rol del usuario?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#6C1D45',
+                confirmButtonText: 'Sí, cambiar rol',
+                cancelButtonText: 'Cancelar',
+            });
+            if (result.isConfirmed) {
+                const dataUpdated = {
+                    data: {
+                        user: {
+                            'id_tipo_usuario': selectedRole,
+                        }
+                    },
+                    _method: 'PUT'
+                }
+                const responseUpdate = await fetchUpdateRole(idUser, dataUpdated)
+                if (responseUpdate.status === 200) {
+                    Swal.fire('Éxito', 'El rol del usuario ha sido actualizado', 'success');
+                    setOpenModal(false)
+                    onDataUpdate();
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            Swal.fire('Error', 'Ocurrió un error al actualizar el rol', 'error');
+        }
+    }
 
     return (
         <>
@@ -105,7 +145,7 @@ function CardSolicitud({ dataUsers }) {
                                             : user.id_estatus === 4 ? 'failure'
                                                 : 'gray'
                                     } className='h-auto'>
-                                    {user.id_estatus}
+                                    {user.estatus.estado}
                                 </Badge>
                             </p>
                         </div>
@@ -181,7 +221,8 @@ function CardSolicitud({ dataUsers }) {
                                 <div>
                                     <select
                                         name="tipo_usuario"
-                                        defaultValue={user.tipo.tipo_usuario}
+                                        value={selectedRole || user.tipo.tipo_usuario}
+                                        onChange={handleRoleChange}
                                         className='col-span-1 rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300'
                                     >
                                         <option value={user.tipo.tipo_usuario}>{user.tipo.tipo_usuario}</option>
@@ -195,11 +236,21 @@ function CardSolicitud({ dataUsers }) {
                         </div>
                     ))}
                 </Modal.Body>
-                <Modal.Footer>
-                    <button><HiCheckCircle /></button>
-                    <button>
-                        <HiXCircle />
-                    </button>
+                <Modal.Footer className='mt-6 flex justify-end'>
+                    <div className='flex gap-x-7'>
+                        <button
+                            type='button'
+                            onClick={handleChangeRole}
+                            className='md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full'>
+                            <HiCheckCircle />
+                        </button>
+                        <button
+                            type='button'
+                            onClick={handleModalClose}
+                            className='md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full'>
+                            <HiXCircle />
+                        </button>
+                    </div>
                 </Modal.Footer>
             </Modal>
 

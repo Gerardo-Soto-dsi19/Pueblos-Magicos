@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import Swal from 'sweetalert2';
+
 import CardSolicitud from './CardSolicitud'
 import { fetchTipoUsuario } from '../../api/api'
 
@@ -13,12 +13,17 @@ function ListadoSolicitudRoles() {
     const fetchData = async () => {
         try {
             const response = await fetchTipoUsuario()
-            //console.log(response);
+            console.log(response);
             setDataUser(response)
         } catch (error) {
             console.log(error);
         }
     }
+    
+    // Refrescar los datos después de un cambio de rol
+    const handleDataUpdate = () => {
+        fetchData();
+    };
     return (
         <div>
             <div className="mt-5 mx-5">
@@ -26,6 +31,7 @@ function ListadoSolicitudRoles() {
             </div>
             <CardSolicitud
                 dataUsers={dataUser}
+                onDataUpdate={handleDataUpdate}
             />
         </div>
     )

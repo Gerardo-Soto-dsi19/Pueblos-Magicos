@@ -413,8 +413,7 @@ function ModalSolicitud({ serviceId, isEditable }) {
                     <select
                         name='id_pueblo'
                         value={formValues.id_pueblo}
-                        onChange={handleChange}
-                        isD
+                        onChange={handleChange}                        
                         className="w-full h-11 rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
                     >
                         <option value={formValues.pueblo}>{formValues.pueblo}</option>
@@ -787,7 +786,7 @@ function ModalSolicitud({ serviceId, isEditable }) {
                         </div>
                     )}
                 </div>
-                <div className="mt-6 flex justify-end" >
+                <div className="flex items-center justify-end gap-4" >
                     <div>
                         <Tooltip content="Guardar publicación">
                             <button

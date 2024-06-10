@@ -242,3 +242,16 @@ export const fetchTypeUsers = async () => {
     throw error
   }
 }
+
+export const fetchUpdateRole = async (id,data) => {
+  try {
+    const config = getRequestConfig({
+      'Accept': 'application/json',
+      'Content-Type': 'multipart/form-data',
+    })
+    const response = await axios.post(`/users/${id}`, data, config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}

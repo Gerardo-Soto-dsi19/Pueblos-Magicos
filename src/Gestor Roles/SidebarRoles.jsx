@@ -5,6 +5,7 @@ import { Link } from "react-router-dom"
 import { FaInbox, FaCheckCircle, FaClock, FaExclamationCircle, FaSignInAlt, FaSignOutAlt, FaRegistered } from "react-icons/fa";
 import { RiAddBoxFill } from "react-icons/ri";
 import ListadoSolicitudRoles from './components/ListadoSolicitudRoles';
+import { fetchLogOut } from '../api/api'
 
 function SidebarRoles() {
     const [isOpen, setIsOpen] = useState(false);
@@ -130,7 +131,7 @@ function SidebarRoles() {
                 <main className='md:w-5/6'>
                     <h1 className=" mt-10 border-b-2 mx-5">Gestión de roles</h1>
                     <div>
-                        <ListadoSolicitudRoles/>
+                        <ListadoSolicitudRoles />
                         <div className="flex justify-center ">
                             <Link className="text-[#6C1D45] text-xs">Términos y condiciones</Link>
                         </div>
