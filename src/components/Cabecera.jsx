@@ -7,7 +7,7 @@ function Cabecera() {
     const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
     const authToken = sessionStorage.getItem('accessToken');
     const [isOpen, setIsOpen] = useState(false);
-    
+
     const ADMIN_TYPE = '1';
     const MANAGER_VILLAGES = '2';
 
@@ -22,7 +22,7 @@ function Cabecera() {
                     'Authorization': `Bearer ${authToken}`
                 }
             });
-            
+
             setIsAuthenticated(false);
             sessionStorage.removeItem('accessToken')
             return response
@@ -55,29 +55,11 @@ function Cabecera() {
                                 ></path>
                             </svg>
                         </button>
-                        {isAuthenticated ? (
-                            <Link
-                                onClick={handleLogout}
-                                className="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
-                            >
-                                Cerrar sesión
-                            </Link>
-                        ) : (
-                            <Link
-                                to="/login"
-                                className="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
-                            >
-                                Iniciar sesión
-                            </Link>
-                        )}
                     </div>
-                    <div
-                        className={`${isOpen ? 'block' : 'hidden'
-                            } w-full lg:block lg:w-auto`}
-                        id="mobile-menu"
-                    >
+                    <div className={`${isOpen ? 'block' : 'hidden'} w-full lg:block lg:w-auto`} id="mobile-menu">
                         <nav>
                             <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+
                                 <li>
                                     <Link
                                         to="/formulario/registro"
@@ -107,6 +89,21 @@ function Cabecera() {
                                 )}
                             </ul>
                         </nav>
+                        {isAuthenticated ? (
+                            <Link
+                                onClick={handleLogout}
+                                className="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
+                            >
+                                Cerrar sesión
+                            </Link>
+                        ) : (
+                            <Link
+                                to="/login"
+                                className="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
+                            >
+                                Iniciar sesión
+                            </Link>
+                        )}
                     </div>
                 </div>
             </header>

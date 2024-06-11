@@ -46,7 +46,7 @@ const Login = () => {
                     'Content-Type': 'application/json',
                 }
             });
-            console.log('contenido del response login', response.data.user.id_tipo_usuario);
+            
             if (response.status === 200) {
                 sessionStorage.setItem('accessToken', response.data.access_token);
                 localStorage.setItem('user_name', response.data.user.id);                
