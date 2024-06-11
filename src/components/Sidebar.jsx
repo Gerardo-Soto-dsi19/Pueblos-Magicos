@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { AuthContext } from './AuthContext';
 import { Link } from "react-router-dom"
-import { FaInbox, FaCheckCircle, FaClock, FaExclamationCircle, FaSignInAlt, FaSignOutAlt, FaRegistered } from "react-icons/fa";
+import { FaInbox, FaCheckCircle, FaClock, FaExclamationCircle, FaSignInAlt, FaSignOutAlt, FaUser, FaLock } from "react-icons/fa";
 import { RiAddBoxFill } from "react-icons/ri";
 import ListadoSolicitudes from "./ListadoSolicitudes";
 import { fetchLogOut } from '../api/api'
@@ -103,6 +103,14 @@ function Sidebar() {
                                     <RiAddBoxFill className="mr-2" /> Registrar nueva publicación
                                 </Link>
                             </li>
+                            <li className='md:mb-2 w-full text-center'>
+                                <Link
+                                    to="/gestor-roles"
+                                    className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                                >
+                                    <FaLock className="mr-2" /> Gestor de roles
+                                </Link>
+                            </li>
                         </ul>
                         <div className="flex md:mt-60 sm: mt-10">
 
@@ -135,7 +143,7 @@ function Sidebar() {
             <main className='md:w-5/6'>
                 <h1 className=" mt-10 border-b-2 mx-5">Gestión de publicaciones</h1>
                 <div>
-                    <ListadoSolicitudes                
+                    <ListadoSolicitudes
                         tipoSolicitud={selectedFilter}
                     />
                     <div className="flex justify-center ">

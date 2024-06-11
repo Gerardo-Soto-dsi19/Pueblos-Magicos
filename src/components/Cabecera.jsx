@@ -7,6 +7,13 @@ function Cabecera() {
     const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
     const authToken = sessionStorage.getItem('accessToken');
     const [isOpen, setIsOpen] = useState(false);
+    //const [hasPermission, setHasPermission] = useState(false);
+    const ADMIN_TYPE = '1';
+    const MODERATOR_TYPE = '2';
+
+    const hasPermission = isAuthenticated &&
+        (sessionStorage.getItem('tu') === ADMIN_TYPE ||
+            sessionStorage.getItem('tu') === MODERATOR_TYPE);
 
     const handleLogout = () => {
         try {
@@ -22,6 +29,7 @@ function Cabecera() {
             console.log(error.response.data);
         }
     };
+
 
     return (
         <div>
@@ -63,9 +71,8 @@ function Cabecera() {
                         )}
                     </div>
                     <div
-                        className={`${
-                            isOpen ? 'block' : 'hidden'
-                        } w-full lg:block lg:w-auto`}
+                        className={`${isOpen ? 'block' : 'hidden'
+                            } w-full lg:block lg:w-auto`}
                         id="mobile-menu"
                     >
                         <nav>
@@ -87,14 +94,16 @@ function Cabecera() {
                                         Gestor de publicaciones
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link
-                                        to="/gestor-roles"
-                                        className="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
-                                    >
-                                        Gestor de roles
-                                    </Link>
-                                </li>
+                                {hasPermission && (
+                                    <li>
+                                        <Link
+                                            to="/gestor-roles"
+                                            className="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
+                                        >
+                                            Gestor de roles
+                                        </Link>
+                                    </li>
+                                )}
                             </ul>
                         </nav>
                     </div>
