@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import React from 'react';
 import FormData from 'form-data';
 
-function ModalSolicitud({ serviceId, isEditable }) {
+function ModalSolicitud({ serviceId, isEditable, onDataUpdate  }) {
     const [puebloMagico, setPuebloMagico] = useState([])
     const [categoria, setCategoria] = useState([])
     const [estado, setEstado] = useState([])
@@ -109,7 +109,7 @@ function ModalSolicitud({ serviceId, isEditable }) {
                     setImageData(prevImages => {
                         if (Array.isArray(prevImages)) {
                             return prevImages.filter(image => image.id !== _id_);
-                        } else {                            
+                        } else {
                             return [];
                         }
                     });
@@ -117,7 +117,7 @@ function ModalSolicitud({ serviceId, isEditable }) {
                     setImagesDataGallery(prevImages => {
                         if (Array.isArray(prevImages)) {
                             return prevImages.filter(image => image.id !== _id_);
-                        } else {                            
+                        } else {
                             return [];
                         }
                     });
@@ -213,8 +213,7 @@ function ModalSolicitud({ serviceId, isEditable }) {
                     console.error('No se encontraron datos de servicio');
                 }
             } catch (e) {
-                console.error('Error fetching service data:', e);
-                // O también puedes acceder a las propiedades del objeto de error
+                console.error('Error fetching service data:', e);                
                 console.error('Error fetching service data:', e.message, e.response);
             }
         };
@@ -240,7 +239,7 @@ function ModalSolicitud({ serviceId, isEditable }) {
             } catch (error) {
                 throw error
             }
-        } 
+        }
     };
 
     const handleChange = (e) => {
@@ -341,6 +340,9 @@ function ModalSolicitud({ serviceId, isEditable }) {
                     icon: "success",
                     title: "Se ha cargado la imagen exitosamente"
                 });
+
+                onDataUpdate();
+
                 return response.data;
             } catch (error) {
                 console.error('Error al actualizar el servicio:', error);
@@ -367,6 +369,7 @@ function ModalSolicitud({ serviceId, isEditable }) {
                     icon: "success",
                     title: "Se han cargado las imagenes exitosamente"
                 });
+                onDataUpdate();
                 return response.data;
             } catch (error) {
                 Toast.fire({
@@ -382,6 +385,7 @@ function ModalSolicitud({ serviceId, isEditable }) {
                     icon: "success",
                     title: "Se han actualizado la información exitosamente"
                 });
+                onDataUpdate();
             } catch (error) {
                 Toast.fire({
                     icon: "error",
@@ -410,32 +414,47 @@ function ModalSolicitud({ serviceId, isEditable }) {
             <div className='md:flex justify-between'>
                 <div className='mt-5'>
                     <Label>Pueblo Mágico</Label>
-                    <select
-                        name='id_pueblo'
-                        value={formValues.id_pueblo}
-                        onChange={handleChange}
-                        isD
-                        className="w-full h-11 rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
-                    >
-                        <option value={formValues.pueblo}>{formValues.pueblo}</option>
-                        {puebloMagico.map((item) => (
-                            <option key={item.id} value={item.id}>{item.nombre}</option>
-                        ))}
-                    </select>
+                    {!isEditable ? (
+                        <TextInput
+                            type='text'
+                            defaultValue={formValues.pueblo}
+                            readOnly={true}
+                        />
+                    ) : (
+                        <select
+                            name='id_pueblo'
+                            value={formValues.id_pueblo}
+                            onChange={handleChange}
+                            className="w-full h-11 rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
+                        >
+                            <option value={formValues.pueblo}>{formValues.pueblo}</option>
+                            {puebloMagico.map((item) => (
+                                <option key={item.id} value={item.id}>{item.nombre}</option>
+                            ))}
+                        </select>
+                    )}
                 </div>
                 <div className='mt-5 '>
                     <Label>Categoría</Label>
-                    <select
-                        name='categoria'
-                        value={formValues.categoria}
-                        onChange={handleChange}
-                        className="w-full h-11 rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
-                    >
-                        <option value={formValues.categoria}>{formValues.categoria}</option>
-                        {categoria.map((item) => (
-                            <option key={item.id} value={item.id}>{item.servicio}</option>
-                        ))}
-                    </select>
+                    {!isEditable ? (
+                        <TextInput
+                            type='text'
+                            defaultValue={formValues.categoria}
+                            readOnly={true}
+                        />
+                    ) : (
+                        <select
+                            name='id_categoria'
+                            value={formValues.id_categoria}
+                            onChange={handleChange}
+                            className="w-full h-11 rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
+                        >
+                            <option value={formValues.categoria}>{formValues.categoria}</option>
+                            {categoria.map((item) => (
+                                <option key={item.id} value={item.id}>{item.servicio}</option>
+                            ))}
+                        </select>
+                    )}
                 </div>
             </div>
 
@@ -565,16 +584,25 @@ function ModalSolicitud({ serviceId, isEditable }) {
                 </div>
                 <div className="w-full mt-5">
                     <Label>Estado</Label>
-                    <select
-                        name='estado'
-                        value={formValues.estado} onChange={handleChange}
-                        className="block w-full h-11 rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
-                    >
-                        <option value={formValues.estado}>{formValues.estado}</option>
-                        {estado.map((item) => (
-                            <option key={item.id} value={item.id}>{item.nombre}</option>
-                        ))}
-                    </select>
+                    {!isEditable ? (
+                        <TextInput
+                            type='text'
+                            value={formValues.estado}
+                            readOnly={true}
+                            onChange={handleChange}
+                        />
+                    ) : (
+                        <select
+                            name='id_estado'
+                            value={formValues.id_estado} onChange={handleChange}
+                            className="block w-full h-11 rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset sm:max-w-xs sm:text-sm sm:leading-6"
+                        >
+                            <option value={formValues.estado}>{formValues.estado}</option>
+                            {estado.map((item) => (
+                                <option key={item.id} value={item.id}>{item.nombre}</option>
+                            ))}
+                        </select>
+                    )}
 
                 </div>
             </div>
@@ -616,21 +644,24 @@ function ModalSolicitud({ serviceId, isEditable }) {
                 <div className='mt-3'>
                     <Label htmlFor="imagen_principal">Imagen principal </Label>
                 </div>
-                <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                    <div className="text-center">
-                        <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                            <label
-                                htmlFor="imagen_principal"
-                                className="relative cursor-pointer rounded-md bg-white font-semibold text-[#6c1d45] focus-within:outline-none focus-within:ring-2 focus-within:ring-[#6c1d45] focus-within:ring-offset-2 hover:text-[#6A294A]"
-                            >
-                                <span>Sube un archivo</span>
-                                <input id="imagen_principal" name="imagen_principal" type="file" className="sr-only" onChange={handleMainImageUpload} />
-                            </label>
-                            <p className="pl-1">o arrastra y suelta</p>
+                {isEditable && (
+
+                    <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                        <div className="text-center">
+                            <div className="mt-4 flex text-sm leading-6 text-gray-600" >
+                                <label
+                                    htmlFor="imagen_principal"
+                                    className="relative cursor-pointer rounded-md bg-white font-semibold text-[#6c1d45] focus-within:outline-none focus-within:ring-2 focus-within:ring-[#6c1d45] focus-within:ring-offset-2 hover:text-[#6A294A]"
+                                >
+                                    <span>Sube un archivo</span>
+                                    <input id="imagen_principal" name="imagen_principal" type="file" className="sr-only" onChange={handleMainImageUpload} />
+                                </label>
+                                <p className="pl-1">o arrastra y suelta</p>
+                            </div>
+                            <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
                         </div>
-                        <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
                     </div>
-                </div>
+                )}
                 {imageData && (
                     <div className="mt-5 flex justify-center">
                         <div className='w-40 flex justify-center'>
@@ -700,21 +731,24 @@ function ModalSolicitud({ serviceId, isEditable }) {
                 <div className='mt-3'>
                     <Label>Imágenes de galería</Label>
                 </div>
-                <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                    <div className="text-center">
-                        <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                            <label
-                                htmlFor="arrayGaleria"
-                                className="relative cursor-pointer rounded-md bg-white font-semibold text-[#6c1d45] focus-within:outline-none focus-within:ring-2 focus-within:ring-[#6c1d45] focus-within:ring-offset-2 hover:text-[#6A294A]"
-                            >
-                                <span>Sube uno o varios archivos</span>
-                                <input id="arrayGaleria" name="arrayGaleria" type="file" multiple className="sr-only" onChange={handleGalleryImageUpload} />
-                            </label>
-                            <p className="pl-1">o arrastra y suelta</p>
+                {isEditable && (
+                    <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10" >
+                        <div className="text-center">
+                            <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                                <label
+                                    htmlFor="arrayGaleria"
+                                    className="relative cursor-pointer rounded-md bg-white font-semibold text-[#6c1d45] focus-within:outline-none focus-within:ring-2 focus-within:ring-[#6c1d45] focus-within:ring-offset-2 hover:text-[#6A294A]"
+                                >
+                                    <span>Sube uno o varios archivos</span>
+                                    <input id="arrayGaleria" name="arrayGaleria" type="file" multiple className="sr-only" onChange={handleGalleryImageUpload} />
+                                </label>
+                                <p className="pl-1">o arrastra y suelta</p>
+                            </div>
+                            <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
                         </div>
-                        <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
                     </div>
-                </div>
+
+                )}
 
                 {imagesDataGallery.length > 0 && (
                     <div className="mt-12">

@@ -59,6 +59,9 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             setIsLoading(false);
         }
     };
+    const handleDataUpdate = () => {        
+        fetchData();
+    };
 
     const getFilteredData = async (id_estatus, page) => {
         const token = sessionStorage.getItem('accessToken');
@@ -306,11 +309,12 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                     <ModalSolicitud
                         serviceId={selectedServiceId}
                         isEditable={isEditable}
+                        onDataUpdate={handleDataUpdate}
                     />
                 </Modal.Body>
                 <Modal.Footer className="flex items-center justify-end gap-4">
                     <div className="flex flex-row-reverse gap-x-7">
-                        {sessionStorage.getItem("tu") === "1" && (
+                        {sessionStorage.getItem("tu") === "1" || sessionStorage.getItem("tu") === "2" && (
                             <>
                                 <Tooltip content="Aceptar publicación">
                                     <button
