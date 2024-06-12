@@ -228,20 +228,20 @@ function RegistroLogin() {
               <div className="border-b border-gray-900/10 pb-12">
                 <div className="mt-10 space-y-10">
                   <fieldset>
-                    <legend className="text-sm font-semibold leading-6 text-gray-900">Tipo pueblo Mágico</legend>
-                    <p className="mt-1 text-sm leading-6 text-gray-600">Por favor indique que a que sector esta enfocado</p>
+                    <legend className="text-sm font-semibold leading-6 text-gray-900">Tipo pueblo mágico</legend>
+                    <p className="mt-1 text-sm leading-6 text-gray-600">Por favor indique a qué sector está enfocado</p>
                     <div className="mt-6 space-y-6">
                       <div className="flex items-center gap-x-3">
                         <input
                           id="push-pueblo"
                           name="id_tipo_usuario"
                           type="radio"
-                          value={2}
+                          value={5}
                           onChange={handleChange}
                           className="form-radio h-4 w-4 text-[#6C1D45]"
                         />
                         <label htmlFor="push-pueblo" className="block text-sm font-medium leading-6 text-gray-900">
-                          Director Pueblo Magico
+                          Pueblo Mágico
                         </label>
                       </div>
                       <div className="flex items-center gap-x-3">
