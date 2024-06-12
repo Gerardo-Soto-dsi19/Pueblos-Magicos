@@ -26,24 +26,24 @@ function ResetPassword() {
                     "password_confirmation": newPasswordConfirm
                 }
             }
-            const response = await resetPasswordService(dataForm)        
+            const response = await resetPasswordService(dataForm)
             Swal.fire({
-                icon:'success',                
+                icon: 'success',
                 title: 'Éxito!',
                 text: response.data.status,
-                confirmButtonColor: '#6c1d45', 
+                confirmButtonColor: '#6c1d45',
                 confirmButtonText: 'Aceptar'
             })
         } catch (error) {
             console.log(error);
             Swal.fire({
-                icon: 'error',                
+                icon: 'error',
                 title: 'Error',
                 text: error.response.data.data.user_name.join('\n'),
-                confirmButtonColor: '#6c1d45', 
+                confirmButtonColor: '#6c1d45',
                 confirmButtonText: 'Aceptar'
-              });
-            
+            });
+
         } finally {
             setIsLoading(false)
         }
@@ -65,7 +65,7 @@ function ResetPassword() {
                             <form className="rounded-lg py-10 px-5 mb-10 space-y-6" onSubmit={handleResetPassword}>
                                 <div>
                                     <label htmlFor="new_Password" className="block text-sm font-medium leading-6 text-gray-900">
-                                        Constraseña nueva
+                                        Contraseña nueva
                                     </label>
                                     <div className="mt-2">
                                         <input
@@ -82,7 +82,7 @@ function ResetPassword() {
                                 </div>
                                 <div>
                                     <label htmlFor="new_Password_Confirm" className="block text-sm font-medium leading-6 text-gray-900">
-                                        Confirmar constraseña
+                                        Confirmar contraseña
                                     </label>
                                     <div className="mt-2">
                                         <input

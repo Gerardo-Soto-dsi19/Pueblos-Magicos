@@ -469,7 +469,7 @@ function Formulario() {
 
                 <div className="sm:col-span-2">
                   <label htmlFor="CP" className="block text-sm font-medium leading-6 text-gray-900">
-                    Código Postal
+                    Código postal
                   </label>
                   <div className="mt-2">
                     <input
