@@ -209,11 +209,9 @@ function Formulario() {
           id_usuario: localStorage.getItem('user_name'),
           id_pueblo: formData.id_pueblo,
         }
-      }
-      console.log('FormData', datosToSend);
+      }      
       const response = await createService(datosToSend)
-      if (response.status === 200 || response.status === 201) {
-        console.log('Datos enviados exitosamente');
+      if (response.status === 200 || response.status === 201) {        
         Toast.fire({
           icon: "success",
           title: "Se ha registrado la solicitud con exito!"
@@ -221,7 +219,7 @@ function Formulario() {
         resetForm();
       }
       else if (response.status === 422) {
-        console.log('Unprocessable Contentaaaa');
+        console.log('Unprocessable Content');
       } else if (response.status === 401) {
         console.log('Usuario no autenticado');
       }
@@ -231,13 +229,12 @@ function Formulario() {
     } catch (error) {
       if (error.response && error.response.data) {
         // Imprimir la respuesta de la API
-        console.log('Error al enviar los datossss:', error.response.data);
+        console.log('Error al enviar los datos:', error.response.data);
         const camposNoLlenados = Object.entries(error.response.data.data).flatMap(([campo, errores]) =>
           errores.map((error) => `-${error}`)
         );
 
         const mensajeError = `Los siguientes campos no se llenaron correctamente:\n\n\n${camposNoLlenados.join('\n\n')}`;
-
 
         Swal.fire({
           title: 'Error',
