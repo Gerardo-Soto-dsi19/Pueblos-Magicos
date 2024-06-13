@@ -127,6 +127,10 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
         setMainImage(null);
     };
 
+    const handleRemoveGalleryImages = () => {
+        setGalleryImages([])
+    }
+
     const handleRemoveDataMainImage = (_id_, _name_, _tipo_img_) => {
 
         const token = sessionStorage.getItem('accessToken');
@@ -759,7 +763,28 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                         <div className='w-40 flex justify-center'>
                             <div className="bg-white shadow-md rounded-md overflow-hidden">
                                 <div className='relative'>
-                                    <button className='absolute  right-1 bg-white rounded-full p-1 hover:bg-gray-100' onClick={handleRemoveMainImage}>
+                                    <button className='absolute  right-1 bg-white rounded-full p-1 hover:bg-gray-100'
+                                        onClick={() => {
+                                            Swal.fire({
+                                                title: '¿Estás seguro?',
+                                                text: 'Esta acción eliminará la imagen de manera permanente',
+                                                icon: 'warning',
+                                                showCancelButton: true,
+                                                confirmButtonColor: '#6C1D45',
+                                                cancelButtonColor: '#707372',
+                                                confirmButtonText: 'Sí, eliminar',
+                                                cancelButtonText: 'Cancelar'
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    handleRemoveMainImage();
+                                                    Swal.fire({
+                                                        title: "Deleted!",
+                                                        text: "Tu imagen ha sido eliminada.",
+                                                        icon: "success"
+                                                    });
+                                                }
+                                            });
+                                        }}>
                                         <HiX />
                                     </button>
                                 </div>
@@ -860,6 +885,27 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
 
                                             <button
                                                 className="absolute right-0 bg-white rounded-full p-1 hover:bg-gray-100"
+                                                onClick={() => {
+                                                    Swal.fire({
+                                                        title: '¿Estás seguro?',
+                                                        text: 'Esta acción eliminará la imagen de manera permanente',
+                                                        icon: 'warning',
+                                                        showCancelButton: true,
+                                                        confirmButtonColor: '#6C1D45',
+                                                        cancelButtonColor: '#707372',
+                                                        confirmButtonText: 'Sí, eliminar',
+                                                        cancelButtonText: 'Cancelar'
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            handleRemoveGalleryImages();
+                                                            Swal.fire({
+                                                                title: "Deleted!",
+                                                                text: "Tu imagen ha sido eliminada.",
+                                                                icon: "success"
+                                                            });
+                                                        }
+                                                    });
+                                                }}
                                             >
                                                 <HiX />
                                             </button>
