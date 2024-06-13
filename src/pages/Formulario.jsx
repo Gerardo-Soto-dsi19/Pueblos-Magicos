@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, memo } from 'react';
+import { useRef, useState, useEffect, useContext, memo } from 'react';
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
@@ -87,6 +87,12 @@ function Formulario() {
   const [mainImage, setMainImage] = useState(null);
   const [galleryImages, setGalleryImages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const dropZoneMainRef = useRef(null);
+  const [dragActiveMain, setDragActiveMain] = useState(false);
+
+  const dropZoneGalleryRef = useRef(null);
+  const [dragActiveGallery, setDragActiveGallery] = useState(false);
+
   const handleRemoveMainImage = () => {
     setMainImage(null);
   };
@@ -178,16 +184,7 @@ function Formulario() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const formDataToSend = new FormData();
 
-      if (formData.imgPrincipal) {
-        formDataToSend.append('imgPrincipal', formData.imgPrincipal);
-      }
-      if (formData.arrayGaleria.length > 0) {
-        formData.arrayGaleria.forEach((imagen) => {
-          formDataToSend.append('arrayGaleria', imagen);
-        });
-      }
 
       const datosToSend = {
         data: {
@@ -212,10 +209,9 @@ function Formulario() {
           id_usuario: localStorage.getItem('user_name'),
           id_pueblo: formData.id_pueblo,
         }
-      }
+      }      
       const response = await createService(datosToSend)
-      if (response.status === 200 || response.status === 201) {
-        console.log('Datos enviados exitosamente');
+      if (response.status === 200 || response.status === 201) {        
         Toast.fire({
           icon: "success",
           title: "Se ha registrado la solicitud con exito!"
@@ -223,7 +219,7 @@ function Formulario() {
         resetForm();
       }
       else if (response.status === 422) {
-        console.log('Unprocessable Contentaaaa');
+        console.log('Unprocessable Content');
       } else if (response.status === 401) {
         console.log('Usuario no autenticado');
       }
@@ -233,13 +229,12 @@ function Formulario() {
     } catch (error) {
       if (error.response && error.response.data) {
         // Imprimir la respuesta de la API
-        console.log('Error al enviar los datossss:', error.response.data);
+        console.log('Error al enviar los datos:', error.response.data);
         const camposNoLlenados = Object.entries(error.response.data.data).flatMap(([campo, errores]) =>
           errores.map((error) => `-${error}`)
         );
 
         const mensajeError = `Los siguientes campos no se llenaron correctamente:\n\n\n${camposNoLlenados.join('\n\n')}`;
-
 
         Swal.fire({
           title: 'Error',
@@ -252,6 +247,55 @@ function Formulario() {
     }
   }
 
+  const handleDrag = (e, isMain) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      if (isMain) {
+        setDragActiveMain(true);
+      } else {
+        setDragActiveGallery(true);
+      }
+    } else if (e.type === 'dragleave') {
+      if (isMain) {
+        setDragActiveMain(false);
+      } else {
+        setDragActiveGallery(false);
+      }
+    }
+  };
+  const handleDrop = (e, isMain) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isMain) {
+      setDragActiveMain(false);
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        const file = e.dataTransfer.items[0].getAsFile();
+        if (file) {
+          setMainImage(file);
+          setFormData((prevState) => ({
+            ...prevState,
+            imgPrincipal: file,
+          }));
+        }
+      }
+    } else {
+      setDragActiveGallery(false);
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        const files = Array.from(e.dataTransfer.items)
+          .filter((item) => item.kind === 'file')
+          .map((item) => item.getAsFile());
+
+        if (files.length > 0) {
+          setGalleryImages((prevImages) => [...prevImages, ...files]);
+          setFormData((prevState) => ({
+            ...prevState,
+            arrayGaleria: [...prevState.arrayGaleria, ...files],
+          }));
+        }
+      }
+    }
+  };
 
   return (
     <>
@@ -517,7 +561,15 @@ function Formulario() {
                   <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900">
                     Imagen Principal
                   </label>
-                  <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                  <div
+                    className={`mt-2 flex justify-center rounded-lg border border-dashed px-6 py-10 ${dragActiveMain ? 'bg-gray-200' : 'border-gray-900/25'
+                      }`}
+                    ref={dropZoneMainRef}
+                    onDragEnter={(e) => handleDrag(e, true)}
+                    onDragOver={(e) => handleDrag(e, true)}
+                    onDragLeave={(e) => handleDrag(e, true)}
+                    onDrop={(e) => handleDrop(e, true)}
+                  >
                     <div className="text-center">
                       <div className="mt-4 flex text-sm leading-6 text-gray-600">
                         <label
@@ -555,9 +607,17 @@ function Formulario() {
 
                 <div className="col-span-full">
                   <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900">
-                    Imagen Principal
+                    Imagenes de galería
                   </label>
-                  <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                  <div
+                    className={`mt-2 flex justify-center rounded-lg border border-dashed px-6 py-10 ${dragActiveGallery ? 'bg-gray-200' : 'border-gray-900/25'
+                      }`}
+                    ref={dropZoneGalleryRef}
+                    onDragEnter={(e) => handleDrag(e, false)}
+                    onDragOver={(e) => handleDrag(e, false)}
+                    onDragLeave={(e) => handleDrag(e, false)}
+                    onDrop={(e) => handleDrop(e, false)}
+                  >
                     <div className="text-center">
                       <div className="mt-4 flex text-sm leading-6 text-gray-600">
                         <label
@@ -565,7 +625,14 @@ function Formulario() {
                           className="relative cursor-pointer rounded-md bg-white font-semibold text-[#6c1d45] focus-within:outline-none focus-within:ring-2 focus-within:ring-[#6c1d45] focus-within:ring-offset-2 hover:text-[#6A294A]"
                         >
                           <span>Sube uno o varios archivos</span>
-                          <input id="arrayGaleria" name="arrayGaleria" type="file" multiple className="sr-only" onChange={handleChange} />
+                          <input
+                            id="arrayGaleria"
+                            name="arrayGaleria"
+                            type="file"
+                            multiple
+                            className="sr-only"
+                            onChange={handleChange}
+                          />
                         </label>
                         <p className="pl-1">o arrastra y suelta</p>
                       </div>

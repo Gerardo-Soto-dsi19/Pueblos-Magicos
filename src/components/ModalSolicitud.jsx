@@ -22,6 +22,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
     const [newImageGallery, setNewImageGallery] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
+
     const Toast = Swal.mixin({
         toast: true,
         position: "top-end",
@@ -81,7 +82,48 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
 
     };
 
+    const handleDragOver = (e) => {
+        e.preventDefault();
+    };
+
+    const handleDropMainImage = (e) => {
+        e.preventDefault();
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            if (Array.isArray(imageData) && imageData.length > 0) { // Verifica si el array imageData está vacío
+                // Si ya hay una imagen principal existente, mostrar un mensaje de error
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'No puedes cargar dos imágenes de perfil',
+                });
+            } else {
+                // Si no hay una imagen principal existente, permitir soltar la nueva imagen
+                setMainImage(files[0]);
+                setNewImage(true);
+                setFormValues((prevState) => ({
+                    ...prevState,
+                    imagen_principal: files[0],
+                }));
+            }
+        }
+    };
+
+    const handleDropGalleryImages = (e) => {
+        e.preventDefault();
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            setNewImageGallery(true);
+            setGalleryImages([...galleryImages, ...Array.from(files)]);
+            setFormValues((prevState) => ({
+                ...prevState,
+                imagenes_nuevas: Array.from(files),
+            }));
+        }
+    };
+
     const handleRemoveMainImage = () => {
+
         setMainImage(null);
     };
 
@@ -123,6 +165,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                         }
                     });
                 }
+                onDataUpdate();
             })
         } catch (error) {
             console.error('Error:', error);
@@ -647,7 +690,11 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                 </div>
                 {isEditable && (
 
-                    <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                    <div
+                        className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10"
+                        onDragOver={handleDragOver}
+                        onDrop={Array.isArray(imageData) && imageData.length > 0 ? (e) => e.preventDefault() : handleDropMainImage}
+                    >
                         <div className="text-center">
                             <div className="mt-4 flex text-sm leading-6 text-gray-600" >
                                 <label
@@ -733,7 +780,11 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                     <Label>Imágenes de galería</Label>
                 </div>
                 {isEditable && (
-                    <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10" >
+                    <div
+                        className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10"
+                        onDragOver={handleDragOver}
+                        onDrop={handleDropGalleryImages}
+                    >
                         <div className="text-center">
                             <div className="mt-4 flex text-sm leading-6 text-gray-600">
                                 <label
