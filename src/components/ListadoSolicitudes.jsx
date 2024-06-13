@@ -59,8 +59,9 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             setIsLoading(false);
         }
     };
-    const handleDataUpdate = () => {        
+    const handleDataUpdate = () => {
         fetchData();
+        setIsEditable(false)
     };
 
     const getFilteredData = async (id_estatus, page) => {
@@ -98,7 +99,6 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                     response = await axios.get(`http://localhost/api/servicios/filtrar/estatus/${id_estatus}`, config);
                 }
             }
-
             return response.data.data.servicios;
         } catch (e) {
             throw e;
@@ -314,7 +314,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 </Modal.Body>
                 <Modal.Footer className="flex items-center justify-end gap-4">
                     <div className="flex flex-row-reverse gap-x-7">
-                        {sessionStorage.getItem("tu") === "1" || sessionStorage.getItem("tu") === "2" && (
+                        {(sessionStorage.getItem("tu") === "1" || sessionStorage.getItem("tu") === "2") && (
                             <>
                                 <Tooltip content="Aceptar publicación">
                                     <button

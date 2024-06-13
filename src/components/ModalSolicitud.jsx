@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import React from 'react';
 import FormData from 'form-data';
 
-function ModalSolicitud({ serviceId, isEditable, onDataUpdate  }) {
+function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
     const [puebloMagico, setPuebloMagico] = useState([])
     const [categoria, setCategoria] = useState([])
     const [estado, setEstado] = useState([])
@@ -20,6 +20,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate  }) {
     const [formValues, setFormValues] = useState(initialValues);
     const [newimage, setNewImage] = useState(false);
     const [newImageGallery, setNewImageGallery] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const Toast = Swal.mixin({
         toast: true,
@@ -213,7 +214,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate  }) {
                     console.error('No se encontraron datos de servicio');
                 }
             } catch (e) {
-                console.error('Error fetching service data:', e);                
+                console.error('Error fetching service data:', e);
                 console.error('Error fetching service data:', e.message, e.response);
             }
         };
@@ -317,7 +318,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate  }) {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
-
+        setIsLoading(true);
         if (newimage) {
             const file = formValues.imagen_principal;
 
@@ -829,8 +830,13 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate  }) {
                                 className="md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full"
                                 hidden={!isEditable}
                                 onClick={handleUpdate}
+                                disabled={isLoading}
                             >
-                                <MdDataSaverOn />
+                                {isLoading ? (
+                                    <Spinner className='spinner-custom' aria-label="Spinner de carga" />
+                                ) : (
+                                    <MdDataSaverOn />
+                                )}
                             </button>
                         </Tooltip>
                     </div>
