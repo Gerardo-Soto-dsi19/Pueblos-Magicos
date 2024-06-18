@@ -59,7 +59,7 @@ const Login = () => {
                     }
                 });
 
-                navigate('/formulario/registro');
+                navigate('/gestor-solicitudes');
                 setIsAuthenticated(true);
             } else {
                 Swal.fire({

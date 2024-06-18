@@ -191,8 +191,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             formData.append('data[observacion]', observaciones)
             try {
                 const response = await fetchObservations(formData)
-                if ((await response).status === 200) {
-                    console.log('OK al if de observaciones');
+                if ((await response).status === 200) {                    
                     Swal.fire({
                         icon: "success",
                         title: "Rechazada",

@@ -119,6 +119,7 @@ function Formulario() {
       imgPrincipal: null,
       arrayGaleria: [],
     });
+
     setMainImage(null);
     setGalleryImages([]);
   };
@@ -209,9 +210,9 @@ function Formulario() {
           id_usuario: localStorage.getItem('user_name'),
           id_pueblo: formData.id_pueblo,
         }
-      }      
+      }
       const response = await createService(datosToSend)
-      if (response.status === 200 || response.status === 201) {        
+      if (response.status === 200 || response.status === 201) {
         Toast.fire({
           icon: "success",
           title: "Se ha registrado la solicitud con exito!"
@@ -263,7 +264,8 @@ function Formulario() {
         setDragActiveGallery(false);
       }
     }
-  };
+  }
+
   const handleDrop = (e, isMain) => {
     e.preventDefault();
     e.stopPropagation();
@@ -295,7 +297,28 @@ function Formulario() {
         }
       }
     }
-  };
+  }
+
+  const handleCancell = async () => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Se descartarán los cambios realizados",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: '#6C1D45',      
+      confirmButtonText: "Sí, continuar",
+      cancelButtonText: "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Toast.fire({
+          icon: "info",
+          title: "Se ha cancelado la solicitud con éxito"
+        });
+        
+        resetForm();
+      }
+    });
+  }
 
   return (
     <>
@@ -667,7 +690,10 @@ function Formulario() {
 
 
               <div className="mt-6 py-5 flex items-center justify-end gap-x-6">
-                <button type="button" className="text-sm font-semibold leading-6 text-gray-900">
+                <button
+                  type="button"
+                  className="text-sm font-semibold leading-6 text-gray-900"
+                  onClick={handleCancell}>
                   Cancelar
                 </button>
                 <button
