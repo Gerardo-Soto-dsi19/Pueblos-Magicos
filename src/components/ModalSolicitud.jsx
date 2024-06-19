@@ -535,7 +535,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                     <TextInput
                         name='dias_servicio'
                         type="text"
-                        value={formValues.dias_servicio || 'N/A'}
+                        value={formValues.dias_servicio}
                         readOnly={!isEditable}
                         onChange={handleChange}
                     />
@@ -545,7 +545,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                     <TextInput
                         name='horario_inicio'
                         type="time"
-                        value={formValues.horario_inicio || 'N/A'}
+                        value={formValues.horario_inicio}
                         readOnly={!isEditable}
                         onChange={handleChange}
                     />
@@ -555,7 +555,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                     <TextInput
                         name='horario_fin'
                         type="time"
-                        value={formValues.horario_fin || 'N/A'}
+                        value={formValues.horario_fin}
                         readOnly={!isEditable}
                         onChange={handleChange}
                     />
@@ -569,7 +569,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                     <TextInput
                         name='precios'
                         type="text"
-                        value={formValues.precios || 'N/A'}
+                        value={formValues.precios}
                         readOnly={!isEditable}
                         onChange={handleChange}
                     />
@@ -579,7 +579,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                     <TextInput
                         name='latitud'
                         type="text"
-                        value={formValues.latitud || 'N/A'}
+                        value={formValues.latitud}
                         readOnly={!isEditable}
                         onChange={handleChange}
                     />
@@ -589,7 +589,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                     <TextInput
                         name='longitud'
                         type="text"
-                        value={formValues.longitud || 'N/A'}
+                        value={formValues.longitud}
                         readOnly={!isEditable}
                         onChange={handleChange}
                     />
@@ -602,7 +602,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                     <TextInput
                         name='calle'
                         type="text"
-                        value={formValues.calle || 'N/A'}
+                        value={formValues.calle}
                         readOnly={!isEditable}
                         onChange={handleChange}
                     />
@@ -612,7 +612,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                     <TextInput
                         name='colonia'
                         type="text"
-                        value={formValues.colonia || 'N/A'}
+                        value={formValues.colonia}
                         readOnly={!isEditable}
                         onChange={handleChange}
                     />
@@ -625,7 +625,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                     <TextInput
                         name="alcaldia"
                         type="text"
-                        value={formValues.alcaldia || 'N/A'}
+                        value={formValues.alcaldia}
                         readOnly={!isEditable}
                         onChange={handleChange}
                     />
@@ -661,7 +661,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                     <TextInput
                         name='CP'
                         type="text"
-                        value={formValues.CP || 'N/A'}
+                        value={formValues.CP}
                         readOnly={!isEditable}
                         onChange={handleChange}
                     />
@@ -671,7 +671,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                     <TextInput
                         name='int'
                         type="text"
-                        value={formValues.int || 'N/A'}
+                        value={formValues.int}
                         readOnly={!isEditable}
                         onChange={handleChange}
                     />
@@ -681,7 +681,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                     <TextInput
                         name='ext'
                         type="text"
-                        value={formValues.ext || 'N/A'}
+                        value={formValues.ext}
                         readOnly={!isEditable}
                         onChange={handleChange}
                     />
