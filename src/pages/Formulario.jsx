@@ -92,8 +92,20 @@ function Formulario() {
   const dropZoneGalleryRef = useRef(null);
   const [dragActiveGallery, setDragActiveGallery] = useState(false);
 
+  const handleClick = (e, indexToRemove) => {
+    e.preventDefault(); // Prevenir el comportamiento predeterminado del clic
+    e.stopPropagation(); // Detener la propagación del evento
+    handleRemoveGalleryImage(indexToRemove);
+  };
+
   const handleRemoveMainImage = () => {
     setMainImage(null);
+  };
+
+  const handleRemoveGalleryImage = (indexToRemove) => {
+    setGalleryImages((prevImages) =>
+      prevImages.filter((_, index) => index !== indexToRemove)
+    );
   };
 
   const resetForm = () => {
@@ -184,8 +196,6 @@ function Formulario() {
     e.preventDefault();
     setIsLoading(true);
     try {
-
-
       const datosToSend = {
         data: {
           id_tipo_servicio: formData.categoria,
@@ -674,9 +684,9 @@ function Formulario() {
                       {galleryImages.map((image, index) => (
                         <div className="bg-white shadow-md rounded-md overflow-hidden" key={index}>
                           <div className="relative">
-
                             <button
                               className="absolute right-0 bg-white rounded-full p-1 hover:bg-gray-100"
+                              onClick={(e) => handleClick(e, index)}
                             >
                               <HiX />
                             </button>
