@@ -1,10 +1,9 @@
 import { useRef, useState, useEffect, useContext, memo } from 'react';
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-
-import FormData from 'form-data';
 import Swal from 'sweetalert2';
 import { Spinner } from 'flowbite-react'
+import { FiAlertCircle } from "react-icons/fi";
 import { AuthContext } from '../components/AuthContext';
 import { HiX } from "react-icons/hi";
 import FormInput from '../components/Formulario/FormInput';
@@ -336,6 +335,7 @@ function Formulario() {
           <div className='flex justify-center sm:mx-5'>
             <form onSubmit={handleSubmit} className="md:w-1/2 bg-white shadow-lg rounded-lg mt-5 mb-10 px-10">
               <h1 className='mt-5'>Formulario</h1>
+              <h5 className='flex items-center font-light mt-5 text-red-700 gap-2'><FiAlertCircle/>Todos los campos deben ser llenados para poder enviar la solicitud</h5>
               <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-3">
                   <label htmlFor="#" className="block text-sm font-medium leading-6 text-gray-900">
