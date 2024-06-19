@@ -2,7 +2,7 @@ import { useRef, useState, useEffect, useContext, memo } from 'react';
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { Spinner } from 'flowbite-react'
+import { Spinner, Tooltip } from 'flowbite-react'
 import { FiAlertCircle } from "react-icons/fi";
 import { AuthContext } from '../components/AuthContext';
 import { HiX } from "react-icons/hi";
@@ -335,7 +335,7 @@ function Formulario() {
           <div className='flex justify-center sm:mx-5'>
             <form onSubmit={handleSubmit} className="md:w-1/2 bg-white shadow-lg rounded-lg mt-5 mb-10 px-10">
               <h1 className='mt-5'>Formulario</h1>
-              <h5 className='flex items-center font-light mt-5 text-red-700 gap-2'><FiAlertCircle/>Todos los campos deben ser llenados para poder enviar la solicitud</h5>
+              <h5 className='flex items-center font-light mt-5 text-red-700 gap-2'><FiAlertCircle />Todos los campos deben ser llenados para poder enviar la solicitud</h5>
               <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-3">
                   <label htmlFor="#" className="block text-sm font-medium leading-6 text-gray-900">
@@ -389,12 +389,14 @@ function Formulario() {
                     Días de servicio
                   </label>
                   <div className="mt-2">
-                    <input
-                      type="text"
-                      name="dias_servicio"
-                      value={formData.dias_servicio} onChange={handleChange}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
+                    <Tooltip content="Este campo debe contener entre 5 y 20 caracteres">
+                      <input
+                        type="text"
+                        name="dias_servicio"
+                        value={formData.dias_servicio} onChange={handleChange}
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                    </Tooltip>
                   </div>
                 </div>
 
