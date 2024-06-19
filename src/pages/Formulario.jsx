@@ -73,7 +73,7 @@ function Formulario() {
     longitud: '',
     calle: '',
     colonia: '',
-    estado: '',
+    estado: 'Puebla',
     alcaldia: '',
     CP: '',
     numInt: '',
@@ -111,7 +111,7 @@ function Formulario() {
       longitud: '',
       calle: '',
       colonia: '',
-      estado: '',
+      estado: 'Puebla',
       alcaldia: '',
       CP: '',
       numInt: '',
@@ -206,7 +206,7 @@ function Formulario() {
           longitud: formData.longitud,
           imgPrincipal: formData.imgPrincipal,
           arrayGaleria: formData.arrayGaleria,
-          id_estado: formData.estado,
+          id_estado: '21',
           id_usuario: localStorage.getItem('user_name'),
           id_pueblo: formData.id_pueblo,
         }
@@ -305,7 +305,7 @@ function Formulario() {
       text: "Se descartarán los cambios realizados",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#6C1D45',      
+      confirmButtonColor: '#6C1D45',
       confirmButtonText: "Sí, continuar",
       cancelButtonText: "Cancelar"
     }).then((result) => {
@@ -314,7 +314,7 @@ function Formulario() {
           icon: "info",
           title: "Se ha cancelado la solicitud con éxito"
         });
-        
+
         resetForm();
       }
     });
@@ -526,10 +526,12 @@ function Formulario() {
                     Estado
                   </label>
                   <div className="mt-2">
-                    <MemoizedSelectEstado
-                      value={formData.estado}
-                      onChange={handleChange}
-                      options={estado}
+                    <input
+                      type="text"
+                      name='estado'
+                      defaultValue={'Puebla'}
+                      readOnly={true}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -549,6 +551,20 @@ function Formulario() {
                   </div>
                 </div>
 
+                <div className="sm:col-span-2">
+                  <label htmlFor="numExt" className="block text-sm font-medium leading-6 text-gray-900">
+                    Núm Ext.
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      name="numExt"
+                      id="numExt"
+                      value={formData.numExt} onChange={handleChange}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
 
                 <div className="sm:col-span-2">
                   <label htmlFor="numInt" className="block text-sm font-medium leading-6 text-gray-900">
@@ -560,21 +576,6 @@ function Formulario() {
                       name="numInt"
                       id="numInt"
                       value={formData.numInt} onChange={handleChange}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label htmlFor="numExt" className="block text-sm font-medium leading-6 text-gray-900">
-                    Núm Ext.
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="number"
-                      name="numExt"
-                      id="numExt"
-                      value={formData.numExt} onChange={handleChange}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
