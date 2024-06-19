@@ -736,7 +736,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                                                 if (result.isConfirmed) {
                                                     handleRemoveDataMainImage(imageData.id, imageData.nombre, imageData.id_tipo_imagen);
                                                     Swal.fire({
-                                                        title: "Deleted!",
+                                                        title: " Eliminada!",
                                                         text: "Tu imagen ha sido eliminada.",
                                                         icon: "success"
                                                     });
@@ -778,7 +778,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                                                 if (result.isConfirmed) {
                                                     handleRemoveMainImage();
                                                     Swal.fire({
-                                                        title: "Deleted!",
+                                                        title: " Eliminada!",
                                                         text: "Tu imagen ha sido eliminada.",
                                                         icon: "success"
                                                     });
@@ -851,7 +851,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                                                     if (result.isConfirmed) {
                                                         handleRemoveDataMainImage(image.id, image.nombre);
                                                         Swal.fire({
-                                                            title: "Deleted!",
+                                                            title: " Eliminada!",
                                                             text: "Tu imagen ha sido eliminada.",
                                                             icon: "success"
                                                         });
@@ -899,7 +899,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                                                         if (result.isConfirmed) {
                                                             handleRemoveGalleryImages();
                                                             Swal.fire({
-                                                                title: "Deleted!",
+                                                                title: " Eliminada!",
                                                                 text: "Tu imagen ha sido eliminada.",
                                                                 icon: "success"
                                                             });
