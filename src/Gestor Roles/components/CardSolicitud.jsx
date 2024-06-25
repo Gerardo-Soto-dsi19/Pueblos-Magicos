@@ -31,9 +31,11 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
     const fetchUserById = async (id) => {
         try {
             const response = await fetchTipoUsuarioById(id)
-            setDataInfoUser(response.data.data.servicio)
+            if (response.status === 200) {
+                setDataInfoUser(response.data.data.servicio)
+            }
         } catch (error) {
-
+            logError(error)
         }
 
     }
@@ -148,7 +150,7 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
                     onDataUpdate();
                 }
             }
-        } catch (error) {            
+        } catch (error) {
             Swal.fire('Error', 'Ocurrió un error al actualizar el rol', 'error');
             logError('Error al actualizar el estado del usuario', error);
         }
