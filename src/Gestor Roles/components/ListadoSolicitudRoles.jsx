@@ -13,13 +13,16 @@ function ListadoSolicitudRoles() {
     const fetchData = async () => {
         try {
             const response = await fetchTipoUsuario()
-            console.log(response);
-            setDataUser(response)
+            if (response.status === 200){
+                setDataUser(response)
+            }else {
+                throw new Error('No fue posible listar la información');
+            }
         } catch (error) {
-            console.log(error);
+            logError(error)
         }
     }
-    
+
     // Refrescar los datos después de un cambio de rol
     const handleDataUpdate = () => {
         fetchData();

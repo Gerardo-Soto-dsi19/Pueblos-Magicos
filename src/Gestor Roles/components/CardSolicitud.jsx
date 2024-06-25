@@ -18,9 +18,14 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
 
     useEffect(() => {
         if (dataUsers && dataUsers.data && dataUsers.data.data && dataUsers.data.data.usuarios) {
-            setDataInfoUsers(dataUsers.data.data.usuarios.data);
+            const users = dataUsers.data.data.usuarios.data;
+            const initialToggledState = {};
+            users.forEach(user => {
+                initialToggledState[user.id] = user.id_estatus === 7;
+            });
+            setToggledUsers(initialToggledState);
+            setDataInfoUsers(users);
         }
-        console.log(dataInfoUsers);
     }, [dataUsers]);
 
     const fetchUserById = async (id) => {
@@ -63,10 +68,11 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
     }
 
     const handleToggle = async (userId) => {
-        const isUserToggled = toggledUsers[userId];
-        const confirmTitle = isUserToggled ? '¿Estás seguro?' : '¿Deseas activar este usuario?';
-        const confirmText = isUserToggled ? '¿Deseas dar de baja a este usuario?' : '¿Estás seguro de que deseas activar a este usuario?';
-        const confirmButtonText = isUserToggled ? 'Sí, dar de baja' : 'Sí, activar';
+        const user = dataInfoUsers.find(u => u.id === userId);
+        const isUserActive = user.id_estatus === 7;
+        const confirmTitle = isUserActive ? '¿Estás seguro?' : '¿Deseas activar este usuario?';
+        const confirmText = isUserActive ? '¿Deseas dar de baja a este usuario?' : '¿Estás seguro de que deseas activar a este usuario?';
+        const confirmButtonText = isUserActive ? 'Sí, dar de baja' : 'Sí, activar';
 
         const result = await Swal.fire({
             title: confirmTitle,
@@ -79,16 +85,41 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
         });
 
         if (result.isConfirmed) {
-            setToggledUsers((prevToggledUsers) => ({
-                ...prevToggledUsers,
-                [userId]: !prevToggledUsers[userId],
-            }));
+            const newStatus = {
+                data: {
+                    user: {
+                        'id_estatus': isUserActive ? 4 : 7,
+                    }
+                },
+                _method: 'PUT'
+            };
 
-            const successTitle = isUserToggled ? 'Dado de baja' : 'Activado';
-            const successText = isUserToggled ? 'El usuario ha sido dado de baja exitosamente.' : 'El usuario ha sido activado exitosamente.';
-            Swal.fire(successTitle, successText, 'success');
+            try {
+                const response = await fetchUpdateRole(userId, newStatus);
+                if (response.status === 200) {
+                    setToggledUsers(prevToggledUsers => ({
+                        ...prevToggledUsers,
+                        [userId]: !isUserActive,
+                    }));
+
+                    setDataInfoUsers(prevUsers => prevUsers.map(u =>
+                        u.id === userId ? { ...u, id_estatus: isUserActive ? 4 : 7 } : u
+                    ));
+
+                    const successText = isUserActive ? 'El usuario ha sido dado de baja exitosamente.' : 'El usuario ha sido activado exitosamente.';
+                    const successTitle = isUserActive ? 'Dado de baja' : 'Activado';
+                    Swal.fire(successTitle, successText, 'success');
+                    onDataUpdate();
+                } else {
+                    throw new Error('La actualización no fue exitosa');
+                }
+
+            } catch (error) {
+                Swal.fire('Error', 'No se pudo actualizar el estado del usuario', 'error');
+                logError('Error al actualizar el estado del usuario', error);
+            }
         }
-    }
+    };
 
     const handleChangeRole = async () => {
         try {
@@ -117,9 +148,9 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
                     onDataUpdate();
                 }
             }
-        } catch (error) {
-            console.log(error);
+        } catch (error) {            
             Swal.fire('Error', 'Ocurrió un error al actualizar el rol', 'error');
+            logError('Error al actualizar el estado del usuario', error);
         }
     }
 
@@ -155,7 +186,7 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
                             <p className='font-bold text-gray-700  uppercase'>{toggledUsers[user.id] ? 'Dar de baja' : 'Dar de alta'}</p>
                             <button
                                 onClick={() => handleToggle(user.id)}
-                                className={`toggle-button ${toggledUsers[user.id] ? 'toggled' : ''}`}
+                                className={`toggle-button ${user.id_estatus === 7 ? 'toggled' : ''}`}
                             >
                                 <div className="thumb"></div>
                             </button>
