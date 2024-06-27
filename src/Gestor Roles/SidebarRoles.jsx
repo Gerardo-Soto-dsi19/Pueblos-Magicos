@@ -1,11 +1,12 @@
 import React from 'react'
 import { useState, useContext } from "react";
 import { AuthContext } from '../components/AuthContext';
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 import { FaInbox, FaCheckCircle, FaClock, FaSignInAlt, FaSignOutAlt, FaStickyNote, FaBook } from "react-icons/fa";
 import { RiAddBoxFill } from "react-icons/ri";
 import ListadoSolicitudRoles from './components/ListadoSolicitudRoles';
-import { fetchLogOut } from '../api/api'
+import { fetchLogOut } from '../api/api';
+import Header from './components/Header';
 
 function SidebarRoles() {
     const [isOpen, setIsOpen] = useState(false);
@@ -130,8 +131,11 @@ function SidebarRoles() {
                 </aside >
 
                 <main className='md:w-5/6'>
-                    <h1 className=" mt-10 border-b-2 mx-5">Gestión de roles</h1>
-                    <div>
+                    <div className=''>
+                        <Header />
+                    </div>
+                    <h1 className=" mt-5 mb-5 border-b-2 mx-5">Gestión de roles</h1>
+                    <div className='mt-5'>
                         <ListadoSolicitudRoles />
                         <div className="flex justify-center ">
                             <Link className="text-[#6C1D45] text-xs">Términos y condiciones</Link>
