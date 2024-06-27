@@ -25,7 +25,7 @@ function RegistroLogin() {
       nombre: '',
       apellido_pat: '',
       apellido_mat: '',
-      id_tipo_usuario: ''
+      /* id_tipo_usuario: '' */
     })
   }
   const Toast = Swal.mixin({
@@ -49,12 +49,12 @@ function RegistroLogin() {
         ...prevFormData,
         [name]: files[0],
       }));
-    } else if (name === 'id_tipo_usuario') {
+    } /* else if (name === 'id_tipo_usuario') {
       setFormData((prevFormData) => ({
         ...prevFormData,
         [name]: value,
       }));
-    } else {
+    } */ else {
       setFormData((prevFormData) => ({
         ...prevFormData,
         [name]: value,
@@ -74,7 +74,7 @@ function RegistroLogin() {
           nombre: formData.nombre,
           apellido_pat: formData.apellido_pat,
           apellido_mat: formData.apellido_mat,
-          id_tipo_usuario: formData.id_tipo_usuario
+          /* id_tipo_usuario: formData.id_tipo_usuario */
         }
       }
       const response = await createUser(datosToSend)
@@ -224,7 +224,7 @@ function RegistroLogin() {
                   </div>
                 </div>
               </div>
-
+{/* 
               <div className="border-b border-gray-900/10 pb-12">
                 <div className="mt-10 space-y-10">
                   <fieldset>
@@ -273,7 +273,7 @@ function RegistroLogin() {
                     </div>
                   </fieldset>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <div className="mt-6 py-5 flex items-center justify-end gap-x-6">
