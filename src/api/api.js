@@ -1,3 +1,4 @@
+import { data } from "autoprefixer";
 import axios from "axios";
 axios.defaults.baseURL = 'http://localhost/api'
 
@@ -27,7 +28,7 @@ export const loginUser = async (data) => {
   try {
     const config = getRequestConfig({
       'accept': 'application/json',
-      'Content-Type': 'multipart/form-data',
+      'Content-Type': 'application/json',
     })
     const response = await axios.post('/users/login', data, config)
     return response
@@ -153,13 +154,13 @@ export const getAllServices = async (page) => {
       }
     };
     const response = await axios.get('/servicios', config)
-    return response.data
+    return response
   } catch (error) {
     throw error
   }
 }
 
-export const getServicesFiltered = async (id_status, page) => {
+export const getServicesFiltered = async (id, page) => {
   try {
     const config = {
       ...getAuthConfig(),
@@ -167,8 +168,8 @@ export const getServicesFiltered = async (id_status, page) => {
         page: page + 1
       }
     };
-    const response = await axios.get(`/servicios/filtrar/estatus/${id_status}`, config)
-    return response.data
+    const response = await axios.get(`/servicios/filtrar/estatus/${id}`, config)
+    return response
   } catch (error) {
     throw error
   }
@@ -202,3 +203,57 @@ export const fetchObservations = async (data) => {
     throw error
   }
 }
+
+/* Servicio para eliminar imagen Principal  */
+export const fetchRemoveMainImage = async (data, id) => {
+  try {
+    const config = getRequestConfig({
+      '_method': 'put',
+      'Content-Type': 'application/json'
+    })
+    const response = await axios.put(`/servicios/${id}`, data, config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
+
+/* Servicio para obtener datos de una  publicación en especifico */
+export const fetchGetServicioById = async (id) => {
+  try {
+    const config = getAuthConfig()
+    const response = await axios.get(`/servicios/${id}`, config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
+
+/* Servicio  para actualizar la informacion de una  publicación */
+export const fetchUpdateService = async (id, data) => {
+  try {
+    const config = getRequestConfig({
+      '_method': 'put',
+      'Content-Type': 'application/json'
+    })
+    const response = await axios.put(`/servicios/${id}`, data, config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
+
+/* Servicio para actualizar imagenes */
+export const fetchUpdateImages = async (id, data) => {
+  try {
+    const config = getRequestConfig({
+      'Accept': 'application/json',
+      'Content-Type': 'multipart/form-data',
+    })
+    const response = await axios.post(`/servicios/${id}`, data, config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
+

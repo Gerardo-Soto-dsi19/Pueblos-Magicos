@@ -78,9 +78,10 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         try {
             let response;
             if (id_estatus === 'all') {
-                response = await axios.get('http://localhost/api/servicios', config);
+                response = await getAllServices(page);
             } else {
-                response = await axios.get(`http://localhost/api/servicios/filtrar/estatus/${id_estatus}`, config);
+                response = await getServicesFiltered(id_estatus, page);
+                /* response = await axios.get(`http://localhost/api/servicios/filtrar/estatus/${id_estatus}`, config); */
             }
 
             const data = response.data.data.servicios;
@@ -94,9 +95,9 @@ function ListadoSolicitudes({ tipoSolicitud }) {
 
                 // Realiza la solicitud con la página ajustada
                 if (id_estatus === 'all') {
-                    response = await axios.get('http://localhost/api/servicios', config);
+                    response = await getAllServices(page);
                 } else {
-                    response = await axios.get(`http://localhost/api/servicios/filtrar/estatus/${id_estatus}`, config);
+                    response = await getServicesFiltered(id_estatus, page);
                 }
             }
             return response.data.data.servicios;
@@ -191,7 +192,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             formData.append('data[observacion]', observaciones)
             try {
                 const response = await fetchObservations(formData)
-                if ((await response).status === 200) {                    
+                if ((await response).status === 200) {
                     Swal.fire({
                         icon: "success",
                         title: "Rechazada",
