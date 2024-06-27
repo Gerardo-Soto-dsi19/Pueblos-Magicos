@@ -243,7 +243,9 @@ export const fetchTypeUsers = async () => {
   }
 }
 
-export const fetchUpdateRole = async (id,data) => {
+/* Servicio para obtener un usuario con su ID */
+
+export const fetchUpdateRole = async (id, data) => {
   try {
     const config = getRequestConfig({
       'Accept': 'application/json',
@@ -253,5 +255,20 @@ export const fetchUpdateRole = async (id,data) => {
     return response
   } catch (error) {
     throw error
+  }
+}
+
+/* Servicio para filtrar usuarios */
+
+export const fetchGetFilteredUsers = async (data) => {
+  try {
+    const config = getRequestConfig({
+      'Accept': 'application/json',
+      'Content-Type': 'multipart/form-data',
+    })
+    const response = await axios.get('/users/buscador/user', { params: data }, config)
+    return response
+  } catch (error) {
+
   }
 }
