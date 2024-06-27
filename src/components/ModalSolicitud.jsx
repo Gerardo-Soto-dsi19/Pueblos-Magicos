@@ -6,6 +6,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import React from 'react';
 import FormData from 'form-data';
+import { fetchRemoveMainImage, getTypesServices, getMagicTowns, getStateCatalogue, fetchGetServicioById, fetchUpdateService, fetchUpdateImages } from '../api/api'
 
 function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
     const [puebloMagico, setPuebloMagico] = useState([])
@@ -133,7 +134,6 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
 
     const handleRemoveDataMainImage = (_id_, _name_, _tipo_img_) => {
 
-        const token = sessionStorage.getItem('accessToken');
         const imageDataToDelete = {
             data: {
                 imagenes_eliminar: [
@@ -145,40 +145,36 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
             }
         };
         try {
-            axios.put(`http://localhost/api/servicios/${serviceId}`, imageDataToDelete, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    '_method': 'put',
-                    'Content-Type': 'application/json'
-                }
-            }).then(_response_ => {
-                if (_tipo_img_ === 1) {
-                    setImageData(prevImages => {
-                        if (Array.isArray(prevImages)) {
-                            return prevImages.filter(image => image.id !== _id_);
-                        } else {
-                            return [];
-                        }
-                    });
-                } else {
-                    setImagesDataGallery(prevImages => {
-                        if (Array.isArray(prevImages)) {
-                            return prevImages.filter(image => image.id !== _id_);
-                        } else {
-                            return [];
-                        }
-                    });
-                }
-                onDataUpdate();
-            })
+            fetchRemoveMainImage(imageDataToDelete, serviceId)
+                .then(_response_ => {
+                    if (_tipo_img_ === 1) {
+                        setImageData(prevImages => {
+                            if (Array.isArray(prevImages)) {
+                                return prevImages.filter(image => image.id !== _id_);
+                            } else {
+                                return [];
+                            }
+                        });
+                    } else {
+                        setImagesDataGallery(prevImages => {
+                            if (Array.isArray(prevImages)) {
+                                return prevImages.filter(image => image.id !== _id_);
+                            } else {
+                                return [];
+                            }
+                        });
+                    }
+                    onDataUpdate();
+                })
         } catch (error) {
             console.error('Error:', error);
+
         }
     }
 
     /* Seteo de combos  */
     useEffect(() => {
-        axios.get('http://localhost/api/tiposervicios')
+        getTypesServices()
             .then(response => {
                 setCategoria(response.data.data)
             })
@@ -189,7 +185,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
 
 
     useEffect(() => {
-        axios.get('http://localhost/api/pueblosmagicos')
+        getMagicTowns()
             .then(response => { setPuebloMagico(response.data.data) })
             .catch(error => {
                 console.error('Error fetching pueblos:', error);
@@ -197,7 +193,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
     }, []);
 
     useEffect(() => {
-        axios.get('http://localhost/api/catestados')
+        getStateCatalogue()
             .then(response => { setEstado(response.data.data) })
             .catch(error => {
                 console.error('Error fetching estados:', error);
@@ -210,15 +206,8 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
     useEffect(() => {
         const fetchServiceData = async () => {
             try {
-                const token = sessionStorage.getItem('accessToken');
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                };
-                const response = await axios.get(`http://localhost/api/servicios/${serviceId}`, config);
+                const response = await fetchGetServicioById(serviceId)
                 const serviceData = response.data.data.servicio[0];
-
                 if (serviceData) {
                     const newInitialValues = {
                         id_pueblo: serviceData?.pueblo?.id || '',
@@ -241,6 +230,8 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                         CP: serviceData.direccion?.CP || '',
                         int: serviceData.direccion?.int || '',
                         ext: serviceData.direccion?.ext || '',
+                        telefono: serviceData.detalle_servicio?.telefono || '',
+                        pagina_web: serviceData.detalle_servicio?.pagina_web || '',
                     };
 
                     setInitialValues(newInitialValues);
@@ -323,6 +314,8 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                 precios: formValues.precios,
                 titulo: formValues.titulo,
                 descripcion: formValues.descripcion,
+                telefono: formValues.telefono,
+                pagina_web: formValues.pagina_web
             },
             coordenadas: {
                 longitud: formValues.longitud,
@@ -347,16 +340,8 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
 
     const updateService = async (updatedFields) => {
         try {
-            const token = sessionStorage.getItem('accessToken');
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    '_method': 'put',
-                    'Content-Type': 'application/json'
-                }
-            };
-            const response = await axios.put(`http://localhost/api/servicios/${serviceId}`, updatedFields, config);
-            return response.data;
+            const response = await fetchUpdateService(serviceId, updatedFields)
+            return response;
         } catch (error) {
             console.error('Error al actualizar el servicio:', error);
             throw error;
@@ -371,29 +356,21 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
 
             try {
                 const formData = new FormData();
-
                 formData.append('data[imagen_principal]', file);
                 formData.append('_method', 'PUT');
 
-                const token = sessionStorage.getItem('accessToken');
+                const response = await fetchUpdateImages(serviceId, formData)
+                if (response.status === 200) {
+                    Toast.fire({
+                        icon: "success",
+                        title: "Se ha cargado la imagen exitosamente"
+                    });
 
-                const response = await axios.post(`http://localhost/api/servicios/${serviceId}`, formData, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Accept': 'application/json',
-                        'Content-Type': 'multipart/form-data',
-                    }
-                });
-                Toast.fire({
-                    icon: "success",
-                    title: "Se ha cargado la imagen exitosamente"
-                });
-
-                onDataUpdate();
-
+                    onDataUpdate();
+                }
                 return response.data;
             } catch (error) {
-                console.error('Error al actualizar el servicio:', error);
+                console.error('Error al actualizar la imagen principal:', error);
                 throw error;
             }
         } else if (newImageGallery) {
@@ -405,19 +382,14 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
             }
             formDataGallery.append('_method', 'PUT');
             try {
-                const token = sessionStorage.getItem('accessToken');
-                const response = await axios.post(`http://localhost/api/servicios/${serviceId}`, formDataGallery, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Accept': 'application/json',
-                        'Content-Type': 'multipart/form-data',
-                    }
-                });
-                Toast.fire({
-                    icon: "success",
-                    title: "Se han cargado las imagenes exitosamente"
-                });
-                onDataUpdate();
+                const response = await fetchUpdateImages(serviceId, formDataGallery)
+                if (response.status === 200) {
+                    Toast.fire({
+                        icon: "success",
+                        title: "Se han cargado las imagenes exitosamente"
+                    });
+                    onDataUpdate();
+                }
                 return response.data;
             } catch (error) {
                 Toast.fire({
@@ -429,11 +401,13 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
         } else {
             try {
                 const response = await updateService(updatedFields);
-                Toast.fire({
-                    icon: "success",
-                    title: "Se han actualizado la información exitosamente"
-                });
-                onDataUpdate();
+                if (response.status === 200) {
+                    Toast.fire({
+                        icon: "success",
+                        title: "Se han actualizado la información exitosamente"
+                    });
+                    onDataUpdate();
+                }
             } catch (error) {
                 Toast.fire({
                     icon: "error",
@@ -682,6 +656,26 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                         name='ext'
                         type="text"
                         value={formValues.ext}
+                        readOnly={!isEditable}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="mt-5">
+                    <Label>Teléfono</Label>
+                    <TextInput
+                        name='telefono'
+                        type="number"
+                        value={formValues.telefono}
+                        readOnly={!isEditable}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="mt-5">
+                    <Label>Sitio web</Label>
+                    <TextInput
+                        name='pagina_web'
+                        type="text"
+                        value={formValues.pagina_web}
                         readOnly={!isEditable}
                         onChange={handleChange}
                     />

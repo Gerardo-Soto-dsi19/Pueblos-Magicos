@@ -77,6 +77,8 @@ function Formulario() {
     CP: '',
     numInt: '',
     numExt: '',
+    telefono: '',
+    pagina_web: '',
     imgPrincipal: null,
     arrayGaleria: [],
   });
@@ -127,6 +129,8 @@ function Formulario() {
       CP: '',
       numInt: '',
       numExt: '',
+      telefono: '',
+      pagina_web: '',
       imgPrincipal: null,
       arrayGaleria: [],
     });
@@ -213,6 +217,8 @@ function Formulario() {
           descripcion: formData.descripcion,
           latitud: formData.latitud,
           longitud: formData.longitud,
+          telefono: formData.telefono,
+          pagina_web: 'https://'.concat(formData.pagina_web),
           imgPrincipal: formData.imgPrincipal,
           arrayGaleria: formData.arrayGaleria,
           id_estado: '21',
@@ -372,14 +378,20 @@ function Formulario() {
                   </div>
                 </div>
 
-                <div className="col-span-full">
-                  <FormInput
-                    label="Titulo"
-                    id="titulo"
-                    name="titulo"
-                    value={formData.titulo}
-                    onChange={handleChange}
-                  />
+                <div className="sm:col-span-2">
+                  <label htmlFor="horario_inicio" className="block text-sm font-medium leading-6 text-gray-900">
+                    Título
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type='text'
+                      name="titulo"
+                      id="titulo"
+                      value={formData.titulo} onChange={handleChange}
+                      className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
+                    />
+                  </div>
+
                   <div className="mt-2">
                     <label htmlFor="descripcion" className="block text-sm font-medium leading-6 text-gray-900">
                       Descripción
@@ -389,7 +401,7 @@ function Formulario() {
                       name="descripcion"
                       rows={3}
                       value={formData.descripcion} onChange={handleChange}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
                     />
                   </div>
                 </div>
@@ -404,7 +416,7 @@ function Formulario() {
                         type="text"
                         name="dias_servicio"
                         value={formData.dias_servicio} onChange={handleChange}
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
                       />
                     </Tooltip>
                   </div>
@@ -420,7 +432,7 @@ function Formulario() {
                       name="horario_inicio"
                       id="horario_inicio"
                       value={formData.horario_inicio} onChange={handleChange}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
                     />
                   </div>
                 </div>
@@ -450,7 +462,7 @@ function Formulario() {
                       name="precio"
                       id="precio"
                       value={formData.precio} onChange={handleChange}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
                     />
                   </div>
                 </div>
@@ -465,7 +477,7 @@ function Formulario() {
                       name="latitud"
                       id="latitud"
                       value={formData.latitud} onChange={handleChange}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
                     />
                   </div>
                 </div>
@@ -481,7 +493,7 @@ function Formulario() {
                       id="longitud"
 
                       value={formData.longitud} onChange={handleChange}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
                     />
                   </div>
                 </div>
@@ -498,7 +510,7 @@ function Formulario() {
                       name="calle"
                       id="calle"
                       value={formData.calle} onChange={handleChange}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
                     />
                   </div>
                 </div>
@@ -513,7 +525,7 @@ function Formulario() {
                       name="colonia"
                       id="colonia"
                       value={formData.colonia} onChange={handleChange}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
                     />
                   </div>
                 </div>
@@ -528,7 +540,7 @@ function Formulario() {
                       name="alcaldia"
                       id="alcaldia"
                       value={formData.alcaldia} onChange={handleChange}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
                     />
                   </div>
                 </div>
@@ -543,7 +555,7 @@ function Formulario() {
                       name='estado'
                       defaultValue={'Puebla'}
                       readOnly={true}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
                     />
                   </div>
                 </div>
@@ -558,7 +570,7 @@ function Formulario() {
                       name="CP"
                       id="CP"
                       value={formData.CP} onChange={handleChange}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
                     />
                   </div>
                 </div>
@@ -573,7 +585,7 @@ function Formulario() {
                       name="numExt"
                       id="numExt"
                       value={formData.numExt} onChange={handleChange}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
                     />
                   </div>
                 </div>
@@ -588,7 +600,37 @@ function Formulario() {
                       name="numInt"
                       id="numInt"
                       value={formData.numInt} onChange={handleChange}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-3">
+                  <label htmlFor="telefono" className="block text-sm font-medium leading-6 text-gray-900">
+                    Teléfono
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      name="telefono"
+                      id="telefono"
+                      value={formData.telefono} onChange={handleChange}
+                      className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-3">
+                  <label htmlFor="pagina_web" className="block text-sm font-medium leading-6 text-gray-900">
+                    Sitio Web
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      name="pagina_web"
+                      id="pagina_web"
+                      value={formData.pagina_web} onChange={handleChange}
+                      className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
                     />
                   </div>
                 </div>
