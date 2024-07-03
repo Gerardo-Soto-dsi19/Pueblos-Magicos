@@ -7,6 +7,7 @@ import { RiAddBoxFill } from "react-icons/ri";
 import ListadoSolicitudRoles from './components/ListadoSolicitudRoles';
 import { fetchLogOut } from '../api/api';
 import Header from './components/Header';
+import Filtros from './components/Filtros';
 
 function SidebarRoles() {
     const [isOpen, setIsOpen] = useState(false);
@@ -131,16 +132,24 @@ function SidebarRoles() {
                 </aside >
 
                 <main className='md:w-5/6'>
-                    <div className=''>
+                    <div>
                         <Header />
+                        <h1 className=" mt-5 mb-5 border-b-2 mx-5">Gestión de roles</h1>
                     </div>
-                    <h1 className=" mt-5 mb-5 border-b-2 mx-5">Gestión de roles</h1>
-                    <div className='mt-5'>
-                        <ListadoSolicitudRoles />
-                        <div className="flex justify-center ">
-                            <Link className="text-[#6C1D45] text-xs">Términos y condiciones</Link>
+
+                    <div className='grid md:grid-cols-[300px_1fr] gap-8 p-4 md:p-8'>
+                        <div className='flex flex-col gap-6 border'>
+                            <Filtros />
+                        </div>
+                        <div className='border rounded-md'>
+                            <ListadoSolicitudRoles />
+                            <div className="flex justify-center ">
+                                <Link className="text-[#6C1D45] text-xs">Términos y condiciones</Link>
+                            </div>
                         </div>
                     </div>
+
+
                 </main>
 
             </div >

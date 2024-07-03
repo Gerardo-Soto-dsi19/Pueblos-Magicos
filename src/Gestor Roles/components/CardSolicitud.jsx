@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import { fetchTipoUsuarioById, fetchTypeUsers, fetchUpdateRole } from '../../api/api'
 import '../../index.css'
 
-function CardSolicitud({ dataUsers, onDataUpdate }) {
+function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
     const [toggledUsers, setToggledUsers] = useState({});
     const [openModal, setOpenModal] = useState(false);
     const [idUser, setIdUser] = useState('');
@@ -15,6 +15,7 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
     const [dataInfoUser, setDataInfoUser] = useState([]);
     const [rolUser, setRolUser] = useState([]);
     const [selectedRole, setSelectedRole] = useState('');
+    console.log('Datos a pasar a CardSolicitud:', dataUsers);
 
     useEffect(() => {
         if (dataUsers && dataUsers.data && dataUsers.data.data && dataUsers.data.data.usuarios) {
@@ -27,6 +28,14 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
             setDataInfoUsers(users);
         }
     }, [dataUsers]);
+    
+    const fetchData = async () => {
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
 
     const fetchUserById = async (id) => {
         try {

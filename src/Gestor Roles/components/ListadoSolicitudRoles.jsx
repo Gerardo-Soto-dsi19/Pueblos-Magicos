@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import CardSolicitud from './CardSolicitud'
+import { Accordion } from "flowbite-react";
 import { fetchTipoUsuario } from '../../api/api'
 
 function ListadoSolicitudRoles() {
@@ -27,20 +28,17 @@ function ListadoSolicitudRoles() {
     const handleDataUpdate = () => {
         fetchData();
     };
-    
-    const handleChange = (e) =>{
-        setSearchUser(e.target.value)
 
+    const handleChange = (e) => {
+        setSearchUser(e.target.value)
     };
 
-    
+
 
     return (
         <div>
-            <div className="mt-5 mx-5">
-                <h2>Todas las solicitudes</h2>
-            </div>
-            <div className='container mx-auto px-4 mt-5'>
+
+{/*             <div className='container mx-auto px-4 mt-5'>
                 <div className='flex'>
                     <input
                         type="text"
@@ -55,9 +53,14 @@ function ListadoSolicitudRoles() {
                         Buscar
                     </button>
                 </div>
+            </div> */}
+
+            <div className="mt-5 mx-5">
+                <h2>Todas las solicitudes</h2>
             </div>
             <CardSolicitud
                 dataUsers={dataUser}
+                searchUsers={searchUser}
                 onDataUpdate={handleDataUpdate}
             />
         </div>

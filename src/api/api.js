@@ -266,7 +266,7 @@ export const fetchGetFilteredUsers = async (data) => {
       'Accept': 'application/json',
       'Content-Type': 'multipart/form-data',
     })
-    const response = await axios.get('/users/buscador/user', { params: data }, config)
+    const response = await axios.get(`/users/buscador/user?${data}`, config)
     return response
   } catch (error) {
 
