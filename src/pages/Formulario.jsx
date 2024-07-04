@@ -75,7 +75,7 @@ function Formulario() {
     estado: 'Puebla',
     alcaldia: '',
     CP: '',
-    numInt: '',
+    numInt: null,
     numExt: '',
     telefono: '',
     pagina_web: '',
@@ -599,7 +599,7 @@ function Formulario() {
                       type="text"
                       name="numInt"
                       id="numInt"
-                      value={formData.numInt} onChange={handleChange}
+                      value={formData.numInt || null} onChange={handleChange}
                       className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
                     />
                   </div>
