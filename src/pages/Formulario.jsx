@@ -351,11 +351,11 @@ function Formulario() {
           <div className='flex justify-center sm:mx-5'>
             <form onSubmit={handleSubmit} className="md:w-1/2 bg-white shadow-lg rounded-lg mt-5 mb-10 px-10">
               <h1 className='mt-5'>Formulario</h1>
-              <h5 className='flex items-center font-light mt-5 text-red-700 gap-2'><FiAlertCircle />Todos los campos deben ser llenados para poder enviar la solicitud</h5>
+              <h5 className='flex items-center font-light mt-5 text-red-700 gap-2'><FiAlertCircle />Los campos marcados con * son obligatorios</h5>
               <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-3">
                   <label htmlFor="#" className="block text-sm font-medium leading-6 text-gray-900">
-                    Pueblo Mágico
+                    Pueblo Mágico *
                   </label>
                   <div className="mt-2">
                     <MemoizedSelectPuebloMagico
@@ -367,7 +367,7 @@ function Formulario() {
                 </div>
                 <div className="sm:col-span-3">
                   <label htmlFor="#" className="block text-sm font-medium leading-6 text-gray-900">
-                    Categoría
+                    Categoría *
                   </label>
                   <div className="mt-2">
                     <MemoizedSelectCategoria
@@ -378,9 +378,9 @@ function Formulario() {
                   </div>
                 </div>
 
-                <div className="sm:col-span-2">
+                <div className="sm:col-span-full">
                   <label htmlFor="horario_inicio" className="block text-sm font-medium leading-6 text-gray-900">
-                    Título
+                    Título *
                   </label>
                   <div className="mt-2">
                     <input
@@ -394,7 +394,7 @@ function Formulario() {
 
                   <div className="mt-2">
                     <label htmlFor="descripcion" className="block text-sm font-medium leading-6 text-gray-900">
-                      Descripción
+                      Descripción *
                     </label>
                     <textarea
                       id="descripcion"
@@ -408,7 +408,7 @@ function Formulario() {
 
                 <div className="sm:col-span-2 sm:col-start-1">
                   <label htmlFor="dias_servicio" className="block text-sm font-medium leading-6 text-gray-900">
-                    Días de servicio
+                    Días de servicio *
                   </label>
                   <div className="mt-2">
                     <Tooltip content="Este campo debe contener entre 5 y 20 caracteres">
@@ -424,7 +424,7 @@ function Formulario() {
 
                 <div className="sm:col-span-2">
                   <label htmlFor="horario_inicio" className="block text-sm font-medium leading-6 text-gray-900">
-                    Horario de apertura
+                    Horario de apertura *
                   </label>
                   <div className="mt-2">
                     <input
@@ -439,7 +439,7 @@ function Formulario() {
 
                 <div className="sm:col-span-2">
                   <label htmlFor="horario_fin" className="block text-sm font-medium leading-6 text-gray-900">
-                    Horario de cierre
+                    Horario de cierre *
                   </label>
                   <div className="mt-2">
                     <input
@@ -454,7 +454,7 @@ function Formulario() {
 
                 <div className="sm:col-span-2">
                   <label htmlFor="precio" className="block text-sm font-medium leading-6 text-gray-900">
-                    Precio
+                    Precio *
                   </label>
                   <div className="mt-2">
                     <input
@@ -469,7 +469,7 @@ function Formulario() {
 
                 <div className="sm:col-span-2">
                   <label htmlFor="latitud" className="block text-sm font-medium leading-6 text-gray-900">
-                    Latitud
+                    Latitud *
                   </label>
                   <div className="mt-2">
                     <input
@@ -484,7 +484,7 @@ function Formulario() {
 
                 <div className="sm:col-span-2">
                   <label htmlFor="longitud" className="block text-sm font-medium leading-6 text-gray-900">
-                    Longitud
+                    Longitud *
                   </label>
                   <div className="mt-2">
                     <input
@@ -502,7 +502,7 @@ function Formulario() {
 
                 <div className="sm:col-span-3">
                   <label htmlFor="calle" className="block text-sm font-medium leading-6 text-gray-900">
-                    Calle
+                    Calle *
                   </label>
                   <div className="mt-2">
                     <input
@@ -517,7 +517,7 @@ function Formulario() {
 
                 <div className="sm:col-span-3">
                   <label htmlFor="colonia" className="block text-sm font-medium leading-6 text-gray-900">
-                    Colonia
+                    Colonia *
                   </label>
                   <div className="mt-2">
                     <input
@@ -532,7 +532,7 @@ function Formulario() {
 
                 <div className="sm:col-span-3">
                   <label htmlFor="alcaldia" className="block text-sm font-medium leading-6 text-gray-900">
-                    Alcaldía/Municipio
+                    Alcaldía/Municipio *
                   </label>
                   <div className="mt-2">
                     <input
@@ -547,7 +547,7 @@ function Formulario() {
 
                 <div className="sm:col-span-3">
                   <label htmlFor="#" className="block text-sm font-medium leading-6 text-gray-900">
-                    Estado
+                    Estado *
                   </label>
                   <div className="mt-2">
                     <input
@@ -562,7 +562,7 @@ function Formulario() {
 
                 <div className="sm:col-span-2">
                   <label htmlFor="CP" className="block text-sm font-medium leading-6 text-gray-900">
-                    Código postal
+                    Código postal *
                   </label>
                   <div className="mt-2">
                     <input
@@ -577,7 +577,7 @@ function Formulario() {
 
                 <div className="sm:col-span-2">
                   <label htmlFor="numExt" className="block text-sm font-medium leading-6 text-gray-900">
-                    Núm Ext.
+                    Núm Ext. *
                   </label>
                   <div className="mt-2">
                     <input
@@ -607,7 +607,7 @@ function Formulario() {
 
                 <div className="sm:col-span-3">
                   <label htmlFor="telefono" className="block text-sm font-medium leading-6 text-gray-900">
-                    Teléfono
+                    Teléfono *
                   </label>
                   <div className="mt-2">
                     <input
@@ -622,7 +622,7 @@ function Formulario() {
 
                 <div className="sm:col-span-3">
                   <label htmlFor="pagina_web" className="block text-sm font-medium leading-6 text-gray-900">
-                    Sitio Web
+                    Sitio Web *
                   </label>
                   <div className="mt-2">
                     <input
@@ -637,7 +637,7 @@ function Formulario() {
 
                 <div className="col-span-full">
                   <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900">
-                    Imagen Principal
+                    Imagen Principal *
                   </label>
                   <div
                     className={`mt-2 flex justify-center rounded-lg border border-dashed px-6 py-10 ${dragActiveMain ? 'bg-gray-200' : 'border-gray-900/25'
@@ -685,7 +685,7 @@ function Formulario() {
 
                 <div className="col-span-full">
                   <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900">
-                    Imagenes de galería
+                    Imagenes de galería *
                   </label>
                   <div
                     className={`mt-2 flex justify-center rounded-lg border border-dashed px-6 py-10 ${dragActiveGallery ? 'bg-gray-200' : 'border-gray-900/25'
