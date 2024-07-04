@@ -137,23 +137,19 @@ function SidebarRoles() {
                         <h1 className=" mt-5 mb-5 border-b-2 mx-5">Gestión de roles</h1>
                     </div>
 
-                    <div className='grid md:grid-cols-[300px_1fr] gap-8 p-4 md:p-8'>
-                        <div className='flex flex-col gap-6 border'>
+                    <div className='grid md:grid-cols-[305px_1fr] gap-6 p-4 md:p-6'>
+                        <div className='flex flex-col gap-6 bg-white border rounded-md'>
                             <Filtros />
                         </div>
                         <div className='border rounded-md'>
                             <ListadoSolicitudRoles />
-                            <div className="flex justify-center ">
-                                <Link className="text-[#6C1D45] text-xs">Términos y condiciones</Link>
-                            </div>
                         </div>
                     </div>
-
-
+                    <div className="flex justify-center ">
+                        <Link className="text-[#6C1D45] text-xs">Términos y condiciones</Link>
+                    </div>
                 </main>
-
             </div >
-
         </div>
     )
 }
