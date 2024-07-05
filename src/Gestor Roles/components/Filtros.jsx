@@ -1,10 +1,24 @@
 import React from 'react'
 
-const handleChange = (e) => {
-    setSearchUser(e.target.value)
-};
 
-function Filtros() {
+function Filtros({ filtros, onFiltroChange }) {
+    const handleInputChange = (e) => {
+        onFiltroChange({ buscar: e.target.value });
+    };
+
+    const handleRadioChange = (e) => {
+        onFiltroChange({ [e.target.name]: e.target.value });
+    };
+
+    const handleCheckboxChange = (e) => {
+        onFiltroChange({ conTuristas: e.target.checked ? '1' : '0' });
+    };
+
+    const handleSearch = () => {
+        // Si necesitas alguna acción específica al presionar el botón de búsqueda
+        // Puedes implementarla aquí
+    };
+
     return (
         <div>
             <h2 className='mt-5 mx-2'>Filtros</h2>
@@ -14,11 +28,13 @@ function Filtros() {
                         type="text"
                         className='flex-grow rounded-l-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]'
                         placeholder='Buscar un usuario'
-                        onChange={handleChange}
+                        value={filtros.buscar}
+                        onChange={handleInputChange}
                     />
                     <button
                         type='button'
                         className='rounded-r-md bg-[#6C1D45] hover:bg-[#8C3A68] px-4 py-1.5 text-white'
+                        onClick={handleSearch}
                     >
                         Buscar
                     </button>
@@ -28,27 +44,29 @@ function Filtros() {
                 <h3>Tipo de usuario</h3>
                 <div className="flex items-center gap-x-3">
                     <input
-                        id=""
-                        name=""
+                        id="director"
+                        name="tipoUsuario"
                         type="radio"
-                        value={3}
-                        onChange={''}
+                        value="director"
+                        checked={filtros.tipoUsuario === '2'}
+                        onChange={handleRadioChange}
                         className="form-radio h-4 w-4 text-[#6C1D45]"
                     />
-                    <label >
+                    <label htmlFor="director">
                         Director de pueblo mágico
                     </label>
                 </div>
                 <div className="flex items-center gap-x-3">
                     <input
-                        id=""
-                        name=""
+                        id="pueblo"
+                        name="tipoUsuario"
                         type="radio"
-                        value={3}
-                        onChange={''}
+                        value="pueblo"
+                        checked={filtros.tipoUsuario === '5'}
+                        onChange={handleRadioChange}
                         className="form-radio h-4 w-4 text-[#6C1D45] ring-inset focus:ring-2"
                     />
-                    <label >
+                    <label htmlFor="pueblo">
                         Pueblo mágico
                     </label>
                 </div>
@@ -57,14 +75,14 @@ function Filtros() {
                 <h3>¿Incluir turistas?</h3>
                 <div className="flex items-center gap-x-3">
                     <input
-                        id=""
-                        name=""
+                        id="conTuristas"
+                        name="conTuristas"
                         type="checkbox"
-                        value={3}
-                        onChange={''}
-                        className=" text-[#6C1D45] ring-inset focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
+                        checked={filtros.conTuristas === '1'}
+                        onChange={handleCheckboxChange}
+                        className="text-[#6C1D45] ring-inset focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
                     />
-                    <label >
+                    <label htmlFor="conTuristas">
                         Si
                     </label>
                 </div>
@@ -73,27 +91,29 @@ function Filtros() {
                 <h3>Estado del usuario</h3>
                 <div className="flex items-center gap-x-3">
                     <input
-                        id=""
-                        name=""
+                        id="activo"
+                        name="estatusUser"
                         type="radio"
-                        value={3}
-                        onChange={''}
+                        value="7"
+                        checked={filtros.estatusUser === '7'}
+                        onChange={handleRadioChange}
                         className="form-radio h-4 w-4 text-[#6C1D45]"
                     />
-                    <label >
+                    <label htmlFor="activo">
                         Activo
                     </label>
                 </div>
                 <div className="flex items-center gap-x-3">
                     <input
-                        id=""
-                        name=""
+                        id="inactivo"
+                        name="estatusUser"
                         type="radio"
-                        value={3}
-                        onChange={''}
-                        className="form-radio h-4 w-4 text-[#6C1D45] "
+                        value="4"
+                        checked={filtros.estatusUser === '4'}
+                        onChange={handleRadioChange}
+                        className="form-radio h-4 w-4 text-[#6C1D45]"
                     />
-                    <label >
+                    <label htmlFor="inactivo">
                         Inactivo
                     </label>
                 </div>

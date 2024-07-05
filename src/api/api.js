@@ -268,7 +268,7 @@ export const fetchGetFilteredUsers = async (filtros) => {
     })
     const params = new URLSearchParams({
       conTuristas: filtros.conTuristas,
-      estatusUser: filtros.estatusUser === 'all' ? '' : filtros.estatusUser,
+      estatusUser: filtros.estatusUser === '4' ? '7' : filtros.estatusUser,
       buscar: filtros.buscar
     });
     const response = await axios.get(`/users/buscador/user?${params.toString()}`, config);
