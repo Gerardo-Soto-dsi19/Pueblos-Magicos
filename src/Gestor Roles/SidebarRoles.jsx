@@ -1,17 +1,49 @@
 import React from 'react'
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { AuthContext } from '../components/AuthContext';
 import { Link } from "react-router-dom";
 import { FaInbox, FaCheckCircle, FaClock, FaSignInAlt, FaSignOutAlt, FaStickyNote, FaBook } from "react-icons/fa";
 import { RiAddBoxFill } from "react-icons/ri";
 import ListadoSolicitudRoles from './components/ListadoSolicitudRoles';
-import { fetchLogOut } from '../api/api';
+import { fetchLogOut, fetchGetFilteredUsers } from '../api/api';
 import Header from './components/Header';
 import Filtros from './components/Filtros';
 
 function SidebarRoles() {
     const [isOpen, setIsOpen] = useState(false);
     const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+    const [filtros, setFiltros] = useState({
+        estatusUser: '',
+        tipoUser: '',
+        conTuristas: '0',
+        busqueda: ''
+    });
+    const [usuarios, setUsuarios] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const cargarUsuarios = async () => {
+            setIsLoading(true);
+            setError(null);
+            try {
+                const data = await fetchGetFilteredUsers(filtros);
+                setUsuarios(data);
+            } catch (err) {
+                setError('Error al cargar los usuarios');
+                console.error(err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        cargarUsuarios();
+    }, [filtros]);
+
+    const aplicarFiltros = (nuevosFiltros) => {
+        setFiltros(prevFiltros => ({ ...prevFiltros, ...nuevosFiltros }));
+    };
+
     const handleLogout = async () => {
         try {
             await fetchLogOut();
@@ -27,6 +59,7 @@ function SidebarRoles() {
             }
         }
     };
+
     return (
         <div>
             <div className='md:flex '>
@@ -139,11 +172,17 @@ function SidebarRoles() {
 
                     <div className='grid md:grid-cols-[305px_1fr] gap-6 p-4 md:p-6'>
                         <div className='flex flex-col gap-6 bg-white border rounded-md'>
-                            <Filtros />
+                            <Filtros filtros={filtros} onFiltroChange={aplicarFiltros} />
                         </div>
-                        <div className='border rounded-md'>
-                            <ListadoSolicitudRoles />
-                        </div>
+                        {isLoading ? (
+                            <p>Cargando usuarios...</p>
+                        ) : error ? (
+                            <p>{error}</p>
+                        ) : (
+                            <div className='border rounded-md'>
+                                <ListadoSolicitudRoles usuarios={usuarios} />
+                            </div>
+                        )}
                     </div>
                     <div className="flex justify-center ">
                         <Link className="text-[#6C1D45] text-xs">Términos y condiciones</Link>

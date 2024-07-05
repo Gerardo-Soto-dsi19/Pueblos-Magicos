@@ -260,15 +260,20 @@ export const fetchUpdateRole = async (id, data) => {
 
 /* Servicio para filtrar usuarios */
 
-export const fetchGetFilteredUsers = async (data) => {
+export const fetchGetFilteredUsers = async (filtros) => {
   try {
     const config = getRequestConfig({
       'Accept': 'application/json',
       'Content-Type': 'multipart/form-data',
     })
-    const response = await axios.get(`/users/buscador/user?${data}`, config)
+    const params = new URLSearchParams({
+      conTuristas: filtros.conTuristas,
+      estatusUser: filtros.estatusUser === 'all' ? '' : filtros.estatusUser,
+      buscar: filtros.buscar
+    });
+    const response = await axios.get(`/users/buscador/user?${params.toString()}`, config);
     return response
   } catch (error) {
-
+    throw error
   }
 }
