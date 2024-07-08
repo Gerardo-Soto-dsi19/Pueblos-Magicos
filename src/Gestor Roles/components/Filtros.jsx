@@ -45,10 +45,10 @@ function Filtros({ filtros, onFiltroChange }) {
                 <div className="flex items-center gap-x-3">
                     <input
                         id="director"
-                        name="tipoUsuario"
+                        name="tipoUser"
                         type="radio"
-                        value="director"
-                        checked={filtros.tipoUsuario === '2'}
+                        value={2}
+                        checked={filtros.tipoUser === '2'}
                         onChange={handleRadioChange}
                         className="form-radio h-4 w-4 text-[#6C1D45]"
                     />
@@ -59,10 +59,10 @@ function Filtros({ filtros, onFiltroChange }) {
                 <div className="flex items-center gap-x-3">
                     <input
                         id="pueblo"
-                        name="tipoUsuario"
+                        name="tipoUser"
                         type="radio"
-                        value="pueblo"
-                        checked={filtros.tipoUsuario === '5'}
+                        value={3}
+                        checked={filtros.tipoUser === '3'}
                         onChange={handleRadioChange}
                         className="form-radio h-4 w-4 text-[#6C1D45] ring-inset focus:ring-2"
                     />

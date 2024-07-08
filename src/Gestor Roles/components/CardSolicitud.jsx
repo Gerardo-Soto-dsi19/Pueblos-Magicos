@@ -15,7 +15,7 @@ function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
     const [dataInfoUser, setDataInfoUser] = useState([]);
     const [rolUser, setRolUser] = useState([]);
     const [selectedRole, setSelectedRole] = useState('');
-    console.log('Datos a pasar a CardSolicitud:', dataUsers);
+
 
     useEffect(() => {
         if (dataUsers && dataUsers.data && dataUsers.data.data && dataUsers.data.data.usuarios) {
@@ -28,14 +28,6 @@ function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
             setDataInfoUsers(users);
         }
     }, [dataUsers]);
-    
-    const fetchData = async () => {
-        try {
-            
-        } catch (error) {
-            
-        }
-    }
 
     const fetchUserById = async (id) => {
         try {

@@ -5,43 +5,29 @@ import { Link } from "react-router-dom";
 import { FaInbox, FaCheckCircle, FaClock, FaSignInAlt, FaSignOutAlt, FaStickyNote, FaBook } from "react-icons/fa";
 import { RiAddBoxFill } from "react-icons/ri";
 import ListadoSolicitudRoles from './components/ListadoSolicitudRoles';
-import { fetchLogOut, fetchGetFilteredUsers } from '../api/api';
+import { fetchLogOut } from '../api/api';
 import Header from './components/Header';
 import Filtros from './components/Filtros';
 
 function SidebarRoles() {
     const [isOpen, setIsOpen] = useState(false);
     const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+    const [getAll, setGetAll] = useState(true);
     const [filtros, setFiltros] = useState({
-        estatusUser: '',
+        buscar: '',
         tipoUser: '',
         conTuristas: '0',
-        busqueda: ''
+        estatusUser: ''
     });
-    const [usuarios, setUsuarios] = useState([]);
+
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const cargarUsuarios = async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const data = await fetchGetFilteredUsers(filtros);
-                setUsuarios(data);
-            } catch (err) {
-                setError('Error al cargar los usuarios');
-                console.error(err);
-            } finally {
-                setIsLoading(false);
-            }
-        };
 
-        cargarUsuarios();
-    }, [filtros]);
 
     const aplicarFiltros = (nuevosFiltros) => {
         setFiltros(prevFiltros => ({ ...prevFiltros, ...nuevosFiltros }));
+        setGetAll(false)
     };
 
     const handleLogout = async () => {
@@ -180,7 +166,7 @@ function SidebarRoles() {
                             <p>{error}</p>
                         ) : (
                             <div className='border rounded-md'>
-                                <ListadoSolicitudRoles usuarios={usuarios} />
+                                <ListadoSolicitudRoles getAll={getAll} filtros={filtros} />
                             </div>
                         )}
                     </div>
