@@ -913,7 +913,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                         </div>
                     )}
                 </div>
-                <div className="mt-6 flex justify-end" >
+                <div className="flex items-center justify-end gap-4" >
                     <div>
                         <Tooltip content="Guardar publicación">
                             <button

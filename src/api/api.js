@@ -1,7 +1,7 @@
 import { data } from "autoprefixer";
 import axios from "axios";
 axios.defaults.baseURL = 'http://localhost/api'
-
+axios.defaults.withCredentials = true;
 
 const getAuthConfig = () => {
   const authToken = sessionStorage.getItem('accessToken');
@@ -198,6 +198,85 @@ export const fetchObservations = async (data) => {
       'Content-Type': 'multipart/form-data',
     })
     const response = await axios.post('/observaciones', data, config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
+/* Servicios para obtener usuarios */
+
+export const fetchTipoUsuario = async () => {
+  try {
+    const config = getRequestConfig({
+      'accept': 'application/json',
+      'Content-Type': 'multipart/form-data',
+    })
+    const response = await axios.get('/users', config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
+
+export const fetchTipoUsuarioById = async (id) => {
+  try {
+    const config = getRequestConfig({
+      'accept': 'application/json',
+      'Content-Type': 'multipart/form-data',
+    })
+    const response = await axios.get(`/users/${id}`, config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
+/* Servicio para obtener tipos de usuario*/
+
+export const fetchTypeUsers = async () => {
+  try {
+    const header = {
+      'accept': 'application/json'
+    }
+    const response = await axios.get('/cattiposUsers', header)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
+
+/* Servicio para obtener un usuario con su ID */
+
+export const fetchUpdateRole = async (id, data) => {
+  try {
+    const config = getRequestConfig({
+      'Accept': 'application/json',
+      'Content-Type': 'multipart/form-data',
+    })
+    const response = await axios.post(`/users/${id}`, data, config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
+
+/* Servicio para filtrar usuarios */
+
+export const fetchGetFilteredUsers = async (filtros, page) => {
+  try {
+    const config = {
+      ...getAuthConfig(),
+      params: {
+        page: page + 1
+      }
+    };
+    const paramsURL = new URLSearchParams({
+      tipoUser: filtros.tipoUser,
+      conTuristas: filtros.conTuristas,
+      estatusUser: filtros.estatusUser,
+      buscar: filtros.buscar
+    });
+
+    const response = await axios.get(`/users/buscador/user?${paramsURL.toString()}`, config);
     return response
   } catch (error) {
     throw error

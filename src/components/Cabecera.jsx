@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import axios from "axios";
 
@@ -8,6 +8,13 @@ function Cabecera() {
     const authToken = sessionStorage.getItem('accessToken');
     const [isOpen, setIsOpen] = useState(false);
 
+    const ADMIN_TYPE = '1';
+    const MANAGER_VILLAGES = '2';
+
+    const hasPermission = isAuthenticated &&
+        (sessionStorage.getItem('tu') === ADMIN_TYPE ||
+            sessionStorage.getItem('tu') === MANAGER_VILLAGES);
+
     const handleLogout = () => {
         try {
             const response = axios.post('http://localhost/api/users/logout', null, {
@@ -15,13 +22,15 @@ function Cabecera() {
                     'Authorization': `Bearer ${authToken}`
                 }
             });
-            console.log("Sesion finalizada");
+
             setIsAuthenticated(false);
             sessionStorage.removeItem('accessToken')
+            return response
         } catch (error) {
-            console.log(error.response.data);
+            throw error
         }
     };
+
 
     return (
         <div>
@@ -46,28 +55,23 @@ function Cabecera() {
                                 ></path>
                             </svg>
                         </button>
-                        {isAuthenticated ? (
+                        {isAuthenticated && (
                             <Link
                                 onClick={handleLogout}
                                 className="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
                             >
                                 Cerrar sesión
                             </Link>
-                        ) : (
+                        )/*  : (
                             <Link
                                 to="/"
                                 className="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
                             >
                                 Iniciar sesión
                             </Link>
-                        )}
+                        ) */}
                     </div>
-                    <div
-                        className={`${
-                            isOpen ? 'block' : 'hidden'
-                        } w-full lg:block lg:w-auto`}
-                        id="mobile-menu"
-                    >
+                    <div className={`${isOpen ? 'block' : 'hidden'} w-full lg:block lg:w-auto`} id="mobile-menu">
                         <nav>
                             <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
                                 <li>
@@ -78,6 +82,16 @@ function Cabecera() {
                                         Gestor de publicaciones
                                     </Link>
                                 </li>
+                                {hasPermission && (
+                                    <li>
+                                        <Link
+                                            to="/gestor-roles"
+                                            className="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
+                                        >
+                                            Gestor de roles
+                                        </Link>
+                                    </li>
+                                )}
                             </ul>
                         </nav>
                     </div>

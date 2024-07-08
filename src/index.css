@@ -121,3 +121,42 @@ p {
 .pagination li a:hover {
     background-color: #e6e6e6;
 }
+
+/* Creacion del componente Toggle Button */
+
+.toggle-button {
+    background-color: #E6E6E6;
+    border: 1px, solid #aaa;
+    border-radius: 99px;
+    width: 50px;
+    height: 28px;
+    transition: background-color 0.1s ease, border-color 0.2s ease;
+    cursor: pointer;
+
+    position: relative;
+}
+
+.toggle-button .thumb {
+    height: 20px;
+    width: 20px;
+    background-color: #fff;
+    border-radius: 99px;
+    transform: translateX(0);
+    transition: left 0.15s ease;
+    position: absolute;
+    left: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.toggle-button.toggled {
+    background-color: #6C1D45;
+}
+
+.toggle-button:hover {
+    border-color: #E6E6E6;
+}
+
+.toggle-button.toggled .thumb {
+    left: calc(50px - 25px);
+}
