@@ -130,7 +130,7 @@ function SidebarRoles() {
                     </div>
 
                     <div className='grid md:grid-cols-[305px_1fr] gap-6 p-4 md:p-6'>
-                        <div className='flex flex-col gap-6 bg-white border rounded-md'>
+                        <div className='flex flex-col gap-6 bg-white border rounded-md p-4 w-full max-w-md'>
                             <Filtros filtros={filtros} onFiltroChange={aplicarFiltros} />
                         </div>
                         {isLoading ? (
