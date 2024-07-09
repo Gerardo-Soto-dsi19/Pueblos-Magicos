@@ -20,10 +20,10 @@ function Filtros({ filtros, onFiltroChange }) {
     };
 
     return (
-        <div>
+        <>
             <h2 className='mt-5 mx-2'>Filtros</h2>
             <div className='container mx-auto px-2 mt-5'>
-                <div className=''>
+                <div className='flex'>
                     <input
                         type="text"
                         className='flex-grow rounded-l-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]'
@@ -87,7 +87,7 @@ function Filtros({ filtros, onFiltroChange }) {
                     </label>
                 </div>
             </div>
-            <div className="mt-4 mx-3 space-y-3">
+            <div className="mt-4 mx-3 space-y-3 mb-5">
                 <h3>Estado del usuario</h3>
                 <div className="flex items-center gap-x-3">
                     <input
@@ -118,7 +118,7 @@ function Filtros({ filtros, onFiltroChange }) {
                     </label>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 
