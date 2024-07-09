@@ -2,7 +2,7 @@ import React from 'react'
 import { useState, useContext, useEffect } from "react";
 import { AuthContext } from '../components/AuthContext';
 import { Link } from "react-router-dom";
-import { FaInbox, FaCheckCircle, FaClock, FaSignInAlt, FaSignOutAlt, FaStickyNote, FaBook } from "react-icons/fa";
+import { FaSignInAlt, FaSignOutAlt, FaBook } from "react-icons/fa";
 import { RiAddBoxFill } from "react-icons/ri";
 import ListadoSolicitudRoles from './components/ListadoSolicitudRoles';
 import { fetchLogOut } from '../api/api';
@@ -48,8 +48,8 @@ function SidebarRoles() {
 
     return (
         <div>
-            <div className='md:flex h-screen'>
-                <aside className="md:w-1/6 md:h-screen bg-[#6C1D45] text-white  border-white flex flex-col justify-between" >
+            <div className='md:flex'>
+                <aside className="md:w-1/6 md:h-[100%] bg-[#6C1D45] text-white  border-white flex flex-col justify-between" >
                     <div className='md:mb-52'>
                         <div className=' mx-auto'>
                             <img src="../logo-ipn-lema-vertical-blanco.png" />
@@ -101,7 +101,7 @@ function SidebarRoles() {
                                     </li>
                                 </ul>
                             </div>
-                            <div className="flex md:mt-48 sm: mt-10">
+                            <div className="flex md:mt-80 sm: mt-10">
 
                             </div>
                             <div className="pt-4">
