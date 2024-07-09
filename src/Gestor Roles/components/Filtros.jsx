@@ -23,7 +23,7 @@ function Filtros({ filtros, onFiltroChange }) {
         <>
             <h2 className='mt-5 mx-2'>Filtros</h2>
             <div className='w-full mb-4'>
-                <div className='flex flex-col sm:flex-row'>
+                <div className='flex flex-col sm:flex-row mt-5'>
                     <input
                         type="text"
                         className='w-full sm:w-2/3 rounded-t-md sm:rounded-l-md sm:rounded-t-none border-0 py-2 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]'
@@ -40,7 +40,7 @@ function Filtros({ filtros, onFiltroChange }) {
                     </button>
                 </div>
             </div>
-            <div className="mt-6 mx-3 space-y-3">
+            <div className="mt-2 mx-3 space-y-3">
                 <h3>Tipo de usuario</h3>
                 <div className="flex items-center gap-x-3">
                     <input
