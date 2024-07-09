@@ -48,7 +48,7 @@ function SidebarRoles() {
 
     return (
         <div>
-            <div className='md:flex'>
+            <div className='md:flex h-screen'>
                 <aside className="md:w-1/6 md:h-screen bg-[#6C1D45] text-white  border-white flex flex-col justify-between" >
                     <div className='md:mb-52'>
                         <div className=' mx-auto'>
@@ -78,6 +78,12 @@ function SidebarRoles() {
                             <div className='flex flex-col'>
                                 <ul>
                                     <li className='md:mb-2 w-full text-center'>
+                                    </li>
+                                    <li className='md:mb-2 w-full text-center'>
+                                    </li>
+                                    <li className='md:mb-2 w-full text-center'>
+                                    </li>
+                                    <li className='md:mb-2 w-full text-center'>
                                         <Link
                                             to="/formulario/registro"
                                             className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
@@ -95,7 +101,8 @@ function SidebarRoles() {
                                     </li>
                                 </ul>
                             </div>
-                            <div className="flex md:mt-80 sm: mt-10">
+                            <div className="flex md:mt-48 sm: mt-10">
+
                             </div>
                             <div className="pt-4">
                                 {isAuthenticated ? (
@@ -130,7 +137,7 @@ function SidebarRoles() {
                     </div>
 
                     <div className='grid md:grid-cols-[305px_1fr] gap-6 p-4 md:p-6'>
-                        <div className='flex flex-col gap-6 bg-white border rounded-md p-4 w-full max-w-md'>
+                        <div className='flex flex-col bg-white border rounded-md p-4 w-full max-w-md'>
                             <Filtros filtros={filtros} onFiltroChange={aplicarFiltros} />
                         </div>
                         {isLoading ? (
