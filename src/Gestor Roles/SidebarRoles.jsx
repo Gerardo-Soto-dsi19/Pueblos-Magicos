@@ -48,14 +48,14 @@ function SidebarRoles() {
 
     return (
         <div>
-            <div className='md:flex '>
-                <aside className="md:w-1/6 h-[100%] bg-[#6C1D45] text-white  border-white flex flex-col" >
-                    <div className="">
-                        <div className='md:mb-32'>
-                            <div className=' mx-auto'>
-                                <img src="../logo-ipn-lema-vertical-blanco.png" />
-                            </div>
+            <div className='md:flex'>
+                <aside className="md:w-1/6 md:h-screen bg-[#6C1D45] text-white  border-white flex flex-col justify-between" >
+                    <div className='md:mb-52'>
+                        <div className=' mx-auto'>
+                            <img src="../logo-ipn-lema-vertical-blanco.png" />
                         </div>
+                    </div>
+                    <div className='flex-grow'>
                         <button
                             className="inline-flex items-center mb-5 p-2 ml-3 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
                             onClick={() => setIsOpen(!isOpen)}
@@ -75,57 +75,29 @@ function SidebarRoles() {
                             </svg>
                         </button>
                         <div className={`${isOpen ? 'block' : 'hidden'} w-full lg:block lg:w-auto`} id="mobile-menu">
-
-                            <ul>
-                                <li className='mb-2 w-full '>
-                                    <Link
-                                        onClick={() => handleFilterChange('all')}
-                                        className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
-                                    >
-                                        <FaInbox className="mr-2" />
-                                        Todos los usuarios
-                                    </Link>
-                                </li>
-
-                                <li className='mb-2 w-full text-center'>
-                                    <Link
-                                        onClick={() => handleFilterChange('2')}
-                                        className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
-                                    >
-                                        <FaCheckCircle className="mr-2" />Usuarios activos
-                                    </Link>
-                                </li>
-
-                                <li className='mb-2 w-full text-center'>
-                                    <Link
-                                        onClick={() => handleFilterChange('1')}
-                                        className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
-                                    >
-                                        <FaClock className="mr-2" /> Usuarios inactivos
-                                    </Link>
-                                </li>
-
-                                <li className='md:mb-2 w-full text-center'>
-                                    <Link
-                                        to="/formulario/registro"
-                                        className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
-                                    >
-                                        <RiAddBoxFill className="mr-2" /> Registrar nueva publicación
-                                    </Link>
-                                </li>
-                                <li className='md:mb-2 w-full text-center'>
-                                    <Link
-                                        to="/gestor-solicitudes"
-                                        className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
-                                    >
-                                        <FaBook className="mr-2" /> Gestor de publicaciones
-                                    </Link>
-                                </li>
-                            </ul>
-                            <div className="flex md:mt-60 sm: mt-10">
-
+                            <div className='flex flex-col'>
+                                <ul>
+                                    <li className='md:mb-2 w-full text-center'>
+                                        <Link
+                                            to="/formulario/registro"
+                                            className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                                        >
+                                            <RiAddBoxFill className="mr-2" /> Registrar nueva publicación
+                                        </Link>
+                                    </li>
+                                    <li className='md:mb-2 w-full text-center'>
+                                        <Link
+                                            to="/gestor-solicitudes"
+                                            className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                                        >
+                                            <FaBook className="mr-2" /> Gestor de publicaciones
+                                        </Link>
+                                    </li>
+                                </ul>
                             </div>
-                            <div className="md:mt-10">
+                            <div className="flex md:mt-80 sm: mt-10">
+                            </div>
+                            <div className="pt-4">
                                 {isAuthenticated ? (
                                     <Link
                                         onClick={handleLogout}
@@ -144,13 +116,14 @@ function SidebarRoles() {
 
                                 )}
                             </div>
-
                         </div>
 
                     </div>
+
+
                 </aside >
 
-                <main className='md:w-5/6'>
+                <main className='md:w-5/6 h-screen'>
                     <div>
                         <Header />
                         <h1 className=" mt-5 mb-5 border-b-2 mx-5">Gestión de roles</h1>

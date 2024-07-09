@@ -91,7 +91,7 @@ function ListadoSolicitudRoles({ filtros }) {
                 dataUsers={dataUser}
                 onDataUpdate={handleDataUpdate}
             />
-            <div className="mt-24">
+            <div className="mt-16">
                 <ReactPaginate
                     breakLabel={'...'}
                     nextLabel="Siguiente"
