@@ -20,27 +20,27 @@ function Filtros({ filtros, onFiltroChange }) {
     };
 
     return (
-        <div>
+        <>
             <h2 className='mt-5 mx-2'>Filtros</h2>
-            <div className='container mx-auto px-2 mt-5'>
-                <div className='flex'>
+            <div className='w-full mb-4'>
+                <div className='flex flex-col sm:flex-row mt-5'>
                     <input
                         type="text"
-                        className='flex-grow rounded-l-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]'
+                        className='w-full sm:w-2/3 rounded-t-md sm:rounded-l-md sm:rounded-t-none border-0 py-2 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]'
                         placeholder='Buscar un usuario'
                         value={filtros.buscar}
                         onChange={handleInputChange}
                     />
                     <button
                         type='button'
-                        className='rounded-r-md bg-[#6C1D45] hover:bg-[#8C3A68] px-4 py-1.5 text-white'
+                        className='w-full sm:w-1/3 mt-2 sm:mt-0 rounded-b-md sm:rounded-r-md sm:rounded-b-none bg-[#6C1D45] hover:bg-[#8C3A68] px-4 py-2 text-white'
                         onClick={handleSearch}
                     >
                         Buscar
                     </button>
                 </div>
             </div>
-            <div className="mt-6 mx-3 space-y-3">
+            <div className="mt-2 mx-3 space-y-3">
                 <h3>Tipo de usuario</h3>
                 <div className="flex items-center gap-x-3">
                     <input
@@ -118,7 +118,7 @@ function Filtros({ filtros, onFiltroChange }) {
                     </label>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 
