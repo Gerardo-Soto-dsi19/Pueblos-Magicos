@@ -9,7 +9,6 @@ function GestionSolicitudes() {
   const navigate = useNavigate();
 
   if (!isAuthenticated) {
-    console.log('Error: el usuario no ha sido autenticado');
     return <Navigate to="/" replace />
   }
   return (

@@ -15,8 +15,7 @@ function Filtros({ filtros, onFiltroChange }) {
     };
 
     const handleSearch = () => {
-        // Si necesitas alguna acción específica al presionar el botón de búsqueda
-        // Puedes implementarla aquí
+
     };
 
     return (

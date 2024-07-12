@@ -44,16 +44,10 @@ function ListadoSolicitudRoles({ filtros }) {
             const data = resp.data
             const totalPages = resp.data.data.usuarios.last_page;
             const currentPage = resp.data.data.usuarios.current_page;
-            console.log('Antes del ajuste');
-            console.log('current page', currentPage);
             const adjustedPage = currentPage > totalPages ? totalPages : currentPage;
-            console.log('Despues del ajuste');
-            console.log('current page', adjustedPage);
+
             if (adjustedPage !== currentPage) {
-                console.log('Entra al if');
-                console.log('adjustedPage',adjustedPage);
                 resp = await fetchGetFilteredUsers(filtro, adjustedPage)
-                console.log(resp);
                 setDataUser(resp)
             }
         } catch (error) {
