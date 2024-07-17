@@ -104,14 +104,17 @@ function Sidebar() {
                                     <RiAddBoxFill className="mr-2" /> Registrar nueva publicación
                                 </Link>
                             </li>
-                            <li className='md:mb-2 w-full text-center'>
-                                <Link
-                                    to="/gestor-roles"
-                                    className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
-                                >
-                                    <FaLock className="mr-2" /> Gestor de roles
-                                </Link>
-                            </li>
+                            {(sessionStorage.getItem("tu") === "1" || sessionStorage.getItem("tu") === "2") && (
+                                <li className='md:mb-2 w-full text-center'>
+
+                                    <Link
+                                        to="/gestor-roles"
+                                        className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                                    >
+                                        <FaLock className="mr-2" /> Gestor de roles
+                                    </Link>
+                                </li>
+                            )}
                         </ul>
                         <div className="flex md:mt-60 sm: mt-10">
 
