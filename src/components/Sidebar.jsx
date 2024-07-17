@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"
 import { FaInbox, FaCheckCircle, FaClock, FaExclamationCircle, FaSignInAlt, FaSignOutAlt, FaUser, FaLock } from "react-icons/fa";
 import { RiAddBoxFill } from "react-icons/ri";
 import ListadoSolicitudes from "./ListadoSolicitudes";
+import Header from "../Gestor Roles/components/Header";
 import { fetchLogOut } from '../api/api'
 
 function Sidebar() {
@@ -141,6 +142,7 @@ function Sidebar() {
             </aside >
 
             <main className='md:w-5/6'>
+                <Header />
                 <h1 className=" mt-10 border-b-2 mx-5">Gestión de publicaciones</h1>
                 <div>
                     <ListadoSolicitudes
