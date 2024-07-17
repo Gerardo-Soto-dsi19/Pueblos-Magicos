@@ -58,11 +58,21 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         } finally {
             setIsLoading(false);
         }
-    };
+    }
+
     const handleDataUpdate = () => {
         fetchData();
         setIsEditable(false)
-    };
+    }
+
+    const handleVerifyObservations = (flag) => {
+        if (flag) {
+            setIsEditable(true)
+        } else {
+            setIsEditable(false)
+        }
+
+    }
 
     const getFilteredData = async (id_estatus, page) => {
         const token = sessionStorage.getItem('accessToken');
@@ -310,6 +320,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                         serviceId={selectedServiceId}
                         isEditable={isEditable}
                         onDataUpdate={handleDataUpdate}
+                        verifyObservations={handleVerifyObservations}
                     />
                 </Modal.Body>
                 <Modal.Footer className="flex items-center justify-end gap-4">

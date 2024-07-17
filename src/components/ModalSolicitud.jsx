@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react';
 import { TextInput, Textarea, Label, Tooltip, Spinner } from "flowbite-react"
 import { MdDataSaverOn } from "react-icons/md";
 import { HiX } from "react-icons/hi";
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import React from 'react';
 import FormData from 'form-data';
 import { fetchRemoveMainImage, getTypesServices, getMagicTowns, getStateCatalogue, fetchGetServicioById, fetchUpdateService, fetchUpdateImages } from '../api/api'
 
-function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
+function ModalSolicitud({ serviceId, isEditable, onDataUpdate, verifyObservations }) {
     const [puebloMagico, setPuebloMagico] = useState([])
     const [categoria, setCategoria] = useState([])
     const [estado, setEstado] = useState([])
@@ -22,6 +21,8 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
     const [newimage, setNewImage] = useState(false);
     const [newImageGallery, setNewImageGallery] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [hasObservations, setHasObservations] = useState(false);
+    const [observation, setObservation] = useState('');
 
 
     const Toast = Swal.mixin({
@@ -207,7 +208,9 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
         const fetchServiceData = async () => {
             try {
                 const response = await fetchGetServicioById(serviceId)
+
                 const serviceData = response.data.data.servicio[0];
+                console.log('$$$$', serviceData);
                 if (serviceData) {
                     const newInitialValues = {
                         id_pueblo: serviceData?.pueblo?.id || '',
@@ -248,6 +251,13 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                         (image) => image.id_tipo_imagen === 2
                     );
                     setImagesDataGallery(galleryImageData);
+
+                    if (serviceData.estatus.id === 3) {
+                        setHasObservations(true)
+                        const observacion = serviceData.observaciones.observacion
+                        setObservation(observacion)
+                        verifyObservations(true)
+                    } 
                 } else {
                     console.error('No se encontraron datos de servicio');
                 }
@@ -357,6 +367,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
             try {
                 const formData = new FormData();
                 formData.append('data[imagen_principal]', file);
+                formData.append('data[servicio][id_estatus]',1)
                 formData.append('_method', 'PUT');
 
                 const response = await fetchUpdateImages(serviceId, formData)
@@ -365,12 +376,13 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                         icon: "success",
                         title: "Se ha cargado la imagen exitosamente"
                     });
-
+                    setHasObservations(false)
+                    verifyObservations(false)
                     onDataUpdate();
                 }
                 return response.data;
             } catch (error) {
-                console.error('Error al actualizar la imagen principal:', error);
+                Swal.fire('Error','No se pudo cargar la imagen','error')
                 throw error;
             }
         } else if (newImageGallery) {
@@ -379,7 +391,9 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
 
             for (const file of formValues.imagenes_nuevas) {
                 formDataGallery.append('data[imagenes_nuevas][]', file);
+                
             }
+            formDataGallery.append('data[servicio][id_estatus]',1)
             formDataGallery.append('_method', 'PUT');
             try {
                 const response = await fetchUpdateImages(serviceId, formDataGallery)
@@ -388,14 +402,13 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                         icon: "success",
                         title: "Se han cargado las imagenes exitosamente"
                     });
+                    setHasObservations(false);
+                    verifyObservations(false);
                     onDataUpdate();
                 }
                 return response.data;
             } catch (error) {
-                Toast.fire({
-                    icon: "error",
-                    title: "Error al cargar las imagenes"
-                });
+                Swal.fire('Error', 'No se pudieron cargar las imagenes','error');
                 throw error;
             }
         } else {
@@ -406,13 +419,12 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                         icon: "success",
                         title: "Se han actualizado la información exitosamente"
                     });
+                    setHasObservations(false)
+                    verifyObservations(false);
                     onDataUpdate();
                 }
             } catch (error) {
-                Toast.fire({
-                    icon: "error",
-                    title: "Error al cargar las imagenes"
-                });
+                Swal.fire('Error','No fue posible actualizar la información','error')
                 throw error;
             }
         }
@@ -433,6 +445,19 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
 
     return (
         <>
+            <div>
+                {hasObservations && (
+                    <div>
+                        <Label>Observaciones</Label>
+                        <Textarea
+                            color='failure'
+                            value={observation}
+                            readOnly={true}
+                        />
+
+                    </div>
+                )}
+            </div>
             <div className='md:flex justify-between'>
                 <div className='mt-5'>
                     <Label>Pueblo Mágico</Label>
@@ -914,11 +939,28 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate }) {
                     )}
                 </div>
                 <div className="flex items-center justify-end gap-4" >
+{/*                     {hasObservations && (
+                        <Tooltip content="Enviar">
+                            <button
+                                type="submit"
+                                className="md:flex-1 py-3 px-3 mt-5 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full"
+                                onClick={handleUpdate}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <Spinner className='spinner-custom' aria-label="Spinner de carga" />
+                                ) : (
+                                    <MdDataSaverOn />
+                                )}
+
+                            </button>
+                        </Tooltip>
+                    )} */}
                     <div>
                         <Tooltip content="Guardar publicación">
                             <button
                                 type="submit"
-                                className="md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full"
+                                className="md:flex-1 py-3 px-3 mt-5 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full"
                                 hidden={!isEditable}
                                 onClick={handleUpdate}
                                 disabled={isLoading}
