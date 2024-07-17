@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom'
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../components/AuthContext';
 import axios from "axios"
 import Swal from 'sweetalert2';
@@ -16,6 +16,15 @@ const Login = () => {
         'password': ''
     });
 
+    useEffect(() =>  {
+        const sanctum = axios.get('http://localhost/sanctum/csrf-cookie', {
+            headers: {
+                'accept': 'application/json',
+                'Content-Type': 'application/json',
+            }
+        });
+    });
+
     const navigate = useNavigate();
     const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
 
@@ -28,7 +37,6 @@ const Login = () => {
     }
 
     const handleSubmit = async (e) => {
-
         e.preventDefault();
         setIsLoading(true);
 
@@ -40,18 +48,18 @@ const Login = () => {
         };
 
         try {
-            const response = await loginUser(dataToSend)            
+            const response = await loginUser(dataToSend)
             if (response.status === 200) {
                 sessionStorage.setItem('accessToken', response.data.access_token);
                 localStorage.setItem('user_name', response.data.user.id);
                 sessionStorage.setItem('tu', response.data.user.id_tipo_usuario)
                 // Obtener la cookie CSRF después de un inicio de sesión exitoso
-                await axios.get('http://localhost/sanctum/csrf-cookie', {
+/*                 await axios.get('http://localhost/sanctum/csrf-cookie', {
                     headers: {
                         'accept': 'application/json',
                         'Content-Type': 'application/json',
                     }
-                });
+                }); */
 
                 navigate('/gestor-solicitudes');
                 setIsAuthenticated(true);

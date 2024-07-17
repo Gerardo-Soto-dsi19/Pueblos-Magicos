@@ -1,7 +1,7 @@
 import { data } from "autoprefixer";
 import axios from "axios";
 axios.defaults.baseURL = 'http://localhost/api'
-axios.defaults.withCredentials = true;
+//axios.defaults.withCredentials = true;
 
 const getAuthConfig = () => {
   const authToken = sessionStorage.getItem('accessToken');
