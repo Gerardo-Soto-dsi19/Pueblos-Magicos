@@ -6,6 +6,7 @@ import { Spinner, Tooltip } from 'flowbite-react'
 import { FiAlertCircle } from "react-icons/fi";
 import { AuthContext } from '../components/AuthContext';
 import { HiX } from "react-icons/hi";
+import DatePicker, { DateObject } from "react-multi-date-picker"
 import FormInput from '../components/Formulario/FormInput';
 import FileUpload from '../components/Formulario/FileUpload';
 import { createService, getTypesServices, getMagicTowns, getStateCatalogue } from '../api/api'
@@ -64,7 +65,9 @@ function Formulario() {
     categoria: '',
     titulo: '',
     descripcion: '',
-    dias_servicio: '',
+    dias_servicio: null,
+    fecha_inicio: null,
+    fecha_fin: null,
     horario_inicio: '',
     horario_fin: '',
     precio: '',
@@ -82,6 +85,7 @@ function Formulario() {
     imgPrincipal: null,
     arrayGaleria: [],
   });
+
   const [puebloMagico, setPuebloMagico] = useState([]);
   const [categoria, setCategoria] = useState([]);
   const [estado, setEstado] = useState([]);
@@ -90,9 +94,9 @@ function Formulario() {
   const [isLoading, setIsLoading] = useState(false);
   const dropZoneMainRef = useRef(null);
   const [dragActiveMain, setDragActiveMain] = useState(false);
-
   const dropZoneGalleryRef = useRef(null);
   const [dragActiveGallery, setDragActiveGallery] = useState(false);
+  const [hasRangeDate, setHasRangeDate] = useState(false);
 
   const handleClick = (e, indexToRemove) => {
     e.preventDefault(); // Prevenir el comportamiento predeterminado del clic
@@ -117,6 +121,8 @@ function Formulario() {
       titulo: '',
       descripcion: '',
       dias_servicio: '',
+      fecha_inicio: '',
+      fecha_fin: '',
       horario_inicio: '',
       horario_fin: '',
       precio: '',
@@ -173,28 +179,45 @@ function Formulario() {
 
 
   const handleChange = (e) => {
-    const { name, files } = e.target;
+    const { name, files, value } = e.target;
 
     if (name === 'imgPrincipal') {
       setFormData((prevState) => ({
         ...prevState,
         imgPrincipal: files[0],
       }));
-      setMainImage(files[0])
+      setMainImage(files[0]);
     } else if (name === 'arrayGaleria') {
-      const fileImg = e.target.files
       setFormData((prevState) => ({
         ...prevState,
         arrayGaleria: Array.from(files),
       }));
       setGalleryImages([...galleryImages, ...Array.from(files)]);
+    } else if (name === 'categoria') {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+      const shouldShowRangeDate = value === '5';
+      setHasRangeDate(shouldShowRangeDate);
     } else {
       setFormData((prevState) => ({
         ...prevState,
-        [name]: e.target.value,
+        [name]: value,
       }));
     }
-  };
+  }
+
+  const handleDateChange = (dates) => {
+    const [startDate, endDate] = dates.map(date => date.toDate());
+
+    setFormData(prevData => ({
+      ...prevData,
+      fecha_inicio: startDate,
+      fecha_fin: endDate
+    }));
+  }
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -205,11 +228,13 @@ function Formulario() {
           id_tipo_servicio: formData.categoria,
           municipio: formData.alcaldia,
           CP: formData.CP,
-          int: formData.numInt,
+          int: formData.numInt || null,
           ext: formData.numExt,
           colonia: formData.colonia,
           calle: formData.calle,
-          dias_servicio: formData.dias_servicio,
+          dias_servicio: formData.dias_servicio || null,
+          fecha_inicio: formData.fecha_inicio || null,
+          fecha_fin: formData.fecha_fin || null,
           horario_inicio: formData.horario_inicio,
           horario_fin: formData.horario_fin,
           precio: formData.precio,
@@ -218,7 +243,7 @@ function Formulario() {
           latitud: formData.latitud,
           longitud: formData.longitud,
           telefono: formData.telefono,
-          pagina_web: 'https://'.concat(formData.pagina_web),
+          pagina_web: 'https://'.concat(formData.pagina_web) || null,
           imgPrincipal: formData.imgPrincipal,
           arrayGaleria: formData.arrayGaleria,
           id_estado: '21',
@@ -226,6 +251,7 @@ function Formulario() {
           id_pueblo: formData.id_pueblo,
         }
       }
+
       const response = await createService(datosToSend)
       if (response.status === 200 || response.status === 201) {
         Toast.fire({
@@ -366,11 +392,12 @@ function Formulario() {
                   </div>
                 </div>
                 <div className="sm:col-span-3">
-                  <label htmlFor="#" className="block text-sm font-medium leading-6 text-gray-900">
+                  <label htmlFor="categoria" className="block text-sm font-medium leading-6 text-gray-900">
                     Categoría *
                   </label>
                   <div className="mt-2">
                     <MemoizedSelectCategoria
+                      name="categoria"
                       value={formData.categoria}
                       onChange={handleChange}
                       options={categoria}
@@ -407,19 +434,42 @@ function Formulario() {
                 </div>
 
                 <div className="sm:col-span-2 sm:col-start-1">
-                  <label htmlFor="dias_servicio" className="block text-sm font-medium leading-6 text-gray-900">
-                    Días de servicio *
-                  </label>
-                  <div className="mt-2">
-                    <Tooltip content="Este campo debe contener entre 5 y 20 caracteres">
-                      <input
-                        type="text"
-                        name="dias_servicio"
-                        value={formData.dias_servicio} onChange={handleChange}
-                        className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
-                      />
-                    </Tooltip>
-                  </div>
+                  {hasRangeDate ? (
+                    <>
+                      <label htmlFor="rangeDate" className="block text-sm font-medium leading-6 text-gray-900">
+                        Fechas de festividad *
+                      </label>
+                      <div className="date-picker-wrapper">
+                        <DatePicker
+                          range
+                          name="rangeDate"
+                          dateSeparator=' - '
+                          onChange={handleDateChange}
+                          value={[formData.fecha_inicio, formData.fecha_fin]}
+                          inputClass="date-picker-input"
+                          containerClassName="date-picker-container"
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <label htmlFor="dias_servicio" className="block text-sm font-medium leading-6 text-gray-900">
+                        Días de servicio *
+                      </label>
+                      <div className="mt-2">
+                        <Tooltip content="Este campo debe contener entre 5 y 20 caracteres">
+                          <input
+                            type="text"
+                            name="dias_servicio"
+                            value={formData.dias_servicio}
+                            onChange={handleChange}
+                            className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#6C1D45]"
+                          />
+                        </Tooltip>
+                      </div>
+                    </>
+                  )}
+
                 </div>
 
                 <div className="sm:col-span-2">
@@ -622,7 +672,7 @@ function Formulario() {
 
                 <div className="sm:col-span-3">
                   <label htmlFor="pagina_web" className="block text-sm font-medium leading-6 text-gray-900">
-                    Sitio Web *
+                    Sitio Web 
                   </label>
                   <div className="mt-2">
                     <input
