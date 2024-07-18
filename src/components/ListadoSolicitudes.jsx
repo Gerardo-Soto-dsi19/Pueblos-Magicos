@@ -7,6 +7,7 @@ import '../index.css'
 import ModalSolicitud from './ModalSolicitud'
 import NoDataCard from './NoDataCard';
 import { HiCheckCircle, HiOutlinePencilAlt, HiXCircle } from "react-icons/hi";
+import { FaTrash } from 'react-icons/fa';
 import FormData from 'form-data';
 import Swal from 'sweetalert2';
 import { getAllServices, getServicesFiltered, fetchAccept, fetchObservations } from '../api/api'
@@ -158,6 +159,15 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         }
     }
 
+    const handleDarDeBaja = async () => {
+        const dataToSend = {
+            data: {
+                servicio: {
+                    id_estatus: "4"
+                }
+            }
+        };
+    }
 
     const handlePageClick = (event) => {
         const newPage = event.selected;
@@ -327,6 +337,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                     <div className="flex flex-row-reverse gap-x-7">
                         {(sessionStorage.getItem("tu") === "1" || sessionStorage.getItem("tu") === "2") && (
                             <>
+
                                 <Tooltip content="Aceptar publicación">
                                     <button
                                         type="button"
@@ -354,6 +365,15 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                                         <HiXCircle />
                                     </button>
                                 </Tooltip>
+{/*                                 <Tooltip content="Dar de baja la publicación">
+                                    <button
+                                        type="button"
+                                        className="md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full"
+
+                                    >
+                                        <FaTrash />
+                                    </button>
+                                </Tooltip> */}
                             </>
                         )}
                     </div>
