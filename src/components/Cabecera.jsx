@@ -22,7 +22,8 @@ function Cabecera() {
                     'Authorization': `Bearer ${authToken}`
                 }
             });
-
+            sessionStorage.removeItem('accessToken');
+            document.cookie = 'XSRF-TOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
             setIsAuthenticated(false);
             sessionStorage.removeItem('accessToken')
             return response
