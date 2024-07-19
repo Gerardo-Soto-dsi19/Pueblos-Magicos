@@ -4,7 +4,7 @@ import { AuthContext } from '../components/AuthContext';
 import axios from "axios"
 import Swal from 'sweetalert2';
 import { Spinner } from 'flowbite-react';
-import { loginUser, fetchAuthTokens } from '../api/api'
+import { loginUser } from '../api/api'
 
 
 
@@ -16,14 +16,18 @@ const Login = () => {
         'password': ''
     });
 
-    useEffect(() =>  {
-        const sanctum = axios.get('http://localhost/sanctum/csrf-cookie', {
-            headers: {
-                'accept': 'application/json',
-                'Content-Type': 'application/json',
+    useEffect(() => {
+        const getCsrfToken = async () => {
+            try {
+                await axios.get('http://localhost/sanctum/csrf-cookie', {
+                    
+                });
+            } catch (error) {
+                Swal.fire('Error al conectarse','Hay un problema de conexión. Por favor, intenta de nuevo más tarde.','error')
             }
-        });
-    });
+        };
+        getCsrfToken();
+    }, []);
 
     const navigate = useNavigate();
     const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
@@ -53,13 +57,7 @@ const Login = () => {
                 sessionStorage.setItem('accessToken', response.data.access_token);
                 localStorage.setItem('user_name', response.data.user.id);
                 sessionStorage.setItem('tu', response.data.user.id_tipo_usuario)
-                // Obtener la cookie CSRF después de un inicio de sesión exitoso
-/*                 await axios.get('http://localhost/sanctum/csrf-cookie', {
-                    headers: {
-                        'accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    }
-                }); */
+
 
                 navigate('/gestor-solicitudes');
                 setIsAuthenticated(true);
@@ -72,7 +70,6 @@ const Login = () => {
             }
         } catch (error) {
             if (error.response && error.response.data) {
-                // Imprimir la respuesta de la API
                 Swal.fire({
                     icon: 'error',
                     title: 'Credenciales incorrectas',
