@@ -1,15 +1,39 @@
 import { data } from "autoprefixer";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 axios.defaults.baseURL = 'http://localhost/api'
-//axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true;
+
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 500) {
+      // Token expirado o inválido
+      sessionStorage.removeItem('accessToken'); // Eliminar el token
+
+      // Limpiar la cookie de Sanctum
+      document.cookie = 'XSRF-TOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+      // Guardar la URL actual
+      sessionStorage.setItem('lastVisitedUrl', window.location.pathname);
+
+      // Redirigir al login
+      window.location.href = '/';
+    }
+    return Promise.reject(error);
+  }
+);
 
 const getAuthConfig = () => {
   const authToken = sessionStorage.getItem('accessToken');
-  return {
-    headers: {
-      'Authorization': `Bearer ${authToken}`,
-    }
-  };
+  if (authToken) {
+    return {
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+      }
+    };
+  }
+  return {};
 };
 
 const getRequestConfig = (additionalHeaders = {}) => {
