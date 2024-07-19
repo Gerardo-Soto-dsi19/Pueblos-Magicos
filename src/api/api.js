@@ -1,8 +1,6 @@
-import { data } from "autoprefixer";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
 axios.defaults.baseURL = 'http://localhost/api'
-axios.defaults.withCredentials = true;
+//axios.defaults.withCredentials = true;
 
 axios.interceptors.response.use(
   (response) => response,
@@ -22,7 +20,7 @@ axios.interceptors.response.use(
     }
     return Promise.reject(error);
   }
-);
+)
 
 const getAuthConfig = () => {
   const authToken = sessionStorage.getItem('accessToken');
