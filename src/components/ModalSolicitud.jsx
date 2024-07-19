@@ -210,7 +210,6 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate, verifyObservation
                 const response = await fetchGetServicioById(serviceId)
 
                 const serviceData = response.data.data.servicio[0];
-                console.log('$$$$', serviceData);
                 if (serviceData) {
                     const newInitialValues = {
                         id_pueblo: serviceData?.pueblo?.id || '',

@@ -1,5 +1,3 @@
-
-import axios from "axios"
 import ReactPaginate from "react-paginate";
 import React, { useEffect, useState } from 'react'
 import { Carousel, Spinner, Modal, Tooltip, Badge } from "flowbite-react"
@@ -7,7 +5,7 @@ import '../index.css'
 import ModalSolicitud from './ModalSolicitud'
 import NoDataCard from './NoDataCard';
 import { HiCheckCircle, HiOutlinePencilAlt, HiXCircle } from "react-icons/hi";
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaCheck } from 'react-icons/fa';
 import FormData from 'form-data';
 import Swal from 'sweetalert2';
 import { getAllServices, getServicesFiltered, fetchAccept, fetchObservations } from '../api/api'
@@ -21,6 +19,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     const [selectedServiceId, setSelectedServiceId] = useState(null);
     const [emptyData, setEmptyData] = useState(false);
     const [isEditable, setIsEditable] = useState(false);
+    const [isServiceActive, setIsServiceActive] = useState(true);
     let titulo;
 
     switch (tipoSolicitud) {
@@ -76,15 +75,6 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     }
 
     const getFilteredData = async (id_estatus, page) => {
-        const token = sessionStorage.getItem('accessToken');
-        const config = {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            params: {
-                page: page + 1
-            }
-        };
 
         try {
             let response;
@@ -92,7 +82,6 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 response = await getAllServices(page);
             } else {
                 response = await getServicesFiltered(id_estatus, page);
-                /* response = await axios.get(`http://localhost/api/servicios/filtrar/estatus/${id_estatus}`, config); */
             }
 
             const data = response.data.data.servicios;
@@ -159,14 +148,45 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         }
     }
 
-    const handleDarDeBaja = async () => {
+    const handleToggleServiceStatus = async () => {
+        const newStatus = isServiceActive ? 4 : 2;
+        const actionText = isServiceActive ? "pausar" : "activar";
+        const iconType = isServiceActive ? 'warning' : 'info';
         const dataToSend = {
             data: {
                 servicio: {
-                    id_estatus: "4"
+                    id_estatus: newStatus
+                }
+            },
+        };
+        try {
+            const result = await Swal.fire({
+                title: '¿Estás seguro?',
+                text: `¿Deseas ${actionText} la publicación?`,
+                icon: iconType,
+                showCancelButton: true,
+                confirmButtonColor: '#6C1D45',
+                confirmButtonText: `Sí, ${actionText}`,
+                cancelButtonText: 'Cancelar',
+            });
+            if (result.isConfirmed) {
+                const response = await fetchAccept(selectedServiceId, dataToSend);
+                console.log('Response:', response); 
+                if (response && response.status === 200) {
+                    Swal.fire('Éxito', `La publicación fue ${actionText}da`, 'success');
+                    setIsServiceActive(!isServiceActive);
+                    setOpenModal(false);
+                } else {
+                    throw new Error('La respuesta del servidor no fue exitosa');
                 }
             }
-        };
+        } catch (error) {
+            if(error ==='Unauthenticated'){
+                console.log('Token expirado');
+            }
+            console.error('Error en handleToggleServiceStatus:', error);
+            Swal.fire('Error', `Ocurrió un error al ${actionText} la publicación`, 'error');
+        }
     }
 
     const handlePageClick = (event) => {
@@ -175,8 +195,9 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         fetchData();
     };
 
-    const handleCardClick = (id) => {
+    const handleCardClick = (id, isActive) => {
         setSelectedServiceId(id);
+        setIsServiceActive(isActive);
         setOpenModal(true);
     };
     const handleModalClose = () => {
@@ -301,7 +322,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                         </div>
                         <p
                             className=" text-center cursor-pointer underline mt-10"
-                            onClick={() => handleCardClick(servicio.id)}
+                            onClick={() => handleCardClick(servicio.id, servicio.estatus.id !== 4)}
                         >
                             Ver más...
                         </p>
@@ -365,17 +386,17 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                                         <HiXCircle />
                                     </button>
                                 </Tooltip>
-{/*                                 <Tooltip content="Dar de baja la publicación">
-                                    <button
-                                        type="button"
-                                        className="md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full"
-
-                                    >
-                                        <FaTrash />
-                                    </button>
-                                </Tooltip> */}
                             </>
                         )}
+                        <Tooltip content={isServiceActive ? "Pausar publicación" : "Dar de alta"}>
+                            <button
+                                type="button"
+                                className="md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full"
+                                onClick={handleToggleServiceStatus}
+                            >
+                                {isServiceActive ? <FaTrash /> : <FaCheck />}
+                            </button>
+                        </Tooltip>
                     </div>
                 </Modal.Footer>
 
