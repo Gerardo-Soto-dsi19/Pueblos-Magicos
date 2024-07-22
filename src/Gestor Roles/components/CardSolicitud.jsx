@@ -63,10 +63,9 @@ function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
     const handleTypesUsers = async () => {
         try {
             const response = await fetchTypeUsers()
-            console.log('respuesta del combo', response.data.data);
             setRolUser(response.data.data)
         } catch (error) {
-
+            Swal.fire('Error', 'Error al mostrar los tipos de usuario, intentelo mas tarde','error')
         }
     }
 
