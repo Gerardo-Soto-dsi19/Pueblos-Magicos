@@ -81,8 +81,17 @@ function SidebarRoles() {
                                     </li>
                                     <li className='md:mb-2 w-full text-center'>
                                     </li>
-                                    <li className='md:mb-2 w-full text-center'>
-                                    </li>
+                                    {((sessionStorage.getItem("tu") === "1") &&
+                                        <li className='md:mb-2 w-full text-center'>
+                                            <Link
+                                                to="/gestor-usuarios/registro/usuarios"
+                                                className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                                            >
+                                                <RiAddBoxFill className="mr-2" /> Registrar nuevo usuario
+                                            </Link>
+                                        </li>
+                                    )}
+
                                     <li className='md:mb-2 w-full text-center'>
                                         <Link
                                             to="/formulario/registro"
