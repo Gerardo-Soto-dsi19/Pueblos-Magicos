@@ -256,15 +256,17 @@ export const fetchTipoUsuarioById = async (id) => {
 
 export const fetchTypeUsers = async () => {
   try {
-    const header = {
-      'accept': 'application/json'
-    }
-    const response = await axios.get('/cattiposUsers', header)
+    const config = getRequestConfig({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    })
+    const response = await axios.get('/cattiposUsers', config)
     return response
   } catch (error) {
     throw error
   }
 }
+
 
 /* Servicio para obtener un usuario con su ID */
 
@@ -358,3 +360,17 @@ export const fetchUpdateImages = async (id, data) => {
   }
 }
 
+/* Servicio para crear un usuario desde el gestor de roles */
+
+export const fetchCreateUser = async (data) => {
+  try {
+    const config = getRequestConfig({
+      'accept': 'application/json',
+      'Content-Type': 'application/json',
+    })
+    const response = await axios.post('/admin/users/registrar', data, config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
