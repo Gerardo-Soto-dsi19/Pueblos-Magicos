@@ -1,14 +1,16 @@
 import ReactPaginate from "react-paginate";
 import React, { useEffect, useState } from 'react'
-import { Carousel, Spinner, Modal, Tooltip, Badge } from "flowbite-react"
+import { Carousel, Spinner, Modal, Tooltip, Badge, Dropdown } from "flowbite-react"
 import '../index.css'
 import ModalSolicitud from './ModalSolicitud'
 import NoDataCard from './NoDataCard';
 import { HiCheckCircle, HiOutlinePencilAlt, HiXCircle } from "react-icons/hi";
 import { FaTrash, FaCheck } from 'react-icons/fa';
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { LuPowerOff } from "react-icons/lu";
 import FormData from 'form-data';
 import Swal from 'sweetalert2';
-import { getAllServices, getServicesFiltered, fetchAccept, fetchObservations } from '../api/api'
+import { getAllServices, getServicesFiltered, fetchAccept, fetchObservations, fetchDeleteService } from '../api/api'
 
 function ListadoSolicitudes({ tipoSolicitud }) {
     const [servicios, setServicios] = useState([]);
@@ -129,17 +131,8 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 });
                 fetchData();
                 setOpenModal(false);
-            } else {
-                // La solicitud no fue exitosa
-                const errorMessage = response.data ? response.data.error : 'Ocurrió un error al aceptar la publicación';
-                Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: errorMessage
-                });
             }
         } catch (error) {
-            console.error('Error:', error);
             Swal.fire({
                 icon: "error",
                 title: "Error",
@@ -148,8 +141,9 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         }
     }
 
-    const handleToggleServiceStatus = async () => {
+    const handleToggleServiceStatus = async (id) => {
         const newStatus = isServiceActive ? 4 : 2;
+        const successText = isServiceActive ? "pausada" : "activada";
         const actionText = isServiceActive ? "pausar" : "activar";
         const iconType = isServiceActive ? 'warning' : 'info';
         const dataToSend = {
@@ -170,22 +164,51 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 cancelButtonText: 'Cancelar',
             });
             if (result.isConfirmed) {
-                const response = await fetchAccept(selectedServiceId, dataToSend);
-                console.log('Response:', response); 
-                if (response && response.status === 200) {
-                    Swal.fire('Éxito', `La publicación fue ${actionText}da`, 'success');
+                const response = await fetchAccept(id, dataToSend);
+                if (response.status === 200) {
+                    Swal.fire('Éxito', `La publicación fue ${successText}`, 'success');
                     setIsServiceActive(!isServiceActive);
-                    setOpenModal(false);
-                } else {
-                    throw new Error('La respuesta del servidor no fue exitosa');
+                    fetchData();
                 }
             }
         } catch (error) {
-            if(error ==='Unauthenticated'){
-                console.log('Token expirado');
+            Swal.fire({
+                title: 'Error',
+                icon: 'error',
+                text: `Ocurrió un error al ${actionText} la publicación`,
+                timer: 5000
+            });
+
+        }
+    }
+
+    const handleDeletePublication = async (id) => {
+
+        try {
+            const result = await Swal.fire({
+                title: '¿Estás seguro?',
+                text: '¿Deseas eliminar la publicación?',
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#6C1D45',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+            });
+            if (result.isConfirmed) {
+                const response = await fetchDeleteService(id);
+                if (response.status === 200) {
+                    Swal.fire('Éxito', 'La publicación fue eliminada', 'success');
+                    setIsServiceActive(!isServiceActive);
+                    fetchData();
+                }
             }
-            console.error('Error en handleToggleServiceStatus:', error);
-            Swal.fire('Error', `Ocurrió un error al ${actionText} la publicación`, 'error');
+        } catch (error) {
+            Swal.fire({
+                title: 'Error',
+                icon: 'error',
+                text: 'Ocurrió un error al eliminar la publicación',
+                timer: 5000
+            });
         }
     }
 
@@ -279,8 +302,30 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 {servicios.map((servicio) => (
                     <div
                         key={servicio.id}
-                        className="m-3 bg-white shadow-md px-5 py-6 rounded-xl"
+                        className="relative m-3 bg-white shadow-md px-5 py-6 rounded-xl"
                     >
+                        <div className="absolute top-4 right-0.5 cursor-pointer">
+                            <Dropdown
+                                dismissOnClick={false}
+                                renderTrigger={() => <span><BsThreeDotsVertical /></span>}
+                            >
+                                <Dropdown.Item onClick={() => handleToggleServiceStatus(servicio.id)}>
+                                    <div className="flex items-center">
+                                        {isServiceActive ? <LuPowerOff className="w-10 h-5 mr-2" /> : <FaCheck />}
+                                        {isServiceActive ? 'Desactivar publicación' : 'Activar publicación'}
+                                    </div>
+                                </Dropdown.Item>
+                                {(sessionStorage.getItem("tu") === "1") && (
+                                    <Dropdown.Item onClick={() => handleDeletePublication(servicio.id)}>
+                                        <div className="flex items-center">
+                                            <FaTrash className="w-10 h-5 mr-1" />
+                                            Eliminar solicitud
+                                        </div>
+                                    </Dropdown.Item>
+                                )}
+                            </Dropdown>
+                        </div>
+
                         <div className="h-56 sm:h-64 xl:h-40 2xl:h-44 mb-5">
                             <Carousel leftControl rightControl>
                                 {servicio.imagenes.map((imagen, index) => (
@@ -388,15 +433,6 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                                 </Tooltip>
                             </>
                         )}
-                        <Tooltip content={isServiceActive ? "Pausar publicación" : "Dar de alta"}>
-                            <button
-                                type="button"
-                                className="md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full"
-                                onClick={handleToggleServiceStatus}
-                            >
-                                {isServiceActive ? <FaTrash /> : <FaCheck />}
-                            </button>
-                        </Tooltip>
                     </div>
                 </Modal.Footer>
 
