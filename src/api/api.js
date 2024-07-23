@@ -1,3 +1,4 @@
+import { data } from "autoprefixer";
 import axios from "axios";
 axios.defaults.baseURL = 'http://localhost/api'
 //axios.defaults.withCredentials = true;
@@ -5,7 +6,7 @@ axios.defaults.baseURL = 'http://localhost/api'
 axios.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 500) {
+    if (error.response && error.response.status === 401) {
       // Token expirado o inválido
       sessionStorage.removeItem('accessToken'); // Eliminar el token
 
@@ -332,7 +333,7 @@ export const fetchGetServicioById = async (id) => {
   }
 }
 
-/* Servicio  para actualizar la informacion de una  publicación */
+/* Servicio para actualizar la informacion de una  publicación */
 export const fetchUpdateService = async (id, data) => {
   try {
     const config = getRequestConfig({
@@ -340,6 +341,20 @@ export const fetchUpdateService = async (id, data) => {
       'Content-Type': 'application/json'
     })
     const response = await axios.put(`/servicios/${id}`, data, config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
+
+/* Servicio para eliminar una publicación */
+export const fetchDeleteService = async (id) => {
+ 
+  try {
+    const config = getRequestConfig({
+      'Content-Type': 'application/json'
+    })
+    const response = await axios.delete(`/servicios/${id}`, config)
     return response
   } catch (error) {
     throw error
