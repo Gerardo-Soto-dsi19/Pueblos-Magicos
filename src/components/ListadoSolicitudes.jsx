@@ -1,6 +1,6 @@
 import ReactPaginate from "react-paginate";
 import React, { useEffect, useState } from 'react'
-import { Carousel, Spinner, Modal, Tooltip, Badge, Dropdown } from "flowbite-react"
+import { Carousel, Spinner, Modal, Tooltip, Badge, Dropdown, ModalBody } from "flowbite-react"
 import '../index.css'
 import ModalSolicitud from './ModalSolicitud'
 import NoDataCard from './NoDataCard';
@@ -10,6 +10,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { LuPowerOff } from "react-icons/lu";
 import FormData from 'form-data';
 import Swal from 'sweetalert2';
+import EditServiceModal from "./EditServiceModal";
 import { getAllServices, getServicesFiltered, fetchAccept, fetchObservations, fetchDeleteService } from '../api/api'
 
 function ListadoSolicitudes({ tipoSolicitud }) {
@@ -22,6 +23,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     const [emptyData, setEmptyData] = useState(false);
     const [isEditable, setIsEditable] = useState(false);
     const [isServiceActive, setIsServiceActive] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     let titulo;
 
     switch (tipoSolicitud) {
@@ -142,43 +144,87 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     }
 
     const handleToggleServiceStatus = async (id) => {
-        const newStatus = isServiceActive ? 4 : 2;
-        const successText = isServiceActive ? "pausada" : "activada";
-        const actionText = isServiceActive ? "pausar" : "activar";
-        const iconType = isServiceActive ? 'warning' : 'info';
-        const dataToSend = {
-            data: {
-                servicio: {
-                    id_estatus: newStatus
-                }
-            },
-        };
-        try {
-            const result = await Swal.fire({
-                title: '¿Estás seguro?',
-                text: `¿Deseas ${actionText} la publicación?`,
-                icon: iconType,
-                showCancelButton: true,
-                confirmButtonColor: '#6C1D45',
-                confirmButtonText: `Sí, ${actionText}`,
-                cancelButtonText: 'Cancelar',
-            });
-            if (result.isConfirmed) {
+        if (isServiceActive) {
+            // Si está activo y se quiere desactivar, seguimos el flujo original
+            await desactivateService(id);
+        } else {
+            // Si está inactivo y se quiere activar, primero editamos la información
+            await activateServiceFlow(id);
+        }
+    }
+
+    const desactivateService = async (id) => {
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: '¿Deseas pausar la publicación?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#6C1D45',
+            confirmButtonText: 'Sí, pausar',
+            cancelButtonText: 'Cancelar',
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const dataToSend = {
+                    data: {
+                        servicio: {
+                            id_estatus: 4
+                        }
+                    },
+                };
                 const response = await fetchAccept(id, dataToSend);
                 if (response.status === 200) {
-                    Swal.fire('Éxito', `La publicación fue ${successText}`, 'success');
-                    setIsServiceActive(!isServiceActive);
+                    Swal.fire('Éxito', 'La publicación fue pausada', 'success');
+                    setIsServiceActive(false);
                     fetchData();
                 }
+            } catch (error) {
+                Swal.fire({
+                    title: 'Error',
+                    icon: 'error',
+                    text: 'Ocurrió un error al pausar la publicación',
+                    timer: 5000
+                });
+            }
+        }
+    }
+
+    const activateServiceFlow = async (id) => {
+        // Primero, abrimos el modal para editar la información
+        setSelectedServiceId(id);
+        setIsEditable(true);
+        setIsModalOpen(true);
+
+        // Esperamos a que el usuario edite y guarde la información
+        // Esto se manejará en el componente del modal
+
+
+    }
+
+    const handleSaveAndActivate = async (id) => {
+        
+        try {
+            const dataToSend = {
+                data: {
+                    servicio: {
+                        id_estatus: 2
+                    }
+                },
+            };
+            const response = await fetchAccept(id, dataToSend);
+            if (response.status === 200) {
+                Swal.fire('Éxito', 'La publicación fue activada', 'success');
+                setIsServiceActive(true);
+                fetchData();
             }
         } catch (error) {
             Swal.fire({
                 title: 'Error',
                 icon: 'error',
-                text: `Ocurrió un error al ${actionText} la publicación`,
+                text: 'Ocurrió un error al activar la publicación',
                 timer: 5000
             });
-
         }
     }
 
@@ -435,8 +481,13 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                         )}
                     </div>
                 </Modal.Footer>
-
             </Modal>
+            <EditServiceModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                serviceId={selectedServiceId}
+                onSaveAndActivate={handleSaveAndActivate}
+            />
         </>
     )
 }
