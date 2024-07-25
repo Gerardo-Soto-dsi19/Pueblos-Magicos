@@ -271,10 +271,8 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 delete dataToUpdate.data[key];
             }
         });
-        console.log('props del modal', dataToUpdate);
 
         try {
-            console.log('Entra al Try');
             if (newimage) {
                 const file = dataToUpdate.imagen_principal;
                 try {
@@ -344,7 +342,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 fetchData();
             }
         } catch (error) {
-            console.log(error);
+            
             Swal.fire({
                 title: 'Error',
                 icon: 'error',
@@ -440,7 +438,6 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                     throw new Error('Error al enviar las observaciones');
                 }
             } catch (error) {
-                console.log(error);
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",

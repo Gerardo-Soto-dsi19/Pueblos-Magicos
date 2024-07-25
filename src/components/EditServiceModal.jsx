@@ -81,7 +81,6 @@ function EditServiceModal({ isOpen, onClose, serviceId, onDataUpdate, onSaveAndA
             setImagesDataGallery(galleryImageData);
 
         } catch (error) {
-            console.log(error);
             Swal.fire({
                 title: 'Error',
                 icon: 'error',
@@ -208,8 +207,7 @@ function EditServiceModal({ isOpen, onClose, serviceId, onDataUpdate, onSaveAndA
                     onDataUpdate();
                 })
         } catch (error) {
-            console.error('Error:', error);
-
+            Swal.fire('Error', 'No fue posible eliminar la imagen de galeria', 'error')
         }
     }
 
@@ -235,8 +233,7 @@ function EditServiceModal({ isOpen, onClose, serviceId, onDataUpdate, onSaveAndA
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormValues(prev => ({ ...prev, [name]: value }));
-        console.log(`Campo ${name} cambiado a: ${value}`); // Para debugging
-    };
+    }
 
     const handleSaveAndActivate = async () => {
         const changedValues = {};
@@ -246,13 +243,8 @@ function EditServiceModal({ isOpen, onClose, serviceId, onDataUpdate, onSaveAndA
             if (formValues[key] !== originalValues[key]) {
                 changedValues[key] = formValues[key];
                 hasChanges = true;
-                console.log(`Campo cambiado: ${key}, Valor original: ${originalValues[key]}, Nuevo valor: ${formValues[key]}`); // Para debugging
             }
         });
-
-        console.log('¿Hay cambios?', hasChanges); // Para debugging
-        console.log('¿Nueva imagen principal?', newimage); // Para debugging
-        console.log('¿Nuevas imágenes de galería?', newImageGallery); // Para debugging
 
         if (!hasChanges && !newimage && !newImageGallery) {
             const result = await Swal.fire({
@@ -267,15 +259,11 @@ function EditServiceModal({ isOpen, onClose, serviceId, onDataUpdate, onSaveAndA
             if (!result.isConfirmed) {
                 return;
             }
-        } else {
-            console.log('Se detectaron cambios:', changedValues); // Para debugging
         }
-
         try {
             await onSaveAndActivate(serviceId, changedValues, newimage, newImageGallery);
             onClose();
         } catch (error) {
-            console.error('Error saving service changes:', error);
             Swal.fire({
                 title: 'Error',
                 icon: 'error',
