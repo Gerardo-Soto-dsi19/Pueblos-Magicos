@@ -24,6 +24,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     const [isEditable, setIsEditable] = useState(false);
     const [isServiceActive, setIsServiceActive] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isValidating, setIsValidating] = useState(false);
     let titulo;
 
     switch (tipoSolicitud) {
@@ -155,17 +156,25 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         }
     }
 
-    const handleToggleServiceStatus = async (id) => {
+    const handleToggleServiceStatus = async (id, estatus) => {
         if (isServiceActive) {
-            // Si está activo y se quiere desactivar, seguimos el flujo original
+            if (estatus === 1) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'No es posible desactivar la publicación hasta que esta sea aceptada.',
+                    icon: 'error',
+                    timer: 10000
+                });
+                return;
+            }
             await desactivateService(id);
         } else {
-            // Si está inactivo y se quiere activar, primero editamos la información
             await activateServiceFlow(id);
         }
     }
 
     const desactivateService = async (id) => {
+
         const result = await Swal.fire({
             title: '¿Estás seguro?',
             text: '¿Deseas pausar la publicación?',
@@ -175,7 +184,6 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             confirmButtonText: 'Sí, pausar',
             cancelButtonText: 'Cancelar',
         });
-
         if (result.isConfirmed) {
             try {
                 const dataToSend = {
@@ -203,7 +211,6 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     }
 
     const activateServiceFlow = async (id) => {
-        // Primero, abrimos el modal para editar la información
         setSelectedServiceId(id);
         setIsEditable(true);
         setIsModalOpen(true);
@@ -288,7 +295,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                             title: "Se ha cargado la imagen exitosamente"
                         });
                     }
-                
+
                 } catch (error) {
                     Swal.fire('Error', 'No se pudo cargar la imagen', 'error')
                     throw error;
@@ -337,12 +344,12 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             }
             const response = await fetchAccept(id, dataToSend);
             if (response.status === 200) {
-                Swal.fire('Éxito', 'La publicación fue activada', 'success');
+                Swal.fire('Éxito', 'Publicación enviada. Pendiente de validación', 'success');
                 setIsServiceActive(true);
                 fetchData();
             }
         } catch (error) {
-            
+
             Swal.fire({
                 title: 'Error',
                 icon: 'error',
@@ -369,6 +376,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 if (response.status === 200) {
                     Swal.fire('Éxito', 'La publicación fue eliminada', 'success');
                     setIsServiceActive(!isServiceActive);
+                    setIsValidating(true);
                     fetchData();
                 }
             }
@@ -474,25 +482,30 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                         className="relative m-3 bg-white shadow-md px-5 py-6 rounded-xl"
                     >
                         <div className="absolute top-4 right-0.5 cursor-pointer">
-                            <Dropdown
-                                dismissOnClick={false}
-                                renderTrigger={() => <span><BsThreeDotsVertical /></span>}
-                            >
-                                <Dropdown.Item onClick={() => handleToggleServiceStatus(servicio.id)}>
-                                    <div className="flex items-center">
-                                        {isServiceActive ? <LuPowerOff className="w-10 h-5 mr-2" /> : <FaCheck />}
-                                        {isServiceActive ? 'Desactivar publicación' : 'Activar publicación'}
-                                    </div>
-                                </Dropdown.Item>
-                                {(sessionStorage.getItem("tu") === "1") && (
-                                    <Dropdown.Item onClick={() => handleDeletePublication(servicio.id)}>
-                                        <div className="flex items-center">
-                                            <FaTrash className="w-10 h-5 mr-1" />
-                                            Eliminar solicitud
-                                        </div>
-                                    </Dropdown.Item>
-                                )}
-                            </Dropdown>
+                            {(!isValidating || sessionStorage.getItem('tu') === '1') && (
+                                <Dropdown
+                                    dismissOnClick={false}
+                                    renderTrigger={() => <span><BsThreeDotsVertical /></span>}
+                                >
+                                    {!isValidating && (
+                                        <Dropdown.Item onClick={() => handleToggleServiceStatus(servicio.id, servicio.id_estatus)}>
+                                            <div className="flex items-center">
+                                                {isServiceActive ? <LuPowerOff className="w-10 h-5 mr-2" /> : <FaCheck />}
+                                                {isServiceActive ? 'Desactivar publicación' : 'Activar publicación'}
+                                            </div>
+                                        </Dropdown.Item>
+                                    )}
+                                    {sessionStorage.getItem("tu") === "1" && (
+                                        <Dropdown.Item onClick={() => handleDeletePublication(servicio.id)}>
+                                            <div className="flex items-center">
+                                                <FaTrash className="w-10 h-5 mr-1" />
+                                                Eliminar solicitud
+                                            </div>
+                                        </Dropdown.Item>
+                                    )}
+                                </Dropdown>
+                            )}
+
                         </div>
 
                         <div className="h-56 sm:h-64 xl:h-40 2xl:h-44 mb-5">
