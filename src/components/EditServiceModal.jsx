@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react'
 import { Modal, Label, Button, TextInput, Textarea } from 'flowbite-react';
 import Swal from 'sweetalert2';
 import { HiX } from "react-icons/hi";
-import { fetchGetServicioById } from "../api/api"
-function EditServiceModal({ isOpen, onClose, serviceId, onSaveAndActivate }) {
+import { fetchGetServicioById, fetchRemoveMainImage } from "../api/api"
+function EditServiceModal({ isOpen, onClose, serviceId, onDataUpdate, onSaveAndActivate }) {
     const [mainImage, setMainImage] = useState(null);
     const [galleryImages, setGalleryImages] = useState([]);
     const [imageData, setImageData] = useState([]);
     const [imagesDataGallery, setImagesDataGallery] = useState([]);
     const [newimage, setNewImage] = useState(false);
     const [newImageGallery, setNewImageGallery] = useState(false);
+    const [originalValues, setOriginalValues] = useState({});
     const [formValues, setFormValues] = useState({
         pueblo: '',
         categoria: '',
@@ -40,13 +41,12 @@ function EditServiceModal({ isOpen, onClose, serviceId, onSaveAndActivate }) {
 
     const loadServiceData = async (id) => {
         try {
-            const response = await fetchGetServicioById(serviceId)
-            console.log(response.data.data.servicio[0]);
+            const response = await fetchGetServicioById(id)
             const serviceData = response.data.data.servicio[0];
             const detalleServicio = serviceData.detalle_servicio;
             const direccion = serviceData.direccion;
 
-            setFormValues({
+            const newFormValues = {
                 pueblo: serviceData.pueblo.nombre,
                 categoria: serviceData.tipo_servicio.servicio,
                 titulo: detalleServicio.titulo || '',
@@ -66,7 +66,9 @@ function EditServiceModal({ isOpen, onClose, serviceId, onSaveAndActivate }) {
                 pagina_web: detalleServicio.pagina_web || '',
                 latitud: detalleServicio.coordenada.latitud || '',
                 longitud: detalleServicio.coordenada.longitud || ''
-            });
+            };
+            setFormValues(newFormValues);
+            setOriginalValues(newFormValues);
             const mainImageData = response.data.data.servicio[0].imagenes.find(
                 (image) => image.id_tipo_imagen === 1
             );
@@ -77,6 +79,7 @@ function EditServiceModal({ isOpen, onClose, serviceId, onSaveAndActivate }) {
                 (image) => image.id_tipo_imagen === 2
             );
             setImagesDataGallery(galleryImageData);
+
         } catch (error) {
             console.log(error);
             Swal.fire({
@@ -123,7 +126,7 @@ function EditServiceModal({ isOpen, onClose, serviceId, onSaveAndActivate }) {
 
     const handleDragOver = (e) => {
         e.preventDefault();
-    };
+    }
 
     const handleDropMainImage = (e) => {
         e.preventDefault();
@@ -146,7 +149,7 @@ function EditServiceModal({ isOpen, onClose, serviceId, onSaveAndActivate }) {
                 }));
             }
         }
-    };
+    }
 
     const handleDropGalleryImages = (e) => {
         e.preventDefault();
@@ -159,12 +162,12 @@ function EditServiceModal({ isOpen, onClose, serviceId, onSaveAndActivate }) {
                 imagenes_nuevas: Array.from(files),
             }));
         }
-    };
+    }
 
     const handleRemoveMainImage = () => {
 
         setMainImage(null);
-    };
+    }
 
     const handleRemoveGalleryImages = () => {
         setGalleryImages([])
@@ -232,12 +235,44 @@ function EditServiceModal({ isOpen, onClose, serviceId, onSaveAndActivate }) {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormValues(prev => ({ ...prev, [name]: value }));
-    }
+        console.log(`Campo ${name} cambiado a: ${value}`); // Para debugging
+    };
 
     const handleSaveAndActivate = async () => {
-        try {
-            await onSaveAndActivate(serviceId, formValues, newimage, newImageGallery);
+        const changedValues = {};
+        let hasChanges = false;
 
+        Object.keys(formValues).forEach(key => {
+            if (formValues[key] !== originalValues[key]) {
+                changedValues[key] = formValues[key];
+                hasChanges = true;
+                console.log(`Campo cambiado: ${key}, Valor original: ${originalValues[key]}, Nuevo valor: ${formValues[key]}`); // Para debugging
+            }
+        });
+
+        console.log('¿Hay cambios?', hasChanges); // Para debugging
+        console.log('¿Nueva imagen principal?', newimage); // Para debugging
+        console.log('¿Nuevas imágenes de galería?', newImageGallery); // Para debugging
+
+        if (!hasChanges && !newimage && !newImageGallery) {
+            const result = await Swal.fire({
+                title: '¿Estás seguro?',
+                text: 'No se ha modificado ningún campo, ¿Deseas continuar?',
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#6C1D45',
+                confirmButtonText: 'Sí, continuar',
+                cancelButtonText: 'Cancelar',
+            });
+            if (!result.isConfirmed) {
+                return;
+            }
+        } else {
+            console.log('Se detectaron cambios:', changedValues); // Para debugging
+        }
+
+        try {
+            await onSaveAndActivate(serviceId, changedValues, newimage, newImageGallery);
             onClose();
         } catch (error) {
             console.error('Error saving service changes:', error);
@@ -248,7 +283,8 @@ function EditServiceModal({ isOpen, onClose, serviceId, onSaveAndActivate }) {
                 timer: 5000
             });
         }
-    }
+    };
+
 
     return (
         <Modal show={isOpen} onClose={onClose}>
@@ -273,7 +309,6 @@ function EditServiceModal({ isOpen, onClose, serviceId, onSaveAndActivate }) {
                         />
                     </div>
                 </div>
-
 
                 <div className='mt-5 block'>
                     <Label>Título</Label>
@@ -358,6 +393,7 @@ function EditServiceModal({ isOpen, onClose, serviceId, onSaveAndActivate }) {
                         />
                     </div>
                 </div>
+
                 <div className="md:flex flex-row md:space-x-6">
                     <div className="w-full mt-5">
                         <Label>Calle</Label>
@@ -378,6 +414,7 @@ function EditServiceModal({ isOpen, onClose, serviceId, onSaveAndActivate }) {
                         />
                     </div>
                 </div>
+
                 <div className='md:flex flex-row md:space-x-6'>
                     <div className="w-full mt-5">
                         <Label>Alcaldía/Municipio</Label>
@@ -398,6 +435,7 @@ function EditServiceModal({ isOpen, onClose, serviceId, onSaveAndActivate }) {
                         />
                     </div>
                 </div>
+
                 <div className="md:flex flex-row md:space-x-6">
                     <div className="mt-5">
                         <Label>Código Postal</Label>
@@ -429,6 +467,7 @@ function EditServiceModal({ isOpen, onClose, serviceId, onSaveAndActivate }) {
                     </div>
 
                 </div>
+
                 <div className='md:flex flex-row md:space-x-6'>
                     <div className="w-full mt-5">
                         <Label>Teléfono</Label>
@@ -449,6 +488,7 @@ function EditServiceModal({ isOpen, onClose, serviceId, onSaveAndActivate }) {
                         />
                     </div>
                 </div>
+
                 <div className="mt-5 border-t-2">
                     <div className='mt-3'>
                         <Label htmlFor="imagen_principal">Imagen principal </Label>
@@ -557,6 +597,7 @@ function EditServiceModal({ isOpen, onClose, serviceId, onSaveAndActivate }) {
                         </div>
                     )}
                 </div>
+
                 <div className='mt-5 border-t-2'>
                     <div className='mt-3'>
                         <Label>Imágenes de galería</Label>

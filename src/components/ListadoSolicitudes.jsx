@@ -11,7 +11,7 @@ import { LuPowerOff } from "react-icons/lu";
 import FormData from 'form-data';
 import Swal from 'sweetalert2';
 import EditServiceModal from "./EditServiceModal";
-import { getAllServices, getServicesFiltered, fetchAccept, fetchObservations, fetchDeleteService } from '../api/api'
+import { getAllServices, getServicesFiltered, fetchAccept, fetchObservations, fetchDeleteService, fetchUpdateImages, fetchUpdateService } from '../api/api'
 
 function ListadoSolicitudes({ tipoSolicitud }) {
     const [servicios, setServicios] = useState([]);
@@ -63,6 +63,18 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             setIsLoading(false);
         }
     }
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
+    })
 
     const handleDataUpdate = () => {
         fetchData();
@@ -195,23 +207,136 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         setSelectedServiceId(id);
         setIsEditable(true);
         setIsModalOpen(true);
-
-        // Esperamos a que el usuario edite y guarde la información
-        // Esto se manejará en el componente del modal
-
-
     }
 
-    const handleSaveAndActivate = async (id) => {
-        
+    const updateService = async (id, updatedFields) => {
         try {
+            const response = await fetchUpdateService(id, updatedFields)
+            return response;
+        } catch (error) {
+            console.error('Error al actualizar el servicio:', error);
+            throw error;
+        }
+    }
+
+    const handleSaveAndActivate = async (id, data, newimage, newImageGallery) => {
+        const dataToUpdate = {
+            data: {
+                servicio: {},
+                servicio_detalles: {},
+                coordenadas: {},
+                horarios: {},
+                direccion: {}
+            }
+        };
+        const serviceId = id;
+
+        // Mapeo de los campos a sus respectivas secciones
+        const fieldMapping = {
+            id_categoria: ['servicio', 'id_tipo_servicio'],
+            id_pueblo: ['servicio', 'id_pueblo'],
+            dias_servicio: ['servicio_detalles', 'dias_servicio'],
+            precios: ['servicio_detalles', 'precios'],
+            titulo: ['servicio_detalles', 'titulo'],
+            descripcion: ['servicio_detalles', 'descripcion'],
+            telefono: ['servicio_detalles', 'telefono'],
+            pagina_web: ['servicio_detalles', 'pagina_web'],
+            longitud: ['coordenadas', 'longitud'],
+            latitud: ['coordenadas', 'latitud'],
+            horario_inicio: ['horarios', 'horario_inicio'],
+            horario_fin: ['horarios', 'horario_fin'],
+            calle: ['direccion', 'calle'],
+            municipio: ['direccion', 'municipio'],
+            CP: ['direccion', 'CP'],
+            int: ['direccion', 'int'],
+            ext: ['direccion', 'ext'],
+            colonia: ['direccion', 'colonia']
+        };
+
+        // Agregar solo los campos modificados
+        Object.keys(data).forEach(key => {
+            if (fieldMapping[key]) {
+                const [section, field] = fieldMapping[key];
+                dataToUpdate.data[section][field] = data[key];
+            }
+        });
+
+        // Agregar campos fijos
+        dataToUpdate.data.servicio.id_usuario = localStorage.getItem("user_name");
+        dataToUpdate.data.servicio.id_estatus = 1;
+
+        // Eliminar secciones vacías
+        Object.keys(dataToUpdate.data).forEach(key => {
+            if (Object.keys(dataToUpdate.data[key]).length === 0) {
+                delete dataToUpdate.data[key];
+            }
+        });
+        console.log('props del modal', dataToUpdate);
+
+        try {
+            console.log('Entra al Try');
+            if (newimage) {
+                const file = dataToUpdate.imagen_principal;
+                try {
+                    const formData = new FormData();
+                    formData.append('data[imagen_principal]', file);
+                    formData.append('data[servicio][id_estatus]', 1)
+                    formData.append('_method', 'PUT');
+
+                    const response = await fetchUpdateImages(serviceId, formData)
+                    if (response.status === 200) {
+                        Toast.fire({
+                            icon: "success",
+                            title: "Se ha cargado la imagen exitosamente"
+                        });
+                    }
+                
+                } catch (error) {
+                    Swal.fire('Error', 'No se pudo cargar la imagen', 'error')
+                    throw error;
+                }
+            } else if (newImageGallery) {
+                const formDataGallery = new FormData();
+                for (const file of data.imagenes_nuevas) {
+                    formDataGallery.append('data[imagenes_nuevas][]', file);
+
+                }
+                formDataGallery.append('data[servicio][id_estatus]', 1)
+                formDataGallery.append('_method', 'PUT');
+                try {
+                    const response = await fetchUpdateImages(serviceId, formDataGallery)
+                    if (response.status === 200) {
+                        Toast.fire({
+                            icon: "success",
+                            title: "Se han cargado las imagenes exitosamente"
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire('Error', 'No se pudieron cargar las imagenes', 'error');
+                    throw error;
+                }
+            } else {
+                const idServicio = id
+                try {
+                    const response = await updateService(idServicio, dataToUpdate);
+                    if (response.status === 200) {
+                        Toast.fire({
+                            icon: "success",
+                            title: "Se han actualizado la información exitosamente"
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire('Error', 'No fue posible actualizar la información', 'error')
+                    throw error;
+                }
+            }
             const dataToSend = {
                 data: {
                     servicio: {
-                        id_estatus: 2
+                        id_estatus: 1
                     }
                 },
-            };
+            }
             const response = await fetchAccept(id, dataToSend);
             if (response.status === 200) {
                 Swal.fire('Éxito', 'La publicación fue activada', 'success');
@@ -219,6 +344,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 fetchData();
             }
         } catch (error) {
+            console.log(error);
             Swal.fire({
                 title: 'Error',
                 icon: 'error',
@@ -486,6 +612,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 serviceId={selectedServiceId}
+                onDataUpdate={handleDataUpdate}
                 onSaveAndActivate={handleSaveAndActivate}
             />
         </>
