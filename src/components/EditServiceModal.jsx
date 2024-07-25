@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, Label, Button, TextInput, Textarea } from 'flowbite-react';
+import { Modal, Label, TextInput, Textarea, Tooltip } from 'flowbite-react';
 import Swal from 'sweetalert2';
 import { HiX } from "react-icons/hi";
+import { LuPower } from "react-icons/lu";
+import { PiKeyReturn } from "react-icons/pi";
+
 import { fetchGetServicioById, fetchRemoveMainImage } from "../api/api"
 function EditServiceModal({ isOpen, onClose, serviceId, onDataUpdate, onSaveAndActivate }) {
     const [mainImage, setMainImage] = useState(null);
@@ -701,9 +704,27 @@ function EditServiceModal({ isOpen, onClose, serviceId, onDataUpdate, onSaveAndA
 
                 </div>
             </Modal.Body>
-            <Modal.Footer>
-                <Button onClick={onClose}>Cancelar</Button>
-                <Button color="purple" onClick={handleSaveAndActivate}>Guardar y Activar</Button>
+            <Modal.Footer className="flex items-center justify-end gap-4">
+                <div className="flex flex-row-reverse gap-x-7">
+                    <Tooltip content='Guardar y Activar'>
+                        <button
+                            type='button'
+                            className="md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full"
+                            onClick={handleSaveAndActivate}>
+                            <LuPower />
+                        </button>
+                    </Tooltip>
+                    <Tooltip content='Cancelar'>
+                        <button
+                            type='button'
+                            className="py-3 px-3 bg-[#707372] hover:bg-[#8D9293] text-white rounded-full"
+                            onClick={onClose}>
+                            <PiKeyReturn />
+                        </button>
+                    </Tooltip>
+
+
+                </div>
             </Modal.Footer>
         </Modal>
     )
