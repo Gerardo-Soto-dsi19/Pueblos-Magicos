@@ -728,7 +728,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate, verifyObservation
                                 </label>
                                 <p className="pl-1">o arrastra y suelta</p>
                             </div>
-                            <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+                            <p className="text-xs leading-5 text-gray-600">PNG, JPG up to 10MB</p>
                         </div>
                     </div>
                 )}
@@ -839,7 +839,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate, verifyObservation
                                 </label>
                                 <p className="pl-1">o arrastra y suelta</p>
                             </div>
-                            <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+                            <p className="text-xs leading-5 text-gray-600">PNG, JPG up to 10MB</p>
                         </div>
                     </div>
 
