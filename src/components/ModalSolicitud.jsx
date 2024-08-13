@@ -125,13 +125,16 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate, verifyObservation
     };
 
     const handleRemoveMainImage = () => {
-
         setMainImage(null);
     };
 
-    const handleRemoveGalleryImages = () => {
-        setGalleryImages([])
-    }
+    const handleRemoveGalleryImages = (index) => {
+        setGalleryImages(prevImages => prevImages.filter((_, i) => i !== index));
+        setFormValues(prevState => ({
+            ...prevState,
+            imagenes_nuevas: prevState.imagenes_nuevas.filter((_, i) => i !== index),
+        }));
+    };
 
     const handleRemoveDataMainImage = (_id_, _name_, _tipo_img_) => {
 
@@ -256,7 +259,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate, verifyObservation
                         const observacion = serviceData.observaciones.observacion
                         setObservation(observacion)
                         verifyObservations(true)
-                    } 
+                    }
                 } else {
                     console.error('No se encontraron datos de servicio');
                 }
@@ -366,7 +369,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate, verifyObservation
             try {
                 const formData = new FormData();
                 formData.append('data[imagen_principal]', file);
-                formData.append('data[servicio][id_estatus]',1)
+                formData.append('data[servicio][id_estatus]', 1)
                 formData.append('_method', 'PUT');
 
                 const response = await fetchUpdateImages(serviceId, formData)
@@ -381,7 +384,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate, verifyObservation
                 }
                 return response.data;
             } catch (error) {
-                Swal.fire('Error','No se pudo cargar la imagen','error')
+                Swal.fire('Error', 'No se pudo cargar la imagen', 'error')
                 throw error;
             }
         } else if (newImageGallery) {
@@ -390,9 +393,9 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate, verifyObservation
 
             for (const file of formValues.imagenes_nuevas) {
                 formDataGallery.append('data[imagenes_nuevas][]', file);
-                
+
             }
-            formDataGallery.append('data[servicio][id_estatus]',1)
+            formDataGallery.append('data[servicio][id_estatus]', 1)
             formDataGallery.append('_method', 'PUT');
             try {
                 const response = await fetchUpdateImages(serviceId, formDataGallery)
@@ -407,7 +410,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate, verifyObservation
                 }
                 return response.data;
             } catch (error) {
-                Swal.fire('Error', 'No se pudieron cargar las imagenes','error');
+                Swal.fire('Error', 'No se pudieron cargar las imagenes', 'error');
                 throw error;
             }
         } else {
@@ -423,7 +426,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate, verifyObservation
                     onDataUpdate();
                 }
             } catch (error) {
-                Swal.fire('Error','No fue posible actualizar la información','error')
+                Swal.fire('Error', 'No fue posible actualizar la información', 'error')
                 throw error;
             }
         }
@@ -904,25 +907,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate, verifyObservation
                                             <button
                                                 className="absolute right-0 bg-white rounded-full p-1 hover:bg-gray-100"
                                                 onClick={() => {
-                                                    Swal.fire({
-                                                        title: '¿Estás seguro?',
-                                                        text: 'Esta acción eliminará la imagen de manera permanente',
-                                                        icon: 'warning',
-                                                        showCancelButton: true,
-                                                        confirmButtonColor: '#6C1D45',
-                                                        cancelButtonColor: '#707372',
-                                                        confirmButtonText: 'Sí, eliminar',
-                                                        cancelButtonText: 'Cancelar'
-                                                    }).then((result) => {
-                                                        if (result.isConfirmed) {
-                                                            handleRemoveGalleryImages();
-                                                            Swal.fire({
-                                                                title: " Eliminada!",
-                                                                text: "Tu imagen ha sido eliminada.",
-                                                                icon: "success"
-                                                            });
-                                                        }
-                                                    });
+                                                    handleRemoveGalleryImages(index);
                                                 }}
                                             >
                                                 <HiX />
@@ -938,23 +923,6 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate, verifyObservation
                     )}
                 </div>
                 <div className="flex items-center justify-end gap-4" >
-{/*                     {hasObservations && (
-                        <Tooltip content="Enviar">
-                            <button
-                                type="submit"
-                                className="md:flex-1 py-3 px-3 mt-5 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full"
-                                onClick={handleUpdate}
-                                disabled={isLoading}
-                            >
-                                {isLoading ? (
-                                    <Spinner className='spinner-custom' aria-label="Spinner de carga" />
-                                ) : (
-                                    <MdDataSaverOn />
-                                )}
-
-                            </button>
-                        </Tooltip>
-                    )} */}
                     <div>
                         <Tooltip content="Guardar publicación">
                             <button
