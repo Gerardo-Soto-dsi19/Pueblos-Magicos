@@ -3,6 +3,7 @@ import { useState, useContext, useEffect } from "react";
 import { AuthContext } from '../components/AuthContext';
 import { Link } from "react-router-dom";
 import { FaSignInAlt, FaSignOutAlt, FaBook } from "react-icons/fa";
+import { FaUserPlus } from "react-icons/fa6";
 import { RiAddBoxFill } from "react-icons/ri";
 import ListadoSolicitudRoles from './components/ListadoSolicitudRoles';
 import { fetchLogOut } from '../api/api';
@@ -87,7 +88,7 @@ function SidebarRoles() {
                                                 to="/gestor-usuarios/registro/usuarios"
                                                 className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
                                             >
-                                                <RiAddBoxFill className="mr-2" /> Registrar nuevo usuario
+                                                <FaUserPlus className="mr-2" /> Registrar nuevo usuario
                                             </Link>
                                         </li>
                                     )}

@@ -3,6 +3,7 @@ import { useState, useContext } from 'react'
 import { AuthContext } from '../components/AuthContext';
 import { Link, Navigate } from "react-router-dom";
 import { FaSignInAlt, FaSignOutAlt, FaBook, FaLock } from "react-icons/fa";
+import { FaUserPlus } from "react-icons/fa6";
 import { RiAddBoxFill } from "react-icons/ri";
 import { fetchLogOut } from '../api/api'
 import Header from './components/Header';
@@ -76,7 +77,7 @@ function SidebarUser() {
                                             to="/formulario/registro"
                                             className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
                                         >
-                                            <RiAddBoxFill className="mr-2" /> Registrar nueva publicación
+                                            <FaUserPlus className="mr-2" /> Registrar nueva publicación
                                         </Link>
                                     </li>
                                     <li className='md:mb-2 w-full text-center'>
