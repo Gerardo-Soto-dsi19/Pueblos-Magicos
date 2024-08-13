@@ -709,7 +709,7 @@ function Formulario() {
                         </label>
                         <p className="pl-1">o arrastra y suelta</p>
                       </div>
-                      <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF hasta 1 MB</p>
+                      <p className="text-xs leading-5 text-gray-600">PNG, JPG hasta 1 MB</p>
                     </div>
                   </div>
                   {mainImage && (
@@ -764,7 +764,7 @@ function Formulario() {
                         </label>
                         <p className="pl-1">o arrastra y suelta</p>
                       </div>
-                      <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF hasta 1 MB</p>
+                      <p className="text-xs leading-5 text-gray-600">PNG, JPG hasta 1 MB</p>
                     </div>
                   </div>
                 </div>
