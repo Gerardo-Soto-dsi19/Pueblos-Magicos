@@ -215,7 +215,7 @@ function RegistroUsuarios() {
                             </div>
 
                             <div className="mt-6 py-5 flex items-center justify-end gap-x-6">
-                                <Link type="button" className="text-sm font-semibold leading-6 text-gray-900" to={"/"}>
+                                <Link type="button" className="text-sm font-semibold leading-6 text-gray-900" to={"/gestor-roles"}>
                                     Cancelar
                                 </Link>
                                 <button
