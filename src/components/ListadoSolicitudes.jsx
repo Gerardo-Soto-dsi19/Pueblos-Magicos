@@ -1,6 +1,6 @@
 import ReactPaginate from "react-paginate";
 import React, { useEffect, useState } from 'react'
-import { Carousel, Spinner, Modal, Tooltip, Badge, Dropdown, ModalBody } from "flowbite-react"
+import { Carousel, Spinner, Modal, Tooltip, Badge, Dropdown } from "flowbite-react"
 import '../index.css'
 import ModalSolicitud from './ModalSolicitud'
 import NoDataCard from './NoDataCard';
@@ -139,6 +139,11 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             const response = await fetchAccept(selectedServiceId, dataToSend)
             if (response.status === 200) {
                 // La solicitud fue exitosa
+                const data = await response.json()
+                if (data.data && data.data.error) {
+                    // Si hay un error en la respuesta, lanzamos una excepción
+                    throw new Error(data.error);
+                }
                 Swal.fire({
                     icon: "success",
                     title: "Ok",
@@ -146,27 +151,36 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 });
                 fetchData();
                 setOpenModal(false);
+
+            } else {
+                throw new Error("Error en la solicitud");
             }
         } catch (error) {
+            let errorMessage = "Ocurrió un error inesperado";
+
+            if (error.response.data.data) {
+                errorMessage = error.response.data.data.error || errorMessage;
+            }
+            
             Swal.fire({
                 icon: "error",
                 title: "Error",
-                text: "Ocurrió un error al intentar aceptar la publicación"
+                text: errorMessage
             });
         }
     }
 
     const handleToggleServiceStatus = async (id, estatus) => {
         if (isServiceActive) {
-            if (estatus === 1) {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'No es posible desactivar la publicación hasta que esta sea aceptada.',
-                    icon: 'error',
-                    timer: 10000
-                });
-                return;
-            }
+            /*             if (estatus === 1) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'No es posible desactivar la publicación hasta que esta sea aceptada.',
+                                icon: 'error',
+                                timer: 10000
+                            });
+                            return;
+                        } */
             await desactivateService(id);
         } else {
             await activateServiceFlow(id);
