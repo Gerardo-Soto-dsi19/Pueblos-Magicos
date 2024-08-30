@@ -317,7 +317,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate, verifyObservation
 
             servicio: {
                 id_tipo_servicio: formValues.id_categoria,
-                id_usuario: localStorage.getItem("user_name"),
+                /* id_usuario: localStorage.getItem("user_name"), */
                 id_pueblo: formValues.id_pueblo,
                 id_estatus: 1,
             },
