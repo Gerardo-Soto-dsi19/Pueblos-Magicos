@@ -93,7 +93,6 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         } else {
             setIsEditable(false)
         }
-
     }
 
     const getFilteredData = async (id_estatus, page) => {
@@ -421,8 +420,6 @@ function ListadoSolicitudes({ tipoSolicitud }) {
 
 
     const handleCardClick = (id, isActive) => {
-        console.log('Si entro en el handleCardClick');
-        console.log('Valid de isActive', isActive);
         setSelectedServiceId(id);
         if (isActive) {
             setOpenModal(true);

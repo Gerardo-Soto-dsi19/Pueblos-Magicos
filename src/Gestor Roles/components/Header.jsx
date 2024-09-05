@@ -15,7 +15,6 @@ function Header() {
         const idUserName = localStorage.getItem('user_name');
         setTypeUser(userType);
         getUserInfo(idUserName);
-        console.log('tipo de usuario', userType);
     }, [])
 
     const getUserTypeLabel = () => {
