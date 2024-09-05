@@ -1,5 +1,5 @@
 import ReactPaginate from "react-paginate";
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Carousel, Spinner, Modal, Tooltip, Badge, Dropdown } from "flowbite-react"
 import '../index.css'
 import ModalSolicitud from './ModalSolicitud'
@@ -54,11 +54,11 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     const fetchData = async () => {
         try {
             setIsLoading(true);
+            setServicios([]); // Limpiar los servicios antes de cargar nuevos datos
             const { data, last_page } = await getFilteredData(tipoSolicitud, currentPage);
-            const newServicios = data || [];
-            setServicios(newServicios);
+            setServicios(data || []);
             setTotalPages(last_page);
-            setEmptyData(newServicios.length === 0 || last_page === 0);
+            setEmptyData((data || []).length === 0 || last_page === 0);
         } catch (e) {
             console.error('Error fetching data: ', e);
             setEmptyData(true);
@@ -100,7 +100,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             if (id_estatus === 'all') {
                 response = await getAllServices(page);
             } else {
-                response = await getServicesFiltered(id_estatus, page);
+                response = await getServicesFiltered(id_estatus,0);
             }
 
             const data = response.data.data.servicios;
@@ -412,8 +412,9 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     const handlePageClick = (event) => {
         const newPage = event.selected;
         setCurrentPage(newPage);
-        fetchData();
-    };
+    }
+
+
 
     const handleCardClick = (id, isActive) => {
         console.log('Si entro en el handleCardClick');

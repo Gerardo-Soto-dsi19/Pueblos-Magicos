@@ -291,7 +291,8 @@ export const fetchGetFilteredUsers = async (filtros, page) => {
     const config = {
       ...getAuthConfig(),
       params: {
-        page: page + 1
+        page: page + 1,
+        _t: new Date().getTime()
       }
     };
     const paramsURL = new URLSearchParams({
