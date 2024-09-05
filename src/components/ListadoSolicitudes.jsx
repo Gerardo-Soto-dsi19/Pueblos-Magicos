@@ -42,6 +42,9 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         case '3':
             titulo = 'Solicitudes con observación';
             break;
+        case '4':
+            titulo = 'Solicitudes inactivas';
+            break;
         default:
             titulo = 'Título predeterminado';
             break;
