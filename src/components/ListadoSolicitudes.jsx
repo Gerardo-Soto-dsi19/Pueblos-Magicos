@@ -628,6 +628,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                     renderOnZeroPageCount={null}
                     className="pagination"
                     forcePage={clampedForcePage}
+                    activeClassName="active"
                 />
             </div>
 

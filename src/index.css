@@ -95,31 +95,41 @@ p {
     justify-content: center;
     list-style: none;
     padding: 0;
-    margin-bottom: 5rem;
+    margin-bottom: 1rem;
 }
 
 .pagination li {
-    margin: 0 5px;
+    margin: 0 4px;
 }
 
 .pagination li a {
-    display: block;
-    padding: 5px 10px;
     background-color: #f2f2f2;
     color: #6C1D45;
-    text-decoration: none;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
     border-radius: 3px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.3s ease;
 }
 
 .pagination li.active a {
     background-color: #6C1D45;
-    /* Cambiado el color de fondo */
     color: #fff;
-    /* El color del texto sigue siendo blanco */
+    border-color: #6C1D45;
+    font-weight: bold;
+
 }
 
-.pagination li a:hover {
-    background-color: #e6e6e6;
+.pagination li.active a:hover {
+    background-color: #8C3A68;
+    border-color: #8C3A68;
+  }
+
+.pagination li.disabled a {
+    color: #ccc;
+    cursor: not-allowed;
 }
 
 /* Creacion del componente Toggle Button */
