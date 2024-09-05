@@ -103,7 +103,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             if (id_estatus === 'all') {
                 response = await getAllServices(page);
             } else {
-                response = await getServicesFiltered(id_estatus,0);
+                response = await getServicesFiltered(id_estatus, page);
             }
 
             const data = response.data.data.servicios;
@@ -112,8 +112,9 @@ function ListadoSolicitudes({ tipoSolicitud }) {
 
             // Si la página solicitada es mayor que el número total de páginas, establece la página a la última disponible
             const adjustedPage = currentPage > totalPages ? totalPages : currentPage;
+            
             if (adjustedPage !== currentPage) {
-                config.params.page = adjustedPage;
+                page = adjustedPage - 1;
 
                 // Realiza la solicitud con la página ajustada
                 if (id_estatus === 'all') {
