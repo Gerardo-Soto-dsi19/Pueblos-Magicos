@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { AuthContext } from './AuthContext';
 import { Link } from "react-router-dom"
 import { FaInbox, FaCheckCircle, FaClock, FaExclamationCircle, FaSignInAlt, FaSignOutAlt, FaUser, FaLock } from "react-icons/fa";
+import { LuPowerOff } from "react-icons/lu";
 import { RiAddBoxFill } from "react-icons/ri";
 import ListadoSolicitudes from "./ListadoSolicitudes";
 import Header from "../Gestor Roles/components/Header";
@@ -84,6 +85,14 @@ function Sidebar() {
                                         className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
                                     >
                                         <FaExclamationCircle className="mr-2" /> Solicitudes con observación
+                                    </Link>
+                                </li>
+                                <li className='mb-4 w-full text-center'>
+                                    <Link
+                                        onClick={() => handleFilterChange('4')}
+                                        className="flex items-center py-2 px-4 rounded-md transition duration-300 hover:bg-[#7C2C5C] text-white"
+                                    >
+                                        <LuPowerOff className="mr-2" /> Solicitudes inactivas
                                     </Link>
                                 </li>
                                 <li className='md:mb-4 w-full text-center'>
