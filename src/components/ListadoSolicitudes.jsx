@@ -19,12 +19,14 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [openModal, setOpenModal] = useState(false);
+    const [openModalControl, setOpenModalControl] = useState(false);
     const [selectedServiceId, setSelectedServiceId] = useState(null);
     const [emptyData, setEmptyData] = useState(false);
     const [isEditable, setIsEditable] = useState(false);
     const [isServiceActive, setIsServiceActive] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isValidating, setIsValidating] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
     let titulo;
 
     switch (tipoSolicitud) {
@@ -161,7 +163,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             if (error.response.data.data) {
                 errorMessage = error.response.data.data.error || errorMessage;
             }
-            
+
             Swal.fire({
                 icon: "error",
                 title: "Error",
@@ -171,18 +173,20 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     }
 
     const handleToggleServiceStatus = async (id, estatus) => {
-        if (isServiceActive) {
-            /*             if (estatus === 1) {
-                            Swal.fire({
+
+        if (estatus === 1 || estatus === 2) {
+            /*                 Swal.fire({
                                 title: 'Error',
                                 text: 'No es posible desactivar la publicación hasta que esta sea aceptada.',
                                 icon: 'error',
                                 timer: 10000
-                            });
-                            return;
-                        } */
+                            }); */
+            setIsServiceActive(true)
             await desactivateService(id);
-        } else {
+            setIsEditable(true);
+            setIsPaused(true);
+        } else if (estatus === 4) {
+            setIsServiceActive(false)
             await activateServiceFlow(id);
         }
     }
@@ -225,9 +229,10 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     }
 
     const activateServiceFlow = async (id) => {
+        setOpenModalControl(true)
         setSelectedServiceId(id);
         setIsEditable(true);
-        setIsModalOpen(true);
+        //setIsModalOpen(true);
     }
 
     const updateService = async (id, updatedFields) => {
@@ -411,17 +416,34 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     };
 
     const handleCardClick = (id, isActive) => {
+        console.log('Si entro en el handleCardClick');
+        console.log('Valid de isActive', isActive);
         setSelectedServiceId(id);
-        setIsServiceActive(isActive);
-        setOpenModal(true);
-    };
+        if (isActive) {
+            setOpenModal(true);
+        } else {
+            setIsModalOpen(true);
+        }
+
+    }
+
+    const handleCardClickActive = (id, isActive) => {
+        setSelectedServiceId(id);
+        if (isActive != 4) {
+            setIsServiceActive(true)
+        } else {
+            setIsServiceActive(false)
+        }
+    }
+
     const handleModalClose = () => {
         if (openModal) {
             setIsEditable(false);
             setOpenModal(false);
             setSelectedServiceId(null);
         }
-    };
+        setOpenModalControl(false)
+    }
     const handleEditable = () => {
         setIsEditable(true);
     }
@@ -470,6 +492,21 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         }
     }
 
+    const handleSaveEdit = () => {
+        Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Tu publicacion fue enviada a validación con éxito',
+        });
+
+        setOpenModalControl(false)
+    }
+    const handleShowEdit = () => {
+        setOpenModal(true)
+    }
+    const handleCancelEdit = () => {
+        setOpenModalControl(false)
+    }
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-screen">
@@ -495,14 +532,15 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                         key={servicio.id}
                         className="relative m-3 bg-white shadow-md px-5 py-6 rounded-xl"
                     >
-                        <div className="absolute top-4 right-0.5 cursor-pointer">
+                        <div className="absolute top-4 right-0.5 cursor-pointer" onClick={() => handleCardClickActive(servicio.id, servicio.id_estatus)}>
                             {(!isValidating || sessionStorage.getItem('tu') === '1') && (
                                 <Dropdown
                                     dismissOnClick={false}
                                     renderTrigger={() => <span><BsThreeDotsVertical /></span>}
+
                                 >
                                     {!isValidating && (
-                                        <Dropdown.Item onClick={() => handleToggleServiceStatus(servicio.id, servicio.id_estatus)}>
+                                        <Dropdown.Item onClick={() => /* setOpenModalControl(true) */ handleToggleServiceStatus(servicio.id, servicio.id_estatus)}>
                                             <div className="flex items-center">
                                                 {isServiceActive ? <LuPowerOff className="w-10 h-5 mr-2" /> : <FaCheck />}
                                                 {isServiceActive ? 'Desactivar publicación' : 'Activar publicación'}
@@ -565,7 +603,10 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                             className=" text-center cursor-pointer underline mt-10"
                             onClick={() => handleCardClick(servicio.id, servicio.estatus.id !== 4)}
                         >
-                            Ver más...
+                            {
+                                servicio.estatus.id === 4 ? 'Editar'
+                                    : 'Ver mas...'
+                            }
                         </p>
                     </div>
                 ))}
@@ -591,6 +632,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                     <ModalSolicitud
                         serviceId={selectedServiceId}
                         isEditable={isEditable}
+                        isPaused={isPaused}
                         onDataUpdate={handleDataUpdate}
                         verifyObservations={handleVerifyObservations}
                     />
@@ -632,6 +674,23 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                     </div>
                 </Modal.Footer>
             </Modal>
+
+            <Modal show={openModalControl} onClose={handleModalClose}>
+                <Modal.Body>
+                    {/*                     {Swal.fire({
+                        icon: 'warning',
+                        text: '¿Estás seguro de continuar? ya que si no has guardado cambios en la información, estos se perderan',
+                        
+                    })} */}
+                    <h4>¿Estás seguro de continuar, ya que si no has guardado cambios en la información, estos se perderán?</h4>
+                    <div className='flex gap-4 mt-10'>
+                        <button type="button" className="p-1 bg-slate-200 rounded-md" onClick={handleSaveEdit}>Guardar</button>
+                        {/* <button type="button" className="p-1 bg-lime-500 rounded-md" onClick={handleShowEdit}>Editar</button> */}
+                        <button type="button" className="p-1 bg-red-500 rounded-md" onClick={handleCancelEdit}>Cancelar</button>
+                    </div>
+                </Modal.Body>
+            </Modal>
+
             <EditServiceModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}

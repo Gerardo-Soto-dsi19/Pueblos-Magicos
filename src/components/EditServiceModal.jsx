@@ -70,6 +70,8 @@ function EditServiceModal({ isOpen, onClose, serviceId, onDataUpdate, onSaveAndA
                 latitud: detalleServicio.coordenada.latitud || '',
                 longitud: detalleServicio.coordenada.longitud || ''
             };
+            
+            
             setFormValues(newFormValues);
             setOriginalValues(newFormValues);
             const mainImageData = response.data.data.servicio[0].imagenes.find(
@@ -287,16 +289,18 @@ function EditServiceModal({ isOpen, onClose, serviceId, onDataUpdate, onSaveAndA
                         <Label>Pueblo Mágico</Label>
                         <TextInput
                             type='text'
-                            defaultValue={formValues.pueblo}
+                            value={formValues.pueblo}
                             readOnly={true}
+                            onChange={handleChange}
                         />
                     </div>
                     <div className='w-full mt-5'>
                         <Label>Categoría</Label>
                         <TextInput
                             type='text'
-                            defaultValue={formValues.categoria}
+                            value={formValues.categoria}
                             readOnly={true}
+                            onChange={handleChange}
                         />
                     </div>
                 </div>
@@ -307,7 +311,6 @@ function EditServiceModal({ isOpen, onClose, serviceId, onDataUpdate, onSaveAndA
                         name="titulo"
                         type='text'
                         value={formValues.titulo}
-                        readOnly={true}
                         onChange={handleChange}
                     />
                 </div>
@@ -706,7 +709,7 @@ function EditServiceModal({ isOpen, onClose, serviceId, onDataUpdate, onSaveAndA
             </Modal.Body>
             <Modal.Footer className="flex items-center justify-end gap-4">
                 <div className="flex flex-row-reverse gap-x-7">
-                    <Tooltip content='Guardar y Activar'>
+                    <Tooltip content='Guardar'>
                         <button
                             type='button'
                             className="md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full"
