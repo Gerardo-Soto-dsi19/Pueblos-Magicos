@@ -20,6 +20,8 @@ function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
     useEffect(() => {
         if (dataUsers && dataUsers.data && dataUsers.data.data && dataUsers.data.data.usuarios) {
             const users = dataUsers.data.data.usuarios.data;
+            console.log(users);
+
             const initialToggledState = {};
             users.forEach(user => {
                 initialToggledState[user.id] = user.id_estatus === 7;
@@ -65,7 +67,7 @@ function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
             const response = await fetchTypeUsers()
             setRolUser(response.data.data)
         } catch (error) {
-            Swal.fire('Error', 'Error al mostrar los tipos de usuario, intentelo mas tarde','error')
+            Swal.fire('Error', 'Error al mostrar los tipos de usuario, intentelo mas tarde', 'error')
         }
     }
 
@@ -161,6 +163,10 @@ function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
             {dataInfoUsers.map((user) => (
                 <div key={user.id} className='m-3 bg-white shadow-md px-5 py-4 rounded-xl flex justify-between'>
                     <div className='w-2/3'>
+                        <p className='font-bold mb-3 text-gray-700  uppercase'>
+                            Nombre: {''}
+                            <span className='font-normal normal-case'>{user.persona.nombre + ' ' + user.persona.apellido_pat + ' ' + user.persona.apellido_mat}</span>
+                        </p>
                         <p className='font-bold mb-3 text-gray-700  uppercase'>
                             Usuario: {''}
                             <span className='font-normal normal-case'>{user.user_name}</span>
