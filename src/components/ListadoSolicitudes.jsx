@@ -11,6 +11,8 @@ import { LuPowerOff } from "react-icons/lu";
 import FormData from 'form-data';
 import Swal from 'sweetalert2';
 import EditServiceModal from "./EditServiceModal";
+import BuscadorPublicaciones from "./BuscadorPublicaciones";
+
 import { getAllServices, getServicesFiltered, fetchAccept, fetchObservations, fetchDeleteService, fetchUpdateImages, fetchUpdateService } from '../api/api'
 
 function ListadoSolicitudes({ tipoSolicitud }) {
@@ -111,7 +113,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
 
             // Si la página solicitada es mayor que el número total de páginas, establece la página a la última disponible
             const adjustedPage = currentPage > totalPages ? totalPages : currentPage;
-            
+
             if (adjustedPage !== currentPage) {
                 page = adjustedPage - 1;
 
@@ -417,8 +419,6 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         setCurrentPage(newPage);
     }
 
-
-
     const handleCardClick = (id, isActive) => {
         setSelectedServiceId(id);
         if (isActive) {
@@ -494,12 +494,32 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         }
     }
 
-    const handleSaveEdit = () => {
-        Swal.fire({
-            icon: 'success',
-            title: '¡Éxito!',
-            text: 'Tu publicacion fue enviada a validación con éxito',
-        });
+    const handleSaveEdit = async () => {
+        console.log('Entra a la funcion');
+        setIsLoading(true)
+        try {
+            const formData = new FormData();
+            formData.append('data[servicio][id_estatus]', 1)
+            formData.append('_method', 'PUT');
+            const response = await fetchAccept(selectedServiceId, formData)
+            if (response.status === 200) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Tu publicacion fue enviada a validación con éxito',
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                title: 'Error',
+                icon: 'error',
+                text: 'Ocurrió un error al activar la publicación',
+                timer: 5000
+            });
+        } finally {
+            setIsLoading(false)
+            fetchData();
+        }
 
         setOpenModalControl(false)
     }
@@ -509,6 +529,8 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     const handleCancelEdit = () => {
         setOpenModalControl(false)
     }
+
+
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-screen">
@@ -523,6 +545,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         <>
             <div className="mt-10 mx-5">
                 <h2>{titulo}</h2>
+                <BuscadorPublicaciones />
             </div>
             <div>
                 {emptyData && <NoDataCard />}
@@ -679,18 +702,33 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             </Modal>
 
             <Modal show={openModalControl} onClose={handleModalClose}>
-                <Modal.Body>
-                    {/*                     {Swal.fire({
-                        icon: 'warning',
-                        text: '¿Estás seguro de continuar? ya que si no has guardado cambios en la información, estos se perderan',
-                        
-                    })} */}
-                    <h4>¿Estás seguro de continuar, ya que si no has guardado cambios en la información, estos se perderán?</h4>
-                    <div className='flex gap-4 mt-10'>
-                        <button type="button" className="p-1 bg-slate-200 rounded-md" onClick={handleSaveEdit}>Guardar</button>
-                        {/* <button type="button" className="p-1 bg-lime-500 rounded-md" onClick={handleShowEdit}>Editar</button> */}
-                        <button type="button" className="p-1 bg-red-500 rounded-md" onClick={handleCancelEdit}>Cancelar</button>
+                <Modal.Body className="m-5" >
+                    <h2 className="text-center">¡Atención!</h2><br />
+                    <h4 className="text-center">Está a punto de activar esta publicación.</h4><br />
+                    <p className="text-center"> Recuerde: Si no ha realizado modificaciones a la información,</p>
+                    <p className="text-center">deberá repetir el proceso completo de edición posteriormente.</p><br />
+                    <h3 className="text-center">¿Desea continuar con la activación?</h3>
+                    <div className='flex justify-center gap-4 mt-10'>
+                        <button
+                            type="button"
+                            className="px-4 py-2 bg-[#6C1D45] text-white rounded-md hover:bg-[#8C3A68]"
+                            onClick={handleSaveEdit}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <Spinner className='spinner-custom' aria-label="Spinner de carga" />
+                            ) : (
+                                'Aceptar'
+                            )}
+                        </button>
+                        <button
+                            type="button"
+                            className="px-4 py-2 bg-[#707372] text-white rounded-md hover:bg-[#8C8F8E]"
+                            onClick={handleCancelEdit}>Cancelar
+                        </button>
                     </div>
+
+
                 </Modal.Body>
             </Modal>
 
