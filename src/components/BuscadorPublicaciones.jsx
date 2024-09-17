@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { fetchSearchResults } from '../api/api'
 
-function BuscadorPublicaciones() {
+function BuscadorPublicaciones({ onSearchResult, onClearSearch, isSearching }) {
     const [inputValue, setInputValue] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [filteredOptions, setFilteredOptions] = useState([]);
@@ -8,26 +9,18 @@ function BuscadorPublicaciones() {
     const [lastSearched, setLastSearched] = useState('');
     const wrapperRef = useRef(null);
 
-    const opciones = [
-        { 
-            categoria: 'Frutas', 
-            opciones: [
-                'Manzana', 
-                'Banana', 
-                'Naranja', 
-                'Fresa', 
-                'Pera'
-            ] 
-        },
-        { 
-            categoria: 'Verduras', 
-            opciones: ['Zanahoria', 'Brócoli', 'Espinaca', 'Tomate', 'Pepino'] 
-        },
-        { 
-            categoria: 'Carnes', 
-            opciones: ['Pollo', 'Res', 'Cerdo', 'Cordero', 'Pavo'] 
-        },
-    ];
+    useEffect(() => {
+        const fetchOptions = async () => {
+            try {
+                const response = await fetchSearchResults();
+                setFilteredOptions(response.data.data.opciones);
+            } catch (error) {
+                console.error('Error fetching options:', error);
+            }
+        };
+
+        fetchOptions();
+    }, []);
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -46,31 +39,32 @@ function BuscadorPublicaciones() {
         setInputValue(value);
         setIsOpen(true);
 
-        const filtered = opciones.map(categoria => ({
-            ...categoria,
-            opciones: categoria.opciones.filter(opcion =>
-                opcion.toLowerCase().includes(value.toLowerCase())
-            )
-        })).filter(categoria => categoria.opciones.length > 0);
-
-        setFilteredOptions(filtered);
-    };
+        if (value.trim() === '') {
+            setFilteredOptions(filteredOptions);
+        } else {
+            const filtered = filteredOptions.map(pueblo => ({
+                ...pueblo,
+                titulos: pueblo.titulos.filter(titulo =>
+                    titulo.toLowerCase().includes(value.toLowerCase())
+                )
+            })).filter(pueblo => pueblo.titulos.length > 0);
+            setFilteredOptions(filtered);
+        }
+    }
 
     const handleSelectOption = (opcion) => {
         setInputValue(opcion);
+        setSelectedOption(opcion);
         setIsOpen(false);
-    };
+    }
 
     const handleSearch = () => {
-        setLastSearched(selectedOption || inputValue);
-        // Aquí normalmente harías una llamada a una API o actualizarías el estado global
-        console.log(`Búsqueda realizada: ${selectedOption || inputValue}`);
-        // Simular una recarga del DOM
-        document.body.style.opacity = '0.5';
-        setTimeout(() => {
-            document.body.style.opacity = '1';
-        }, 300);
-    };
+        const filtros = {
+            buscar: selectedOption || inputValue,
+            tipoServicio: '' // Ajusta esto según tus necesidades
+        };
+        onSearchResult(filtros);
+    }
 
     return (
         <>
@@ -91,19 +85,29 @@ function BuscadorPublicaciones() {
                         >
                             Buscar
                         </button>
+                        {isSearching && (
+                            <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4 flex justify-between items-center" role="alert">
+                                <button
+                                    onClick={clearSearch}
+                                    className="px-4 py-2 bg-[#6C1D45] text-white rounded-md hover:bg-[#8C3A68]"
+                                >
+                                    Regresar
+                                </button>
+                            </div>
+                        )}
                     </div>
-                    {isOpen && filteredOptions.length > 0 && (
+                    {isOpen && (
                         <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
-                            {filteredOptions.map((categoria) => (
-                                <div key={categoria.categoria}>
-                                    <div className="px-4 py-2 font-semibold bg-gray-100">{categoria.categoria}</div>
-                                    {categoria.opciones.map((opcion) => (
+                            {filteredOptions.map((pueblo) => (
+                                <div key={pueblo.pueblo}>
+                                    <div className="px-4 py-2 font-semibold bg-gray-100">{pueblo.pueblo}</div>
+                                    {pueblo.titulos.map((titulo) => (
                                         <div
-                                            key={opcion}
+                                            key={titulo}
                                             className="px-4 py-2 cursor-pointer hover:bg-blue-100"
-                                            onClick={() => handleSelectOption(opcion)}
+                                            onClick={() => handleSelectOption(titulo)}
                                         >
-                                            {opcion}
+                                            {titulo}
                                         </div>
                                     ))}
                                 </div>
@@ -111,13 +115,7 @@ function BuscadorPublicaciones() {
                         </div>
                     )}
                 </div>
-{/*                 {lastSearched && (
-                    <div className="mt-4 p-4 bg-gray-100 rounded-md">
-                        <p className="text-sm text-gray-600">Última búsqueda: {lastSearched}</p>
-                    </div>
-                )} */}
             </div>
-
         </>
     )
 }
