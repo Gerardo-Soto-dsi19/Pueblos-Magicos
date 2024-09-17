@@ -1,19 +1,16 @@
 import ReactPaginate from "react-paginate";
 import React, { useEffect, useState, useCallback } from 'react'
-import { Carousel, Spinner, Modal, Tooltip, Badge, Dropdown } from "flowbite-react"
+import { Spinner, Modal, Tooltip } from "flowbite-react"
 import '../index.css'
 import ModalSolicitud from './ModalSolicitud'
 import NoDataCard from './NoDataCard';
 import { HiCheckCircle, HiOutlinePencilAlt, HiXCircle } from "react-icons/hi";
-import { FaTrash, FaCheck } from 'react-icons/fa';
-import { BsThreeDotsVertical } from "react-icons/bs";
-import { LuPowerOff } from "react-icons/lu";
 import FormData from 'form-data';
 import Swal from 'sweetalert2';
 import EditServiceModal from "./EditServiceModal";
 import BuscadorPublicaciones from "./BuscadorPublicaciones";
-
-import { getAllServices, getServicesFiltered, fetchAccept, fetchObservations, fetchDeleteService, fetchUpdateImages, fetchUpdateService } from '../api/api'
+import ServiceCard from "./ServiceCard";
+import { getAllServices, getServicesFiltered, fetchAccept, fetchObservations, fetchDeleteService, fetchUpdateImages, fetchUpdateService, fetchSearchResultsFiltered } from '../api/api'
 
 function ListadoSolicitudes({ tipoSolicitud }) {
     const [servicios, setServicios] = useState([]);
@@ -29,6 +26,10 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isValidating, setIsValidating] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
+    const [filteredServices, setFilteredServices] = useState([]);
+    const [searchResults, setSearchResults] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
+
     let titulo;
 
     switch (tipoSolicitud) {
@@ -48,13 +49,14 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             titulo = 'Solicitudes inactivas';
             break;
         default:
-            titulo = 'Título predeterminado';
+            titulo = '';
             break;
     }
-
     useEffect(() => {
-        fetchData();
-    }, [currentPage, tipoSolicitud]);
+        if (!isSearching) {
+            fetchFilteredData();
+        }
+    }, [tipoSolicitud, currentPage, isSearching]);
 
     const fetchData = async () => {
         try {
@@ -66,6 +68,23 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             setEmptyData((data || []).length === 0 || last_page === 0);
         } catch (e) {
             console.error('Error fetching data: ', e);
+            setEmptyData(true);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+    const fetchFilteredData = async () => {
+        try {
+            setIsLoading(true);
+            setServicios([]);
+            const { data, last_page } = await getFilteredData(tipoSolicitud, currentPage);
+            console.log('Resultado del response de getFilteredData', data);
+            setServicios(data || []);
+            setTotalPages(last_page);
+            setFilteredServices(data || []);
+            setEmptyData((data || []).length === 0 || last_page === 0);
+        } catch (e) {
+            console.error('Error fetching filtered data: ', e);
             setEmptyData(true);
         } finally {
             setIsLoading(false);
@@ -106,7 +125,6 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             } else {
                 response = await getServicesFiltered(id_estatus, page);
             }
-
             const data = response.data.data.servicios;
             const totalPages = data.last_page;
             const currentPage = data.current_page;
@@ -131,6 +149,23 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     };
     const maxPageIndex = totalPages > 0 ? totalPages - 1 : 0;
     const clampedForcePage = Math.min(currentPage, maxPageIndex);
+
+    const handleApplyFilter = async (filtros) => {
+        try {
+            setIsLoading(true);
+            setIsSearching(true);
+            const response = await fetchSearchResultsFiltered(filtros);
+            setSearchResults(response.data.data.servicios.data || []);
+            setEmptyData(response.data.data.servicios.data.length === 0);
+            setTotalPages(response.data.data.servicios.last_page)
+            setCurrentPage(response.data.data.servicios.current_page)
+        } catch (e) {
+            console.error('Error in search: ', e);
+            setEmptyData(true);
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     const handleAccept = async () => {
 
@@ -530,6 +565,12 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         setOpenModalControl(false)
     }
 
+    const clearSearch = () => {
+        setIsSearching(false);
+        setSearchResults([]);
+        fetchFilteredData(); // Esta función carga los datos originales
+    }
+
 
     if (isLoading) {
         return (
@@ -545,99 +586,55 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         <>
             <div className="mt-10 mx-5">
                 <h2>{titulo}</h2>
-                <BuscadorPublicaciones />
+                <BuscadorPublicaciones
+                    onSearchResult={handleApplyFilter}
+                    onClearSearch={clearSearch}
+                />
+                {isSearching && (
+                    <div className="mt-5 bg-[#F5E1EC] border-l-4 border-[#6C1D45] text-[#6C1D45] p-4 mb-4 flex justify-between items-center" role="alert">
+                        <p className="font-medium">Mostrando resultados de búsqueda.</p>
+                        <button
+                            onClick={clearSearch}
+                            className="px-4 py-2 bg-[#6C1D45] text-white rounded-md hover:bg-[#8C3A68] transition duration-300 ease-in-out"
+                        >
+                            Volver a todos los servicios
+                        </button>
+                    </div>
+                )}
             </div>
             <div>
                 {emptyData && <NoDataCard />}
             </div>
             {/*Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
-                {servicios.map((servicio) => (
-                    <div
-                        key={servicio.id}
-                        className="relative m-3 bg-white shadow-md px-5 py-6 rounded-xl"
-                    >
-                        <div className="absolute top-4 right-0.5 cursor-pointer" onClick={() => handleCardClickActive(servicio.id, servicio.id_estatus)}>
-                            {(!isValidating || sessionStorage.getItem('tu') === '1') && (
-                                <Dropdown
-                                    dismissOnClick={false}
-                                    renderTrigger={() => <span><BsThreeDotsVertical /></span>}
+                {isSearching
+                    ? searchResults.map((servicio) => (
 
-                                >
-                                    {!isValidating && (
-                                        <Dropdown.Item onClick={() => /* setOpenModalControl(true) */ handleToggleServiceStatus(servicio.id, servicio.id_estatus)}>
-                                            <div className="flex items-center">
-                                                {isServiceActive ? <LuPowerOff className="w-10 h-5 mr-2" /> : <FaCheck />}
-                                                {isServiceActive ? 'Desactivar publicación' : 'Activar publicación'}
-                                            </div>
-                                        </Dropdown.Item>
-                                    )}
-                                    {sessionStorage.getItem("tu") === "1" && (
-                                        <Dropdown.Item onClick={() => handleDeletePublication(servicio.id)}>
-                                            <div className="flex items-center">
-                                                <FaTrash className="w-10 h-5 mr-1" />
-                                                Eliminar solicitud
-                                            </div>
-                                        </Dropdown.Item>
-                                    )}
-                                </Dropdown>
-                            )}
-
-                        </div>
-
-                        <div className="h-56 sm:h-64 xl:h-40 2xl:h-44 mb-5">
-                            <Carousel leftControl rightControl>
-                                {servicio.imagenes.map((imagen, index) => (
-                                    <img
-                                        key={index}
-                                        src={`data:image/jpeg;base64,${imagen.archivo}`}
-                                        alt={servicio.detalle_servicio.titulo}
-                                    />
-                                ))}
-                            </Carousel>
-                        </div>
-                        <p className="font-bold mb-3 text-gray-700 uppercase">
-                            Título:{' '}
-                            <span className="font-normal normal-case">
-                                {servicio.detalle_servicio.titulo}
-                            </span>
-                        </p>
-                        <p className="font-bold mb-3 text-gray-700 uppercase">
-                            Servicio:{' '}
-
-                            <span className="font-normal normal-case">{servicio.tipo_servicio.servicio}</span>
-                        </p>
-                        <p className="font-bold mb-3 text-gray-700 uppercase">
-                            Pueblo Mágico:{' '}
-                            <span className="font-normal normal-case">{servicio.pueblo.nombre}</span>
-                        </p>
-                        <div className="flex">
-                            <p className="flex font-bold gap-3 text-gray-700 uppercase">
-                                Estado: {' '}
-                                <Badge
-                                    color={
-                                        servicio.estatus.id === 1 ? 'warning'
-                                            : servicio.estatus.id === 2 ? 'success'
-                                                : servicio.estatus.id === 3 ? 'failure'
-                                                    : 'gray'
-                                    }
-                                    className="h-auto">{servicio.estatus.estado}</Badge>
-                            </p>
-                        </div>
-                        <p
-                            className=" text-center cursor-pointer underline mt-10"
-                            onClick={() => handleCardClick(servicio.id, servicio.estatus.id !== 4)}
-                        >
-                            {
-                                servicio.estatus.id === 4 ? 'Editar'
-                                    : 'Ver mas...'
-                            }
-                        </p>
-                    </div>
-                ))}
-            </div>
+                        <ServiceCard
+                            key={servicio.id}
+                            servicio={servicio}
+                            isValidating={isValidating}
+                            handleCardClickActive={handleCardClickActive}
+                            handleToggleServiceStatus={handleToggleServiceStatus}
+                            handleDeletePublication={handleDeletePublication}
+                            handleCardClick={handleCardClick}
+                        />
+                    ))
+                    : filteredServices.map((servicio) => (
+                        <ServiceCard
+                            key={servicio.id}
+                            servicio={servicio}
+                            isValidating={isValidating}
+                            handleCardClickActive={handleCardClickActive}
+                            handleToggleServiceStatus={handleToggleServiceStatus}
+                            handleDeletePublication={handleDeletePublication}
+                            handleCardClick={handleCardClick}
+                        />
+                    ))
+                }
+            </div >
             {/*Pagination*/}
-            <div className="mt-24">
+            <div div className="mt-24" >
                 <ReactPaginate
                     breakLabel={'...'}
                     nextLabel="Siguiente"
@@ -650,7 +647,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                     forcePage={clampedForcePage}
                     activeClassName="active"
                 />
-            </div>
+            </div >
 
             <Modal show={openModal} onClose={handleModalClose}>
                 <Modal.Header>Publicación</Modal.Header>
