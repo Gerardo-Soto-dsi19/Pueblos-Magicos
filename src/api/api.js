@@ -350,7 +350,7 @@ export const fetchUpdateService = async (id, data) => {
 
 /* Servicio para eliminar una publicación */
 export const fetchDeleteService = async (id) => {
- 
+
   try {
     const config = getRequestConfig({
       'Content-Type': 'application/json'
@@ -385,6 +385,41 @@ export const fetchCreateUser = async (data) => {
       'Content-Type': 'application/json',
     })
     const response = await axios.post('/admin/users/registrar', data, config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
+
+/* Servicio para obtener todos los titulos con sus categorias del buscador de publicaciones */
+
+export const fetchSearchResults = async () => {
+  try {
+    const config = getRequestConfig({
+      'accept': 'application/json',
+      'Content-Type': 'application/json',
+    })
+
+    const response = await axios.get('/servicios/buscador/titulos', config)
+    return response
+  } catch (error) {
+    throw error
+  }
+}
+
+/* Servicio para obtener los titulos filtrados en el buscador de publicaciones */
+
+export const fetchSearchResultsFiltered = async (filtros) => {
+  try {
+    const config = {
+      ...getAuthConfig(),
+    };
+    const paramsURL = new URLSearchParams({
+      buscar: filtros.buscar,
+      tipoServicio: filtros.tipoServicio,
+    });
+
+    const response = await axios.get(`/servicios/buscador/publicaciones?${paramsURL.toString()}`, config);
     return response
   } catch (error) {
     throw error
