@@ -58,21 +58,6 @@ function ListadoSolicitudes({ tipoSolicitud }) {
         }
     }, [tipoSolicitud, currentPage, isSearching]);
 
-    const fetchData = async () => {
-        try {
-            setIsLoading(true);
-            setServicios([]); // Limpiar los servicios antes de cargar nuevos datos
-            const { data, last_page } = await getFilteredData(tipoSolicitud, currentPage);
-            setServicios(data || []);
-            setTotalPages(last_page);
-            setEmptyData((data || []).length === 0 || last_page === 0);
-        } catch (e) {
-            console.error('Error fetching data: ', e);
-            setEmptyData(true);
-        } finally {
-            setIsLoading(false);
-        }
-    }
     const fetchFilteredData = async () => {
         try {
             setIsLoading(true);
@@ -104,7 +89,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
     })
 
     const handleDataUpdate = () => {
-        fetchData();
+        fetchFilteredData();
         setIsEditable(false)
     }
 
@@ -191,7 +176,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                     title: "Ok",
                     text: "La publicación fue aceptada con éxito"
                 });
-                fetchData();
+                fetchFilteredData();
                 setOpenModal(false);
 
             } else {
@@ -255,7 +240,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                 if (response.status === 200) {
                     Swal.fire('Éxito', 'La publicación fue pausada', 'success');
                     setIsServiceActive(false);
-                    fetchData();
+                    fetchFilteredData();
                 }
             } catch (error) {
                 Swal.fire({
@@ -405,7 +390,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             if (response.status === 200) {
                 Swal.fire('Éxito', 'Publicación enviada. Pendiente de validación', 'success');
                 setIsServiceActive(true);
-                fetchData();
+                fetchFilteredData();
             }
         } catch (error) {
 
@@ -436,7 +421,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                     Swal.fire('Éxito', 'La publicación fue eliminada', 'success');
                     setIsServiceActive(!isServiceActive);
                     setIsValidating(true);
-                    fetchData();
+                    fetchFilteredData();
                 }
             }
         } catch (error) {
@@ -514,7 +499,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
                         text: "Las observaciones fueron enviadas con éxito"
                     });
                     setOpenModal(false);
-                    fetchData();
+                    fetchFilteredData();
                 } else {
                     throw new Error('Error al enviar las observaciones');
                 }
@@ -553,7 +538,7 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             });
         } finally {
             setIsLoading(false)
-            fetchData();
+            fetchFilteredData();
         }
 
         setOpenModalControl(false)
