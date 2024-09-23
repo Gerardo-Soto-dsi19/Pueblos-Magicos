@@ -11,7 +11,7 @@ import RecuperarContraseña from './pages/RecuperarContraseña'
 import GestionSolicitudes from './pages/GestionSolicitudes'
 import ResetPassword from './components/ResetPassword'
 import GestionRoles from './Gestor Roles/GestionRoles'
-import SidebarUser from './Gestor Roles/SidebarUser'
+import PerfilUsuario from './Gestor Roles/PerfilUsuario'
 import RegistroUsuarios from './Gestor Roles/components/RegistroUsuarios'
 
 
@@ -49,7 +49,7 @@ const router = createBrowserRouter([{
     },
     {
       path:'/editar/informacion-personal',
-      element:<SidebarUser/>
+      element:<PerfilUsuario/>
     },
     {
       path:'/gestor-usuarios/registro/usuarios',
