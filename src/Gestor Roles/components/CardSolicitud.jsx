@@ -35,8 +35,6 @@ function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
     useEffect(() => {
         if (dataUsers && dataUsers.data && dataUsers.data.data && dataUsers.data.data.usuarios) {
             const users = dataUsers.data.data.usuarios.data;
-            console.log('lo que llego', users);
-
             const initialToggledState = {};
             users.forEach(user => {
                 initialToggledState[user.id] = user.id_estatus === 7;
