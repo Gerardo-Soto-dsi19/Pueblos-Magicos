@@ -4,7 +4,7 @@ import { HiDotsVertical } from "react-icons/hi";
 import { Modal } from 'flowbite-react'
 import { HiCheckCircle, HiXCircle } from "react-icons/hi";
 import Swal from 'sweetalert2';
-import { fetchTipoUsuarioById, fetchTypeUsers, fetchUpdateRole } from '../../api/api'
+import { fetchTipoUsuarioById, fetchTypeUsers, fetchUpdateRole, getMagicTowns } from '../../api/api'
 import '../../index.css'
 
 function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
@@ -15,12 +15,27 @@ function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
     const [dataInfoUser, setDataInfoUser] = useState([]);
     const [rolUser, setRolUser] = useState([]);
     const [selectedRole, setSelectedRole] = useState('');
+    const [selectPueblo, setSelectPueblo] = useState('');
+    const [puebloMagico, setPuebloMagico] = useState([]);
 
+    const MemoizedSelectPuebloMagico = React.memo((props) => (
+        <select
+            name='id_pueblo'
+            value={props.value}
+            onChange={props.onChange}
+            className="col-span-1 rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300"
+        >
+            <option value="">Seleccionar...</option>
+            {props.options.map((item) => (
+                <option key={item.id} value={item.id}>{item.nombre}</option>
+            ))}
+        </select>
+    ));
 
     useEffect(() => {
         if (dataUsers && dataUsers.data && dataUsers.data.data && dataUsers.data.data.usuarios) {
             const users = dataUsers.data.data.usuarios.data;
-            console.log(users);
+            console.log('lo que llego', users);
 
             const initialToggledState = {};
             users.forEach(user => {
@@ -30,6 +45,20 @@ function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
             setDataInfoUsers(users);
         }
     }, [dataUsers]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [pueblosMagicosResponse] = await Promise.all([
+                    getMagicTowns(),
+                ]);
+                setPuebloMagico(pueblosMagicosResponse.data.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        fetchData();
+    }, []);
 
     const fetchUserById = async (id) => {
         try {
@@ -45,7 +74,11 @@ function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
 
     const handleRoleChange = (event) => {
         setSelectedRole(event.target.value);
-    };
+    }
+
+    const handleAssignTown = (event) => {
+        setSelectPueblo(event.target.value);
+    }
 
     const handleCardClick = (id) => {
         setOpenModal(true)
@@ -141,6 +174,7 @@ function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
                     data: {
                         user: {
                             'id_tipo_usuario': selectedRole,
+                            'id_pueblo': selectPueblo
                         }
                     },
                     _method: 'PUT'
@@ -170,6 +204,10 @@ function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
                         <p className='font-bold mb-3 text-gray-700  uppercase'>
                             Usuario: {''}
                             <span className='font-normal normal-case'>{user.user_name}</span>
+                        </p>
+                        <p className='font-bold mb-3 text-gray-700  uppercase'>
+                            Pueblo: {''}
+                            <span className='font-normal normal-case'>{user.pueblo.nombre}</span>
                         </p>
                         <p className='font-bold mb-3 text-gray-700  uppercase'>
                             Tipo rol: {''}
@@ -270,6 +308,16 @@ function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
                                         ))}
                                     </select>
 
+                                </div>
+                            </div>
+                            <div className='grid items-center grid-cols-[150px_1fr] gap-4'>
+                                <label className='font-medium '>Pueblo Mágico:</label>
+                                <div>
+                                    <MemoizedSelectPuebloMagico
+                                        value={selectPueblo}
+                                        onChange={handleAssignTown}
+                                        options={puebloMagico}
+                                    />
                                 </div>
                             </div>
                         </div>

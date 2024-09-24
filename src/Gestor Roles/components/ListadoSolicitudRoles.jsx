@@ -40,7 +40,7 @@ function ListadoSolicitudRoles({ filtros }) {
             resp = await fetchGetFilteredUsers(filtro, pagina);
             setDataUser(resp);
             setTotalPages(resp.data.data.usuarios.last_page)
-            const data = resp.data
+            const data = resp.data            
             const totalPages = resp.data.data.usuarios.last_page;
             const currentPage = resp.data.data.usuarios.current_page;
             const adjustedPage = currentPage > totalPages ? totalPages : currentPage;
