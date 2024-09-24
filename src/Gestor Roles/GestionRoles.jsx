@@ -4,7 +4,7 @@ import ListadoSolicitudRoles from './components/ListadoSolicitudRoles';
 import { AuthContext } from '../components/AuthContext';
 import { useContext,useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { FaLock, FaUserPlus } from "react-icons/fa";
+import { FaBook, FaUserPlus } from "react-icons/fa";
 import { RiAddBoxFill } from "react-icons/ri";
 import { Link } from 'react-router-dom'
 import Filtros from './components/Filtros';
@@ -33,7 +33,7 @@ function GestionRoles() {
     const menuItems = [
         { icon: <FaUserPlus className="mr-2" />, label: "Registrar nuevo usuario", to: "/gestor-usuarios/registro/usuarios" },
         { icon: <RiAddBoxFill className="mr-2" />, label: "Registrar nueva publicación", to: "/formulario/registro" },
-        { icon: <FaLock className="mr-2" />, label: "Gestor de publicaiones", to: "/gestor-solicitudes" },
+        { icon: <FaBook className="mr-2" />, label: "Gestor de publicaiones", to: "/gestor-solicitudes" },
     ];
     return (
         <Sidebar menuItems={menuItems.filter(item => !item.condition || item.condition)}>
