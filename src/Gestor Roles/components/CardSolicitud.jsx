@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import { fetchTipoUsuarioById, fetchTypeUsers, fetchUpdateRole, getMagicTowns } from '../../api/api'
 import '../../index.css'
 
-function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
+function CardSolicitud({ dataUsers, onDataUpdate }) {
     const [toggledUsers, setToggledUsers] = useState({});
     const [openModal, setOpenModal] = useState(false);
     const [idUser, setIdUser] = useState('');
@@ -160,11 +160,11 @@ function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
         try {
             const result = await Swal.fire({
                 title: '¿Estás seguro?',
-                text: '¿Deseas cambiar el rol del usuario?',
+                text: '¿Deseas actualizar la información del usuario?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#6C1D45',
-                confirmButtonText: 'Sí, cambiar rol',
+                confirmButtonText: 'Sí, actualizar',
                 cancelButtonText: 'Cancelar',
             });
 
@@ -193,16 +193,15 @@ function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
 
                 const responseUpdate = await fetchUpdateRole(idUser, dataUpdated);
                 if (responseUpdate.status === 200) {
-                    Swal.fire('Éxito', 'El rol del usuario ha sido actualizado', 'success');
-                    setOpenModal(false)
+                    Swal.fire('Éxito', 'La información del usuario ha sido actualizada', 'success');
+                    setOpenModal(false);
                     onDataUpdate();
                 }
             }
         } catch (error) {
-            Swal.fire('Error', 'Ocurrió un error al actualizar el rol', 'error');
-            logError('Error al actualizar el estado del usuario', error);
+            Swal.fire('Error', 'Ocurrió un error al actualizar la información', 'error');
         }
-    }
+    };
 
     return (
         <>
