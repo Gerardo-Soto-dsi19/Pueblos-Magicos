@@ -167,17 +167,31 @@ function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
                 confirmButtonText: 'Sí, cambiar rol',
                 cancelButtonText: 'Cancelar',
             });
+
             if (result.isConfirmed) {
+                const updatedFields = {};
+
+                if (selectedRole) {
+                    updatedFields.id_tipo_usuario = selectedRole;
+                }
+
+                if (selectPueblo) {
+                    updatedFields.id_pueblo = selectPueblo;
+                }
+
+                if (Object.keys(updatedFields).length === 0) {
+                    Swal.fire('Información', 'No se ha seleccionado ningún cambio', 'info');
+                    return;
+                }
+
                 const dataUpdated = {
                     data: {
-                        user: {
-                            'id_tipo_usuario': selectedRole,
-                            'id_pueblo': selectPueblo
-                        }
+                        user: updatedFields
                     },
                     _method: 'PUT'
-                }
-                const responseUpdate = await fetchUpdateRole(idUser, dataUpdated)
+                };
+
+                const responseUpdate = await fetchUpdateRole(idUser, dataUpdated);
                 if (responseUpdate.status === 200) {
                     Swal.fire('Éxito', 'El rol del usuario ha sido actualizado', 'success');
                     setOpenModal(false)
