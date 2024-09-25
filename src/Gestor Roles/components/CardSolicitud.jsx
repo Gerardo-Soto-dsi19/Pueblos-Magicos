@@ -205,7 +205,7 @@ function CardSolicitud({ dataUsers, onDataUpdate, searchUser }) {
                         </p>
                         <p className='font-bold mb-3 text-gray-700  uppercase'>
                             Pueblo: {''}
-                            <span className='font-normal normal-case'>{user.pueblo.nombre}</span>
+                            <span className='font-normal normal-case'>{user.pueblo ? user.pueblo.nombre : 'N/A'}</span>
                         </p>
                         <p className='font-bold mb-3 text-gray-700  uppercase'>
                             Tipo rol: {''}
