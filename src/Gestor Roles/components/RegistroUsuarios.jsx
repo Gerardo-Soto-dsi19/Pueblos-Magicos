@@ -24,6 +24,7 @@ function RegistroUsuarios() {
             nombre: '',
             apellido_pat: '',
             apellido_mat: '',
+            id_tipo_usuario: ''
         })
     }
     const Toast = Swal.mixin({
@@ -58,6 +59,8 @@ function RegistroUsuarios() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true)
+        console.log(formData);
+        
         try {
             const datosToSend = {
                 data: {
@@ -67,8 +70,11 @@ function RegistroUsuarios() {
                     nombre: formData.nombre,
                     apellido_pat: formData.apellido_pat,
                     apellido_mat: formData.apellido_mat,
+                    id_tipo_usuario: formData.id_tipo_usuario
                 }
             }
+            console.log("dataToSend:",datosToSend);
+            
             const response = await fetchCreateUser(datosToSend)
 
             if (response.status === 200) {
@@ -212,6 +218,44 @@ function RegistroUsuarios() {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div className="border-b border-gray-900/10 pb-12">
+                                <div className="mt-10 space-y-10">
+                                    <fieldset>
+                                        <legend className="text-sm font-semibold leading-6 text-gray-900">Tipo de usuario</legend>
+                                        <p className="mt-1 text-sm leading-6 text-gray-600">Por favor indique el rol del nuevo usuario</p>
+                                        <div className="mt-6 space-y-6">
+                                            <div className="flex items-center gap-x-3">
+                                                <input
+                                                    id="id_director"
+                                                    name="id_tipo_usuario"
+                                                    type="radio"
+                                                    value={2}
+                                                    onChange={handleChange}
+                                                    className="form-radio h-4 w-4 text-[#6C1D45]"
+                                                />
+                                                <label htmlFor="id_director" className="block text-sm font-medium leading-6 text-gray-900">
+                                                    Director Pueblo Mágico
+                                                </label>
+                                            </div>
+                                            <div className="flex items-center gap-x-3">
+                                                <input
+                                                    id="id_pueblo"
+                                                    name="id_tipo_usuario"
+                                                    type="radio"
+                                                    value={3}
+                                                    onChange={handleChange}
+                                                    className="form-radio h-4 w-4 text-[#6C1D45]"
+                                                />
+                                                <label htmlFor="id_pueblo" className="block text-sm font-medium leading-6 text-gray-900">
+                                                    Pueblo Mágico
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+
+                                </div>
+
                             </div>
 
                             <div className="mt-6 py-5 flex items-center justify-end gap-x-6">
