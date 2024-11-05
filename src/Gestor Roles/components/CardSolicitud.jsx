@@ -41,6 +41,7 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
             });
             setToggledUsers(initialToggledState);
             setDataInfoUsers(users);
+
         }
     }, [dataUsers]);
 
@@ -222,7 +223,13 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
                         </p>
                         <p className='font-bold mb-3 text-gray-700  uppercase'>
                             Tipo rol: {''}
-                            <span className='font-normal normal-case'>{user.tipo.tipo_usuario}</span>
+                            <span className='font-normal normal-case'>
+                                {
+                                    user.tipo.tipo_usuario === 'Admin_Systema' ? 'Administrador de sistema' :
+                                        user.tipo.tipo_usuario === 'Director_Pueblos_Magicos' ? 'Director de pueblo mágico'
+                                            : user.tipo.tipo_usuario === 'Pueblo_Magico' ? 'Pueblo mágico' : 'Turista'
+                                }
+                            </span>
                         </p>
                         <div className="flex">
                             <p className='flex gap-3 font-bold text-gray-700  uppercase'>
@@ -313,9 +320,17 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
                                         onChange={handleRoleChange}
                                         className='col-span-1 rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300'
                                     >
-                                        <option value={user.tipo.tipo_usuario}>{user.tipo.tipo_usuario}</option>
+                                        <option value={user.tipo.tipo_usuario}>
+                                            {user.tipo.tipo_usuario === 'Admin_Systema' ? 'Administrador de sistema' :
+                                                user.tipo.tipo_usuario === 'Director_Pueblos_Magicos' ? 'Director de pueblo mágico' :
+                                                    user.tipo.tipo_usuario === 'Pueblo_Magico' ? 'Pueblo mágico' : 'Turista'}
+                                        </option>
                                         {rolUser.map((item) => (
-                                            <option key={item.id} value={item.id}>{item.tipo_usuario}</option>
+                                            <option key={item.id} value={item.id}>
+                                                {item.tipo_usuario === 'Admin_Systema' ? 'Administrador de sistema' :
+                                                    item.tipo_usuario === 'Director_Pueblos_Magicos' ? 'Director Pueblo mágico' :
+                                                        item.tipo_usuario === 'Pueblo_Magico' ? 'Pueblo mágico' : 'Turista'}
+                                            </option>
                                         ))}
                                     </select>
 

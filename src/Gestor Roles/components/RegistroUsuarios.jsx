@@ -58,9 +58,7 @@ function RegistroUsuarios() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true)
-        console.log(formData);
-        
+        setIsLoading(true)       
         try {
             const datosToSend = {
                 data: {
@@ -72,9 +70,7 @@ function RegistroUsuarios() {
                     apellido_mat: formData.apellido_mat,
                     id_tipo_usuario: formData.id_tipo_usuario
                 }
-            }
-            console.log("dataToSend:",datosToSend);
-            
+            }            
             const response = await fetchCreateUser(datosToSend)
 
             if (response.status === 200) {
