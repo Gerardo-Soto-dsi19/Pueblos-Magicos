@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Badge, Dropdown } from 'flowbite-react'
+import { Badge, Dropdown, Tooltip } from 'flowbite-react'
 import { HiDotsVertical } from "react-icons/hi";
 import { Modal } from 'flowbite-react'
 import { HiCheckCircle, HiXCircle } from "react-icons/hi";
@@ -351,18 +351,23 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
                 </Modal.Body>
                 <Modal.Footer className='mt-6 flex justify-end'>
                     <div className='flex gap-x-7'>
-                        <button
-                            type='button'
-                            onClick={handleChangeRole}
-                            className='md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full'>
-                            <HiCheckCircle />
-                        </button>
-                        <button
-                            type='button'
-                            onClick={handleModalClose}
-                            className='md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full'>
-                            <HiXCircle />
-                        </button>
+                        <Tooltip content="Guardar">
+                            <button
+                                type='button'
+                                onClick={handleChangeRole}
+                                className='md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full'>
+                                <HiCheckCircle />
+                            </button>
+                        </Tooltip>
+                        <Tooltip content="Cancelar">
+                            <button
+                                type='button'
+                                onClick={handleModalClose}
+                                className='md:flex-1 py-3 px-3 bg-[#6C1D45] hover:bg-[#8C3A68] text-white rounded-full'>
+                                <HiXCircle />
+                            </button>
+                        </Tooltip>
+
                     </div>
                 </Modal.Footer>
             </Modal>
