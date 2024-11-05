@@ -17,16 +17,17 @@ function RecuperarContraseña() {
       Swal.fire({
         icon: 'success',        
         title: 'Éxito!',
-        text: response.data.status,
+        text: "Le hemos enviado un correo electrónico para restablecer su contraseña.",
         confirmButtonColor: '#6c1d45',
         confirmButtonText: 'Aceptar'
       })
 
     } catch (error) {
+      
       Swal.fire({
         icon: 'error',        
         title: 'Error',
-        text: error.response.data.data.user_name,
+        text: error.response.data.data.message['data.user_name'],
         confirmButtonColor: '#6c1d45', 
         confirmButtonText: 'Aceptar'
       });
