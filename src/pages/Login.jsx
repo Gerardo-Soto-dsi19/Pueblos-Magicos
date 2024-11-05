@@ -164,7 +164,7 @@ const Login = () => {
                             <p className="mt-10 text-center text-sm text-gray-500">
                                 ¿No tienes una cuenta?{' '}
                                 <Link to="/registro/usuario" className="font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
-                                    Registrate aquí!
+                                    ¡Regístrate aquí!
                                 </Link>
                             </p>
                         </div>
