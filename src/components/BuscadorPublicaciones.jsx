@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { fetchSearchResults } from '../api/api'
 
-function BuscadorPublicaciones({ onSearchResult, onClearSearch, isSearching }) {
+function BuscadorPublicaciones({ onSearchResult, isSearching }) {
     const [inputValue, setInputValue] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [filteredOptions, setFilteredOptions] = useState([]);
     const [selectedOption, setSelectedOption] = useState('');
-    const [lastSearched, setLastSearched] = useState('');
     const wrapperRef = useRef(null);
 
     useEffect(() => {
@@ -61,7 +60,7 @@ function BuscadorPublicaciones({ onSearchResult, onClearSearch, isSearching }) {
     const handleSearch = () => {
         const filtros = {
             buscar: selectedOption || inputValue,
-            tipoServicio: '' // Ajusta esto según tus necesidades
+            tipoServicio: '' 
         };
         onSearchResult(filtros);
     }
