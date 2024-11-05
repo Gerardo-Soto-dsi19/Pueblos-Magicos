@@ -78,7 +78,7 @@ function ListadoSolicitudRoles({ filtros }) {
     return (
         <div>
             <div className="mt-5 mx-5">
-                <h2>Todas las solicitudes</h2>
+                <h2>Todos los usuarios</h2>
             </div>
             <CardSolicitud
                 dataUsers={dataUser}
