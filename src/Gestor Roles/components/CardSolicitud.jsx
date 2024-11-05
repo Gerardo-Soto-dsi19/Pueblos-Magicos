@@ -321,13 +321,13 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
                                         className='col-span-1 rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300'
                                     >
                                         <option value={user.tipo.tipo_usuario}>
-                                            {user.tipo.tipo_usuario === 'Admin_Systema' ? 'Administrador de sistema' :
+                                            {user.tipo.tipo_usuario === 'Admin_Systema' ? 'Administrador del sistema' :
                                                 user.tipo.tipo_usuario === 'Director_Pueblos_Magicos' ? 'Director de pueblo mágico' :
                                                     user.tipo.tipo_usuario === 'Pueblo_Magico' ? 'Pueblo mágico' : 'Turista'}
                                         </option>
                                         {rolUser.map((item) => (
                                             <option key={item.id} value={item.id}>
-                                                {item.tipo_usuario === 'Admin_Systema' ? 'Administrador de sistema' :
+                                                {item.tipo_usuario === 'Admin_Systema' ? 'Administrador del sistema' :
                                                     item.tipo_usuario === 'Director_Pueblos_Magicos' ? 'Director Pueblo mágico' :
                                                         item.tipo_usuario === 'Pueblo_Magico' ? 'Pueblo mágico' : 'Turista'}
                                             </option>
@@ -337,7 +337,7 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
                                 </div>
                             </div>
                             <div className='grid items-center grid-cols-[150px_1fr] gap-4'>
-                                <label className='font-medium '>Pueblo Mágico:</label>
+                                <label className='font-medium '>Pueblo mágico:</label>
                                 <div>
                                     <MemoizedSelectPuebloMagico
                                         value={selectPueblo}

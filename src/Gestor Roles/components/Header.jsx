@@ -19,7 +19,7 @@ function Header() {
 
     const getUserTypeLabel = () => {
         switch (typeUser) {
-            case '1': return 'Administrador de sistema';
+            case '1': return 'Administrador del sistema';
             case '2': return 'Director de pueblos magicos';
             case '3': return 'Pueblos mágicos';
             default: return '';

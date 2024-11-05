@@ -33,7 +33,7 @@ function GestionRoles() {
     const menuItems = [
         { icon: <FaUserPlus className="mr-2" />, label: "Registrar nuevo usuario", to: "/gestor-usuarios/registro/usuarios" },
         { icon: <RiAddBoxFill className="mr-2" />, label: "Registrar nueva publicación", to: "/formulario/registro" },
-        { icon: <FaBook className="mr-2" />, label: "Gestor de publicaiones", to: "/gestor-solicitudes" },
+        { icon: <FaBook className="mr-2" />, label: "Gestor de publicaciones", to: "/gestor-solicitudes" },
     ];
     return (
         <Sidebar menuItems={menuItems.filter(item => !item.condition || item.condition)}>
