@@ -8,14 +8,35 @@ function RecuperarContraseña() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [emailError, setEmailError] = useState(null);
+  const isValidEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEmail(e.target.value)
+    if (e.target.value && e.target.value.match(isValidEmail)) {
+      setEmailError(null)
+
+    } else {
+      setEmailError('Dirección de correo electrónico inválida');
+    }
+  }
 
   const handleForgotPass = async (e) => {
     e.preventDefault();
+    if (emailError != null) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error de validación',
+        text: 'Por favor, ingrese un correo electrónico válido',
+      });
+      return;
+    }
     setIsLoading(true)
     try {
-      const response = await forgotPasswordService(email);
+      await forgotPasswordService(email);
       Swal.fire({
-        icon: 'success',        
+        icon: 'success',
         title: 'Éxito!',
         text: "Le hemos enviado un correo electrónico para restablecer su contraseña.",
         confirmButtonColor: '#6c1d45',
@@ -23,15 +44,14 @@ function RecuperarContraseña() {
       })
 
     } catch (error) {
-      
       Swal.fire({
-        icon: 'error',        
+        icon: 'error',
         title: 'Error',
         text: error.response.data.data.message['data.user_name'],
-        confirmButtonColor: '#6c1d45', 
+        confirmButtonColor: '#6c1d45',
         confirmButtonText: 'Aceptar'
       });
-      
+
     } finally {
       setIsLoading(false)
     }
@@ -70,8 +90,9 @@ function RecuperarContraseña() {
                     required
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-zinc-900 sm:text-sm sm:leading-6"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={handleChange}
                   />
+                  {emailError && <div className="text-red-500 mt-1">{emailError}</div>}
                 </div>
                 <div className='mt-6'>
                   <button
