@@ -8,9 +8,9 @@ import { loginUser } from '../api/api'
 
 
 
-
-const Login = () => {
+function Login() {
     const [isLoading, setIsLoading] = useState(false);
+    const [emailError, setEmailError] = useState(null);
     const [formData, setFormData] = useState({
         'user_name': '',
         'password': ''
@@ -20,10 +20,10 @@ const Login = () => {
         const getCsrfToken = async () => {
             try {
                 await axios.get('http://localhost/sanctum/csrf-cookie', {
-                    
+
                 });
             } catch (error) {
-                Swal.fire('Error al conectarse','Hay un problema de conexión. Por favor, intenta de nuevo más tarde.','error')
+                Swal.fire('Error al conectarse', 'Hay un problema de conexión. Por favor, intenta de nuevo más tarde.', 'error')
             }
         };
         getCsrfToken();
@@ -34,23 +34,46 @@ const Login = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prevFormData) => ({
+        setFormData(prevFormData => ({
             ...prevFormData,
             [name]: value,
         }));
+
+        if (name === 'user_name' && value.trim() !== '') {
+            const isValidEmail = validateEmail(value);
+            if (isValidEmail) {
+                setEmailError(null);
+            } else {
+                setEmailError('Dirección de correo electrónico inválida');
+            }
+        } else if (name === 'user_name' && value.trim() === '') {
+            setEmailError(null);
+        }
+    };
+
+    const validateEmail = (email) => {
+        const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+        return emailPattern.test(email);
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
 
+        if (emailError != null) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de validación',
+                text: 'Por favor, ingrese un correo electrónico válido',
+            });
+            return;
+        }
+        setIsLoading(true);
         const dataToSend = {
             data: {
                 user_name: formData.user_name,
                 password: formData.password
             }
         };
-
         try {
             const response = await loginUser(dataToSend)
             if (response.status === 200) {
@@ -62,11 +85,9 @@ const Login = () => {
                 navigate('/gestor-solicitudes');
                 setIsAuthenticated(true);
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error de inicio de sesión',
-                    text: response.data.error,
-                });
+                setIsLoading(false)
+                setIsAuthenticated(false)
+                return;
             }
         } catch (error) {
             if (error.response && error.response.data) {
@@ -79,6 +100,7 @@ const Login = () => {
         } finally {
             setIsLoading(false);
         }
+
     }
     if (isLoading) {
         return (
@@ -89,7 +111,9 @@ const Login = () => {
             </div>
         );
     }
+
     return (
+
         <>
             <div className='md:flex justify-center items-center mt-10 sm: mx-10'>
                 <div className=" bg-white shadow-lg md:w-96 rounded-lg mb-10">
@@ -119,13 +143,14 @@ const Login = () => {
                                         </label>
                                         <div className="mt-2">
                                             <input
-                                                id="user_name"
                                                 name="user_name"
                                                 type="email"
-                                                value={formData.user_name} onChange={handleChange}
-
+                                                value={formData.user_name}
+                                                onChange={handleChange}
                                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-zinc-900 sm:text-sm sm:leading-6"
+                                                required
                                             />
+                                            {emailError && <div className="text-red-500 mt-1">{emailError}</div>}
                                         </div>
                                     </div>
 
@@ -147,6 +172,7 @@ const Login = () => {
                                                 type="password"
                                                 value={formData.password} onChange={handleChange}
                                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-zinc-800 sm:text-sm sm:leading-6"
+                                                required
                                             />
                                         </div>
                                     </div>
