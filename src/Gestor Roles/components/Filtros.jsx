@@ -66,7 +66,7 @@ function Filtros({ filtros, onFiltroChange }) {
                         className="form-radio h-4 w-4 text-[#6C1D45] ring-inset focus:ring-2"
                     />
                     <label htmlFor="pueblo">
-                        Pueblo mágico
+                        Representante de Pueblo Mágico
                     </label>
                 </div>
             </div>

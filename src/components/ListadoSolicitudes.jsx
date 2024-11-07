@@ -63,7 +63,6 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             setIsLoading(true);
             setServicios([]);
             const { data, last_page } = await getFilteredData(tipoSolicitud, currentPage);
-            console.log('Resultado del response de getFilteredData', data);
             setServicios(data || []);
             setTotalPages(last_page);
             setFilteredServices(data || []);

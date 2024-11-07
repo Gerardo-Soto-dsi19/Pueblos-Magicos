@@ -225,9 +225,9 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
                             Tipo rol: {''}
                             <span className='font-normal normal-case'>
                                 {
-                                    user.tipo.tipo_usuario === 'Admin_Systema' ? 'Administrador de sistema' :
-                                        user.tipo.tipo_usuario === 'Director_Pueblos_Magicos' ? 'Director de pueblo mágico'
-                                            : user.tipo.tipo_usuario === 'Pueblo_Magico' ? 'Pueblo mágico' : 'Turista'
+                                    user.tipo.tipo_usuario === 'Admin_Systema' ? 'Administrador del Sistema' :
+                                        user.tipo.tipo_usuario === 'Director_Pueblos_Magicos' ? 'Director de Pueblos Mágicos'
+                                            : user.tipo.tipo_usuario === 'Pueblo_Magico' ? 'Representante de Pueblo Mágico' : 'Turista'
                                 }
                             </span>
                         </p>
@@ -322,14 +322,14 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
                                     >
                                         <option value={user.tipo.tipo_usuario}>
                                             {user.tipo.tipo_usuario === 'Admin_Systema' ? 'Administrador del sistema' :
-                                                user.tipo.tipo_usuario === 'Director_Pueblos_Magicos' ? 'Director de pueblo mágico' :
-                                                    user.tipo.tipo_usuario === 'Pueblo_Magico' ? 'Pueblo mágico' : 'Turista'}
+                                                user.tipo.tipo_usuario === 'Director_Pueblos_Magicos' ? 'Director de Pueblos Mágicos' :
+                                                    user.tipo.tipo_usuario === 'Pueblo_Magico' ? 'Representante de Pueblo Mágico' : 'Turista'}
                                         </option>
                                         {rolUser.map((item) => (
                                             <option key={item.id} value={item.id}>
                                                 {item.tipo_usuario === 'Admin_Systema' ? 'Administrador del sistema' :
-                                                    item.tipo_usuario === 'Director_Pueblos_Magicos' ? 'Director Pueblo mágico' :
-                                                        item.tipo_usuario === 'Pueblo_Magico' ? 'Pueblo mágico' : 'Turista'}
+                                                    item.tipo_usuario === 'Director_Pueblos_Magicos' ? 'Director de Pueblos Mágicos' :
+                                                        item.tipo_usuario === 'Pueblo_Magico' ? 'Representante de Pueblo Mágico' : 'Turista'}
                                             </option>
                                         ))}
                                     </select>
