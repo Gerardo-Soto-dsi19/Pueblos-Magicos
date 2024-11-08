@@ -80,21 +80,24 @@ function Login() {
                 sessionStorage.setItem('accessToken', response.data.access_token);
                 localStorage.setItem('user_name', response.data.user.id);
                 sessionStorage.setItem('tu', response.data.user.id_tipo_usuario)
-
-
                 navigate('/gestor-solicitudes');
                 setIsAuthenticated(true);
+
             } else {
+                console.log("***"+response);
+                
                 setIsLoading(false)
                 setIsAuthenticated(false)
                 return;
             }
         } catch (error) {
+            console.log(error);
+            
             if (error.response && error.response.data) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Credenciales incorrectas',
-                    text: 'Nombre de usuario o contraseña no válidos',
+                    text: error.response.data.error,
                 });
             }
         } finally {
