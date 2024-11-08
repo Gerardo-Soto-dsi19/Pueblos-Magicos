@@ -79,7 +79,7 @@ function RecuperarContraseña() {
                   htmlFor="email"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Ingrese el usuario
+                  Ingrese su correo electrónico
                 </label>
                 <div className="mt-2">
                   <input
