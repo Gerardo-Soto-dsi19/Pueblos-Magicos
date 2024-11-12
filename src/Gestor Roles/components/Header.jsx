@@ -19,9 +19,9 @@ function Header() {
 
     const getUserTypeLabel = () => {
         switch (typeUser) {
-            case '1': return 'Administrador del sistema';
-            case '2': return 'Director de pueblos magicos';
-            case '3': return 'Pueblos mágicos';
+            case '1': return 'Administrador del Sistema';
+            case '2': return 'Director de Pueblos Mágicos';
+            case '3': return 'Representante del Pueblo Mágico';
             default: return '';
         }
     }

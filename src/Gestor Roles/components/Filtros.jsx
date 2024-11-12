@@ -52,7 +52,7 @@ function Filtros({ filtros, onFiltroChange }) {
                         className="form-radio h-4 w-4 text-[#6C1D45]"
                     />
                     <label htmlFor="director">
-                        Director de pueblo mágico
+                        Director de Pueblos Mágicos
                     </label>
                 </div>
                 <div className="flex items-center gap-x-3">
@@ -66,7 +66,7 @@ function Filtros({ filtros, onFiltroChange }) {
                         className="form-radio h-4 w-4 text-[#6C1D45] ring-inset focus:ring-2"
                     />
                     <label htmlFor="pueblo">
-                        Representante de Pueblo Mágico
+                        Representante del Pueblo Mágico
                     </label>
                 </div>
             </div>

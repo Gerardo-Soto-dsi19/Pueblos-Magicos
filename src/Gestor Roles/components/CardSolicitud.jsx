@@ -17,7 +17,7 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
     const [selectedRole, setSelectedRole] = useState('');
     const [selectPueblo, setSelectPueblo] = useState('');
     const [puebloMagico, setPuebloMagico] = useState([]);
-
+    
     const MemoizedSelectPuebloMagico = React.memo((props) => (
         <select
             name='id_pueblo'
@@ -227,7 +227,7 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
                                 {
                                     user.tipo.tipo_usuario === 'Admin_Systema' ? 'Administrador del Sistema' :
                                         user.tipo.tipo_usuario === 'Director_Pueblos_Magicos' ? 'Director de Pueblos Mágicos'
-                                            : user.tipo.tipo_usuario === 'Pueblo_Magico' ? 'Representante de Pueblo Mágico' : 'Turista'
+                                            : user.tipo.tipo_usuario === 'Pueblo_Magico' ? 'Representante del Pueblo Mágico' : 'Turista'
                                 }
                             </span>
                         </p>
@@ -323,13 +323,13 @@ function CardSolicitud({ dataUsers, onDataUpdate }) {
                                         <option value={user.tipo.tipo_usuario}>
                                             {user.tipo.tipo_usuario === 'Admin_Systema' ? 'Administrador del sistema' :
                                                 user.tipo.tipo_usuario === 'Director_Pueblos_Magicos' ? 'Director de Pueblos Mágicos' :
-                                                    user.tipo.tipo_usuario === 'Pueblo_Magico' ? 'Representante de Pueblo Mágico' : 'Turista'}
+                                                    user.tipo.tipo_usuario === 'Pueblo_Magico' ? 'Representante del Pueblo Mágico' : 'Turista'}
                                         </option>
                                         {rolUser.map((item) => (
                                             <option key={item.id} value={item.id}>
                                                 {item.tipo_usuario === 'Admin_Systema' ? 'Administrador del sistema' :
                                                     item.tipo_usuario === 'Director_Pueblos_Magicos' ? 'Director de Pueblos Mágicos' :
-                                                        item.tipo_usuario === 'Pueblo_Magico' ? 'Representante de Pueblo Mágico' : 'Turista'}
+                                                        item.tipo_usuario === 'Pueblo_Magico' ? 'Representante del Pueblo Mágico' : 'Turista'}
                                             </option>
                                         ))}
                                     </select>
