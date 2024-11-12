@@ -156,8 +156,8 @@ function RegistroUsuarios() {
 
                         <form onSubmit={handleSubmit} className='mt-10'>
                             <h1>Registrar usuario</h1>
-                            <div className="space-y-12 mb-10">
-                                <div className="border-b border-gray-900/10 pb-12">
+                            <div className="space-y-12 mb-5">
+                                <div className="border-b border-gray-900/10 pb-9">
                                     <h2 className="text-base font-semibold leading-7 text-gray-900">Información Personal</h2>
                                     <p className="mt-1 text-sm leading-6 text-gray-600">Utilice una dirección email permanente en la que pueda recibir correos.</p>
                                     <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -253,8 +253,8 @@ function RegistroUsuarios() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="border-b border-gray-900/10 pb-12">
-                                <div className="mt-10 space-y-10">
+                            <div className="border-b border-gray-900/10 pb-5">
+                                <div className="">
                                     <fieldset>
                                         <legend className="text-sm font-semibold leading-6 text-gray-900">Tipo de usuario</legend>
                                         <p className="mt-1 text-sm leading-6 text-gray-600">Por favor indique el rol del nuevo usuario</p>
@@ -291,7 +291,7 @@ function RegistroUsuarios() {
                             </div>
 
                             <div className="border-b border-gray-900/10 pb-12">
-                                <div className="mt-10 space-y-10">
+                                <div className="mt-5 space-y-10">
                                     <fieldset>
                                         <legend className="text-sm font-semibold leading-6 text-gray-900">Asignar Pueblo Mágico</legend>
                                         <p className="mt-1 text-sm leading-6 text-gray-600">Por favor indique el pueblo mágico del nuevo usuario</p>
