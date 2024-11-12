@@ -1,9 +1,9 @@
 import { Outlet } from 'react-router-dom'
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'
 import Swal from 'sweetalert2';
 import { Spinner } from 'flowbite-react'
-import { fetchCreateUser } from '../../api/api'
+import { fetchCreateUser, getMagicTowns } from '../../api/api'
 
 function RegistroUsuarios() {
     const [isLoading, setIsLoading] = useState(false)
@@ -16,6 +16,40 @@ function RegistroUsuarios() {
         apellido_mat: '',
         id_tipo_usuario: ''
     });
+    const [selectPueblo, setSelectPueblo] = useState('');
+    const [puebloMagico, setPuebloMagico] = useState([]);
+
+    const MemoizedSelectPuebloMagico = React.memo((props) => (
+        <select
+            name='id_pueblo'
+            value={props.value}
+            onChange={props.onChange}
+            className="w-full col-span-1 rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300"
+        >
+            <option value="">Seleccionar...</option>
+            {props.options.map((item) => (
+                <option key={item.id} value={item.id}>{item.nombre}</option>
+            ))}
+        </select>
+    ));
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [pueblosMagicosResponse] = await Promise.all([
+                    getMagicTowns(),
+                ]);
+                setPuebloMagico(pueblosMagicosResponse.data.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        fetchData();
+    }, []);
+
+    const handleAssignTown = (event) => {
+        setSelectPueblo(event.target.value);
+    }
+
     const resetData = () => {
         setFormData({
             user_name: '',
@@ -24,7 +58,8 @@ function RegistroUsuarios() {
             nombre: '',
             apellido_pat: '',
             apellido_mat: '',
-            id_tipo_usuario: ''
+            id_tipo_usuario: '',
+            id_pueblo: ''
         })
     }
     const Toast = Swal.mixin({
@@ -58,7 +93,7 @@ function RegistroUsuarios() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true)       
+        setIsLoading(true)
         try {
             const datosToSend = {
                 data: {
@@ -68,9 +103,12 @@ function RegistroUsuarios() {
                     nombre: formData.nombre,
                     apellido_pat: formData.apellido_pat,
                     apellido_mat: formData.apellido_mat,
-                    id_tipo_usuario: formData.id_tipo_usuario
+                    id_tipo_usuario: formData.id_tipo_usuario,
+                    id_pueblo: selectPueblo
                 }
-            }            
+            }
+            console.log(datosToSend);
+
             const response = await fetchCreateUser(datosToSend)
 
             if (response.status === 200) {
@@ -231,7 +269,7 @@ function RegistroUsuarios() {
                                                     className="form-radio h-4 w-4 text-[#6C1D45]"
                                                 />
                                                 <label htmlFor="id_director" className="block text-sm font-medium leading-6 text-gray-900">
-                                                    Director Pueblo Mágico
+                                                    Director de Pueblos Mágicos
                                                 </label>
                                             </div>
                                             <div className="flex items-center gap-x-3">
@@ -244,14 +282,30 @@ function RegistroUsuarios() {
                                                     className="form-radio h-4 w-4 text-[#6C1D45]"
                                                 />
                                                 <label htmlFor="id_pueblo" className="block text-sm font-medium leading-6 text-gray-900">
-                                                    Pueblo Mágico
+                                                    Representante del Pueblo Mágico
                                                 </label>
                                             </div>
                                         </div>
                                     </fieldset>
-
                                 </div>
+                            </div>
 
+                            <div className="border-b border-gray-900/10 pb-12">
+                                <div className="mt-10 space-y-10">
+                                    <fieldset>
+                                        <legend className="text-sm font-semibold leading-6 text-gray-900">Asignar Pueblo Mágico</legend>
+                                        <p className="mt-1 text-sm leading-6 text-gray-600">Por favor indique el pueblo mágico del nuevo usuario</p>
+                                        <div className="mt-6 space-y-6">
+                                            <div className='w-full'>
+                                                <MemoizedSelectPuebloMagico
+                                                    value={selectPueblo}
+                                                    onChange={handleAssignTown}
+                                                    options={puebloMagico}
+                                                />
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
                             </div>
 
                             <div className="mt-6 py-5 flex items-center justify-end gap-x-6">
