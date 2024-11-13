@@ -36,7 +36,7 @@ function GestionSolicitudes() {
   const menuItems = [
     { icon: <FaInbox className="mr-2" />, label: "Todas las solicitudes", onClick: () => handleFilterChange('all') },
     { icon: <FaCheckCircle className="mr-2" />, label: "Solicitudes aceptadas", onClick: () => handleFilterChange('2') },
-    { icon: <FaClock className="mr-2" />, label: "Solicitudes pendientes", onClick: () => handleFilterChange('1') },
+    { icon: <FaClock className="mr-2" />, label: "Solicitudes en validación", onClick: () => handleFilterChange('1') },
     { icon: <FaExclamationCircle className="mr-2" />, label: "Solicitudes con observación", onClick: () => handleFilterChange('3') },
     { icon: <LuPowerOff className="mr-2" />, label: "Solicitudes inactivas", onClick: () => handleFilterChange('4') },
     { icon: <RiAddBoxFill className="mr-2" />, label: "Registrar nueva publicación", to: "/formulario/registro" },
