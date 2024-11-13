@@ -569,7 +569,7 @@ function ModalSolicitud({ serviceId, isEditable, onDataUpdate, verifyObservation
                     <Label>Precio</Label>
                     <TextInput
                         name='precios'
-                        type="text"
+                        type="number"
                         value={formValues.precios}
                         readOnly={!isEditable}
                         onChange={handleChange}
