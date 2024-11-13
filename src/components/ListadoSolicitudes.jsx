@@ -166,8 +166,8 @@ function ListadoSolicitudes({ tipoSolicitud }) {
             if (response.status === 200) {
                 Swal.fire({
                     icon: "success",
-                    title: "Ok",
-                    text: "La publicación fue aceptada con éxito"
+                    title: "Publicada",
+                    text: "La publicación se validó con éxito"
                 });
                 fetchFilteredData();
                 setOpenModal(false);
